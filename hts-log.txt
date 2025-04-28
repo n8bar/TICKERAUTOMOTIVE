@@ -1,0 +1,29 @@
+HTTrack3.49-2+htsswf+htsjava launched on Fri, 20 Dec 2024 17:20:57 at https://www.tickerautomotive.com/ +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar
+(winhttrack -qiC2%Ps2u1%s%uN0%I0p3DaK0H0%kf2A25000%f#f -F "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36" -%F "<!-- Mirrored from %s%s by HTTrack Website Copier/3.x [XR&CO'2014], %s -->" -%l "en, *" https://www.tickerautomotive.com/ -O1 "C:\GoogleDrive\Projects\TickerAutomotive.com\oldsite\tickerautomotive.com" +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar )
+
+Information, Warnings and Errors reported for this mirror:
+note:	the hts-log.txt file, and hts-cache folder, may contain sensitive information,
+	such as username/password authentication for websites mirrored in this project
+	do not share these files/folders if you want these information to remain private
+
+17:21:01	Warning: 	file not stored in cache due to bogus state (incomplete type with OK (200), size 0): https://app.multiscreenstore.com/script.js
+17:21:13	Warning: 	Unable to test https://lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/slider_01-2304w.png?m (loop to same filename)
+17:21:13	Warning: 	link is probably looping, type unknown, aborting: https://lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/slider_01-2304w.png?m
+17:21:39	Warning: 	file not stored in cache due to bogus state (incomplete type with OK (200), size 0): https://zapi.kukui.com/_WebBuilderAssets/Secured/GlobalSettings/style.css
+17:21:44	Warning: 	Unable to test https://lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/banner-1920w.png?m (loop to same filename)
+17:21:44	Warning: 	link is probably looping, type unknown, aborting: https://lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/banner-1920w.png?m
+17:21:55	Error: 	"Not Found" (404) at link https://www.tickerautomotive.com/waiting-room.svg (from https://www.tickerautomotive.com/)
+17:21:55	Error: 	"Not Found" (404) at link https://www.tickerautomotive.com/after-hours.svg (from https://www.tickerautomotive.com/)
+17:21:55	Error: 	"Not Found" (404) at link https://www.tickerautomotive.com/dining.svg (from https://www.tickerautomotive.com/)
+17:21:55	Error: 	"Not Found" (404) at link https://www.tickerautomotive.com/hotel.svg (from https://www.tickerautomotive.com/)
+17:21:55	Error: 	"Not Found" (404) at link https://www.tickerautomotive.com/water.svg (from https://www.tickerautomotive.com/)
+17:21:55	Error: 	"Not Found" (404) at link https://www.tickerautomotive.com/tv.svg (from https://www.tickerautomotive.com/)
+17:21:55	Error: 	"Not Found" (404) at link https://www.tickerautomotive.com/play-area.svg (from https://www.tickerautomotive.com/)
+17:21:59	Warning: 	Moved Permanently for https://www.tickerautomotive.com/path=/
+17:21:59	Warning: 	File has moved from https://www.tickerautomotive.com/path=/ to https://www.tickerautomotive.com/path=
+17:22:00	Error: 	"Not Found" (404) at link https://www.tickerautomotive.com/path= (from https://www.tickerautomotive.com/path=/)
+17:22:01	Error: 	"Forbidden" (403) at link https://irp.cdn-website.com/editor/nee/images/common/2ColumnsArrows.png (from https://irp.cdn-website.com/WIDGET_CSS/a4b3ff3ba866607412a227d0ccc2ce7e.css)
+17:22:01	Error: 	"Forbidden" (403) at link https://irp.cdn-website.com/editor/nee/images/common/bluePic.png (from https://irp.cdn-website.com/WIDGET_CSS/a4b3ff3ba866607412a227d0ccc2ce7e.css)
+
+HTTrack Website Copier/3.49-2 mirror complete in 1 minutes 4 seconds : 87 links scanned, 75 files written (12328420 bytes overall), 76 files updated [6660144 bytes received at 104064 bytes/sec], 8682282 bytes transferred using HTTP compression in 64 files, ratio 22%, 1.9 requests per connection
+(10 errors, 8 warnings, 0 messages)
