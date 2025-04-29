@@ -7,44 +7,6 @@
 <head>
     <meta charset="utf-8">
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script type="text/javascript">
     window._currentDevice = 'desktop';
     window.Parameters = window.Parameters || {
@@ -135,31 +97,7 @@
     window.Parameters.LayoutVariationID[window._currentDevice] = 5;
 </script>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- Injecting site-wide to the head -->
-
-
-
-
 <!-- End Injecting site-wide to the head -->
 
 <!-- Inject secured cdn script -->
@@ -524,11 +462,11 @@
 
 
 <!-- RT CSS Include d-css-runtime-desktop-one-package-structured-global-->
-<link rel="stylesheet" type="text/css" href="../static.cdn-website.com/mnlt/production/5007/_dm/s/rt/dist/css/d-css-runtime-desktop-one-package-structured-global.min.css" />
+<link rel="stylesheet" type="text/css" href="static.cdn-website.com/mnlt/production/5007/_dm/s/rt/dist/css/d-css-runtime-desktop-one-package-structured-global.min.css" />
 
 <!-- End of RT CSS Include -->
 
-<link type="text/css" rel="stylesheet" href="../irp.cdn-website.com/WIDGET_CSS/8c4c4675b970aabf2671d30a49c8b048.css" id="widgetCSS" />
+<link type="text/css" rel="stylesheet" href="irp.cdn-website.com/WIDGET_CSS/8c4c4675b970aabf2671d30a49c8b048.css" id="widgetCSS" />
 
 <!-- Support `img` size attributes -->
 <style>img[width][height] {
@@ -550,7 +488,7 @@
 
 
 <!-- Site CSS -->
-<link type="text/css" rel="stylesheet" href="../irp.cdn-website.com/fd5deb14/files/fd5deb14_1.min8d0c.css?v=26" id="siteGlobalCss" />
+<link type="text/css" rel="stylesheet" href="irp.cdn-website.com/fd5deb14/files/fd5deb14_1.min8d0c.css?v=26" id="siteGlobalCss" />
 
 
 
@@ -1815,393 +1753,6 @@
     window.currentLanguage = "ENGLISH"
     window.isSitePreview = false;
 </script>
-<script>
-    window.customWidgetsFunctions["03922a9dafa746a8a3090e9ef4cb7540~24"] = function (element, data, api) {
-        let zenogreApiBaseUrl = 'https://zapi.kukui.com/api/v1';
-
-class ZenogreReviewsSummaryWidget {
-    constructor(options = {}) {
-
-        var self = this;
-        
-        self.settings = {};
-        
-        //Controls
-        self.root = $(options.root);
-        self.data = data;
-        self.reviewsUrlLink = $(self.root).find('[data-zen-element="reviewsUrlLink"]');
-        self.averageRating = $(self.root).find('[data-zen-element="averageRating"]');
-        self.settings.enableLink = options.enableLink;
-        self.settings.reviewsPageUrl = options.reviewsPageUrl;
-        self.settings.enableRating = options.enableRating;
-        self.settings.enableCustomText = options.enableCustomText;
-        self.settings.customText = typeof (options.customText) == "undefined" ? "" : options.customText;
-        self.settings.keywordsElementToggle = options.keywordsElementToggle;
-        self.keywords = !self.settings.keywordsElementToggle? $(self.root).find('[data-zen-element="keywords"]') : $(self.root).find('[data-zen-element="div-keywords"]');
-        self.clientId = dmAPI.getSiteExternalId();
-        
-        if(self.clientId == null){
-            self.clientId = '00000000-0000-0000-0000-000000000000';
-        }
-        
-        //GET Reviews average score
-        jQuery.ajax({
-            method: "GET",
-            url: `${zenogreApiBaseUrl}/clients/${self.clientId}/reviews/statistics`,
-            headers: {
-                'Content-Type': 'application/json',
-                'zw-client' : self.clientId,
-            },
-            success: function (data) {
-                if(data.reviewsStatistics.totalCount>1){
-                    self.reviewsUrlLink[0].innerHTML = `${data.reviewsStatistics.totalCount} Reviews`;
-                }
-                else{
-                    self.reviewsUrlLink[0].innerHTML = `${data.reviewsStatistics.totalCount} Review`;
-                }
-                
-                if(self.settings.enableLink)            
-                {            
-                    if (self.data.inEditor) {            
-                        self.reviewsUrlLink[0].href = self.settings.reviewsPageUrl.raw_url;            
-                    }            
-                    else             
-                    {            
-                        self.reviewsUrlLink[0].href = self.settings.reviewsPageUrl.href;            
-                    }            
-                }
-                
-                if(self.settings.enableRating){
-                    self.averageRating[0].innerHTML = data.reviewsStatistics.averageRating.toFixed(2);
-                }
-                else{
-                    self.averageRating.hide();
-                }
-                
-                let i;
-                
-                for(i = 0; i <= data.reviewsStatistics.averageRating; i ++){
-                    $(element).find(`[data-zen-element="star-${i}"]`).addClass('full');
-                }
-                
-                if(i - data.reviewsStatistics.averageRating <= 0.25) {
-                    $(element).find(`[data-zen-element="star-${i}"]`).addClass('full');
-                }
-                else if(i - data.reviewsStatistics.averageRating <= 0.75) {
-                    $(element).find(`[data-zen-element="star-${i}"]`).addClass('half');
-                }
-                
-                if(!self.settings.enableCustomText){
-                    //GET Client name
-                    jQuery.ajax({
-                        method: "GET",
-                        url: `${zenogreApiBaseUrl}/clients/${self.clientId}`,
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'zw-client' : self.clientId,
-                        },
-                        success: function (data) {
-                            self.root.show();
-                            self.keywords[0].innerHTML = `${data.name}`;
-                        },
-                        error: function (xhr, ajaxOptions, thrownError) {
-                            console.log("Error occured while getting the data.");
-                        }
-                    });
-                }
-                else{
-                    self.root.show();
-                    self.keywords[0].innerHTML = `${self.settings.customText}`;
-                }
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                console.log("Error occured while getting the data.");
-            }
-        });
-    }
-}
-
-new ZenogreReviewsSummaryWidget({ 
-root: $(element).find('[data-zen-component="summary"]')[0],
-enableLink: data.config.enableReviewsLink,
-reviewsPageUrl: data.config.reviewsPageUrl_input,
-enableRating : data.config.enableAverageRating,
-enableCustomText : data.config.enableCustomText,
-customText : data.config.customText,
-keywordsElementToggle : data.config.keywordsElementToggle
-});
-    };
-</script>
-<script>
-    window.customWidgetsFunctions["d3c1360ae6994cdca7b4017895fd2292~12"] = function (element, data, api) {
-        let zenogreApiBaseUrl = 'https://zapi.kukui.com/api/v1';
-let clientId = dmAPI.getSiteExternalId();
-
-if(clientId == null){
-    clientId = '00000000-0000-0000-0000-000000000000';
-}
-
-class ZenogreBusinessHoursWidget {
-    constructor(options = {}) {
-
-        var self = this;
-            
-        // Internal settings mapped from options object
-        self.settings = {};
-    
-        // Component internal data state
-        self.data = {};
-        
-        //Controls
-        self.root = $(options.root);
-        self.clientId = clientId; //'e68e4c8f-37f4-40a4-aa1f-71d1970e99c0';
-        self.locationId = options.locationOptionsDropdown;
-        self.siteName = dmAPI.getSiteName(); //'d59dc11f8c154390b550e373c5971b70';
-        self.message = $(options.message);
-        self.noDataMessage = $(options.noDataMessage);
-        self.toggle12hFormat = options.toggle12hFormat;
-        self.ddWorktimeSeparator = options.ddWorktimeSeparator;
-        self.getContentLibraryData = options.getContentLibraryData;
-        
-        if(typeof(self.locationId) === 'undefined')
-        {
-            self.locationId = '00000000-0000-0000-0000-000000000000';
-        }
-        
-        //GET Business hours
-        jQuery.ajax({
-            method: "GET",
-            url: `${zenogreApiBaseUrl}/websites/${self.siteName}/businesshours?getContentLibraryData=${self.getContentLibraryData}&locationId=${self.locationId}`,
-            headers: {"zw-client" : self.clientId},
-            success: function (data) {
-                self.displayBusinessHours(data.businessHours);
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                console.log("Error occurred while getting the data."); 
-                self.noDataMessage.show();
-            },
-            complete: function(data){
-                self.message.hide();
-            }
-        });
-    }
-    
-    // Methods
-    displayBusinessHours(businessHours, divElement)
-    {
-        let self = this;
-        let text;
-        
-        $(businessHours).each(function(index, el){
-            if(index == 0)
-            {
-               text = `<div><span>${el.days}: </span><span>${self.displayWorktime(el.workTime)}</span></div>`
-            }
-            else
-            {
-                text += `<span>${self.ddWorktimeSeparator}</span><div><span>${el.days}: </span><span>${self.displayWorktime(el.workTime)}</span></div>`
-            }
-            
-        });
-        
-        self.root.html(text); 
-    }
-    
-    displayWorktime(worktimes)
-    {
-        let self = this;
-        let text;
-        
-        $(worktimes).each(function(index, el){
-            
-            let startTime = self.toggle12hFormat ? self.converWorktimeTo24HFormat(el.split('-')[0]) : el.split('-')[0];
-            let endTime =  self.toggle12hFormat ? self.converWorktimeTo24HFormat(el.split('-')[1]) : el.split('-')[1];
-            
-            if(index == 0){
-                text = `${startTime}-${endTime}` 
-            }
-            else
-            {
-                text += ` and ${startTime}-${endTime}` 
-            }
-        });
-        
-        return text;
-    }
-    
-    converWorktimeTo24HFormat(worktime)
-    {
-        var H = +worktime.substr(0, 2);
-        var h = (H % 12) || 12;
-        var ampm = H < 12 ? "AM" : "PM";
-        
-        worktime = (h < 10 ? '0' + h : h) + worktime.substr(2, 3) + ampm;
-     
-        return worktime;
-    }
-
-}
-
-new ZenogreBusinessHoursWidget({ root: $(element).find('[data-zen-component="business-hours"]')[0],
-                                  message: $(element).find('[data-zen-element="message"]')[0],
-                                  noDataMessage: $(element).find('[data-zen-element="no-data-message"]')[0],
-                                  toggle12hFormat: data.config.toggle12hFormat,
-                                  ddWorktimeSeparator: data.config.ddWorktimeSeparator,
-                                  getContentLibraryData: data.config.getContentLibraryData,
-                                  locationOptionsDropdown: data.config.locationOptionsDropdown });
-    };
-</script>
-<script>
-    window.customWidgetsFunctions["c1add28715d4417b84d409ac057e793b~10"] = function (element, data, api) {
-        let zenogreBaseUrl = 'https://zapi.kukui.com/';
-var zenogreApiBaseUrl =`${zenogreBaseUrl}/api/v1`;
-var myGarageBaseUrl = 'https://mygarage.kukui.com/';
-var clientId = dmAPI.getSiteExternalId(); 
-
-if(clientId == null){
-    clientId = '00000000-0000-0000-0000-000000000000';
-  //  clientId = '4c62df68-c470-4f97-b44b-11a1e2300314'; // Cardinal Plaza Shell
-   // clientId = '99999999-9999-9999-9999-999999999999'
-    //clientId = 'c284a66e-82ea-43ba-990b-0facc378c12b'; //TODO sand
-  //  clientId = '5d124dc9-eb37-4c0c-94a6-96a3a67f4a7f'; //TODO production Tihomir Zenongre Client
-    //clientId = 'f34076d5-1c4a-480a-b95a-6363da5abea0'; //single
-  //  clientId = 'eadaff4e-8a68-4e0a-ac96-934159e15f31'; //TODO mock server
-}
-
-class ZenogreMyGarageWidget{
-    constructor(options = {}){
-        let self = this;
-        self.settings = {};
-        
-        self.data = options.data;
-        self.element = options.element;
-        self.api = options.api;
-        self.root = options.root;
-        
-        self.Init();
-    }
-    
-    Init(){
-        let self = this;
-         
-        let myGarageClientId
-        
-        jQuery.ajax({
-            method: "GET",
-            url: `${zenogreApiBaseUrl}/mygarage/${clientId}/clientId`,
-            headers: {
-                        'Content-Type': 'application/json',
-                        'zw-client' : clientId,
-                    },
-            success: function(dataPayload, status, xhr) {
-                if(!document.getElementById('myGarageLoader')){
-                    myGarageClientId = dataPayload.myGarageId;
-                     
-                    let widgetBody=`<script type='text/javascript' id="myGarageLoader" src="${myGarageBaseUrl}/MyGarageLoader.js?id=${myGarageClientId}" defer /><//script>`;
-                    
-                    $(element).find('[data-zen-component="myGarage"]').prepend(widgetBody);
-                }
-                $(self.root).show()
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                
-                $(self.element).find('[data-zen-component="loading-failed"]').show();
-                $(self.element).find('[data-zen-component="loading-failed"]').addClass('loading-failed');
-                if(self.data.inEditor){
-                    $(self.element).find('[data-zen-component="no-myGarage"]').show();   
-                    $(self.element).find('[data-zen-component="no-myGarage"]').addClass("no-mygarage hide-on-prod")
-                }
-            }
-        });
-    }
-}
-
-let displayMyGarageComponent = new ZenogreMyGarageWidget({
-    data: data,
-    element: element,
-    api: api,
-    root: $(element).find('[data-zen-component="myGarage"]')[0],
-});
-        
-        
-    };
-</script>
-<script>
-    window.customWidgetsFunctions["79c1d8e211f04821af7a73f9f70bcc91~6"] = function (element, data, api) {
-        let zenogreApiBaseUrl = 'https://zapi.kukui.com/api/v1';
-let clientId = dmAPI.getSiteExternalId();
-
-if(clientId == null){
-    clientId = '00000000-0000-0000-0000-000000000000';
-}
-
-class ZenogreNAPLinesWidget {
-    constructor(options = {}) {
-
-        let self = this;
-            
-        // Internal settings mapped from options object
-        self.settings = {};
-    
-        // Component internal data state
-        self.data = {};
-        
-        //Controls
-        self.root = $(options.root);
-        self.clientId = clientId; //'e68e4c8f-37f4-40a4-aa1f-71d1970e99c0';
-        self.siteName = dmAPI.getSiteName(); //'d59dc11f8c154390b550e373c5971b70';
-        self.message = $(options.message);
-        self.noDataMessage = $(options.noDataMessage);
-        self.ddNAPLinesSeparator = options.ddNAPLinesSeparator;
-
-
-        //GET NAP Lines hours
-        jQuery.ajax({
-            method: "GET",
-            url: `${zenogreApiBaseUrl}/clients/${self.clientId}/nap/${self.siteName}`,
-            headers: {"zw-client" : self.clientId},
-            success: function (data) {;
-                self.displayNAPLines(data.napLines);
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                console.log("Error occured while getting the data."); 
-                self.noDataMessage.show();
-            },
-            complete: function(data){
-                self.message.hide();
-            }
-        });
-    }
-    
-     // Methods
-    displayNAPLines(napLines)
-    {
-        let self = this;
-        let text;
-        
-        $(napLines).each(function(index, el){
-            if(index == 0)
-            {
-               text = `<address class="nap" itemprop="address" itemscope="" itemtype="http://schema.org/PostalAddress">${el}</address>`;
-            }
-            else
-            {
-               text += `<span>${self.ddNAPLinesSeparator}</span><address class="nap" itemprop="address" itemscope="" itemtype="http://schema.org/PostalAddress">${el}</address>`;
-            }
-            
-        });
-        
-        self.root.html(text); 
-    }
-    
-}
-
-new ZenogreNAPLinesWidget({ root: $(element).find('[data-zen-component="nap-lines"]')[0],
-                            message: $(element).find('[data-zen-element="message"]')[0],
-                            noDataMessage: $(element).find('[data-zen-element="no-data-message"]')[0],
-                            ddNAPLinesSeparator: data.config.ddNAPLinesSeparator});
-    };
-</script>
 <script type="text/javascript">
 
     var d_version = "production_5007";
@@ -2230,7 +1781,7 @@ new ZenogreNAPLinesWidget({ root: $(element).find('[data-zen-component="nap-line
 
 <!-- Load jQuery -->
 <script type="text/javascript" id='d-js-jquery'
-        src="../static.cdn-website.com/libs/jquery/2.2.4/jquery.min.js"></script>
+        src="static.cdn-website.com/libs/jquery/2.2.4/jquery.min.js"></script>
 <!-- End Load jQuery -->
 <!-- Injecting site-wide before scripts -->
 <!-- End Injecting site-wide to the head -->
@@ -2278,7 +1829,7 @@ new ZenogreNAPLinesWidget({ root: $(element).find('[data-zen-component="nap-line
     rtCommonProps["common.here.appId"] = 'iYvDjIQ2quyEu0rg0hLo';
     rtCommonProps["common.here.appCode"] = '1hcIxLJcbybmtBYTD9Z1UA';
     rtCommonProps["isCoverage.test"] =false;
-    rtCommonProps["ecommerce.ecwid.script"] = '../app.multiscreenstore.com/script.html';
+    rtCommonProps["ecommerce.ecwid.script"] = 'app.multiscreenstore.com/script.html';
     rtCommonProps["feature.flag.mappy.kml"] =false;
     rtCommonProps["common.resources.dist.cdn"] =true;
     rtCommonProps["common.build.dist.folder"] = 'production/5007';
@@ -2351,18 +1902,6 @@ new ZenogreNAPLinesWidget({ root: $(element).find('[data-zen-component="nap-line
     rtFlags["ecom.ecwid.old.store.fix.scrolling.detect.enable"] =true;
     rtFlags["contact.form.browserValidation.enabled"] =true;
     rtFlags["feature.flag.notifications.push.from.top"] =false;
-</script>
-<script src="../static.cdn-website.com/mnlt/production/5007/_dm/s/rt/dist/scripts/d-js-one-runtime-unified-desktop.min.js"  id="d-js-core"></script>
-<!-- End of HEAD RT JS Include -->
-<script>
-    
-    $(window).bind("orientationchange", function (e) {
-        $.layoutManager.initLayout();
-        
-    });
-    $(document).resize(function () {
-        
-    });
 </script>
 
 
@@ -2442,52 +1981,10 @@ new ZenogreNAPLinesWidget({ root: $(element).find('[data-zen-component="nap-line
   <meta name="keywords" content="auto repair hildale, auto repair colorado city, about ticker automotive"/>
   <meta name="description" content="As a family-owned and operated business on the Utah-Arizona border, Ticker Automotive is serving Hildale, Colorado City, and the surrounding areas. Call us!"/>
 
-  <script type="text/javascript">
-
-
-
-
-
-
-      if(dmAPI.getCurrentEnvironment() === 'live'){
-        //   Input tracking URL below inside of ""
-          jQuery.getScript("https://tracking.kukui.com/02/Tracking/Js/7dbaa052-49e5-466b-9019-3e29a353d498");
-      }
-
-
-  
-
-  
-
-  </script>
   <!-- Google tag (gtag.js) -->  <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ME7X83EBJH">
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
 
   </script>
   <script>
-
-
-
-
-
-
 
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -2496,16 +1993,7 @@ new ZenogreNAPLinesWidget({ root: $(element).find('[data-zen-component="nap-line
   gtag('config', 'AW-10784944369');
   gtag('event', 'conversion', {'send_to': 'AW-10784944369/FmqFCPuKjvkCEPHh1JYo'});
   
-  
-  
-  
-  
 
-  
-
-  
-
-  
 
   </script>
 
@@ -2522,43 +2010,10 @@ new ZenogreNAPLinesWidget({ root: $(element).find('[data-zen-component="nap-line
 </head>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <body id="dmRoot" data-page-alias="about-us"  class="dmRoot dmDesktopBody fix-mobile-scrolling addCanvasBorder dmResellerSite dmLargeBody responsiveTablet "
       style="padding:0;margin:0;"
       
     >
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <!-- ========= Site Content ========= -->
@@ -2667,7 +2122,7 @@ new ZenogreNAPLinesWidget({ root: $(element).find('[data-zen-component="nap-line
 </svg> 
 </div> 
 </div> 
- <div class="u_1269174872 dmRespCol small-12 large-3 medium-3" id="1269174872"> <div class="u_1491739564 imageWidget align-center" data-element-type="image" data-widget-type="image" id="1491739564" data-binding="W3siYmluZGluZ05hbWUiOiJpbWFnZSIsInZhbHVlIjoic2l0ZV9pbWFnZXMubG9nbyJ9XQ=="> <a href="index.html" id="1837485542"><img src="../lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/logo-49671cad-1920w.png" alt="Home | Ticker Automotive" id="1322242551" class="" title="Ticker Automotive" data-diy-image="" data-dm-image-path="https://irp.cdn-website.com/fd5deb14/dms3rep/multi/logo-49671cad.png" onerror="handleImageLoadError(this)"/></a> 
+ <div class="u_1269174872 dmRespCol small-12 large-3 medium-3" id="1269174872"> <div class="u_1491739564 imageWidget align-center" data-element-type="image" data-widget-type="image" id="1491739564" data-binding="W3siYmluZGluZ05hbWUiOiJpbWFnZSIsInZhbHVlIjoic2l0ZV9pbWFnZXMubG9nbyJ9XQ=="> <a href="index.html" id="1837485542"><img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/logo-49671cad-1920w.png" alt="Home | Ticker Automotive" id="1322242551" class="" title="Ticker Automotive" data-diy-image="" data-dm-image-path="https://irp.cdn-website.com/fd5deb14/dms3rep/multi/logo-49671cad.png" onerror="handleImageLoadError(this)"/></a>
 </div> 
 </div> 
  <div class="u_1675462918 dmRespCol small-12 large-5 medium-5" id="1675462918"> <a data-display-type="block" class="u_1744227118 align-center dmButtonLink dmWidget dmWwr default dmOnlyButton dmDefaultGradient" file="false" href="appointments.html" data-element-type="dButtonLinkId" id="1744227118"> <span class="iconBg" aria-hidden="true" id="1887813118"> <span class="icon hasFontIcon icon-star" id="1436023267"></span> 
@@ -2730,7 +2185,7 @@ new ZenogreNAPLinesWidget({ root: $(element).find('[data-zen-component="nap-line
 </svg> 
 </div> 
 </div> 
- <div class="u_1957530368 dmRespCol small-12 large-4 medium-4" id="1957530368"> <div class="u_1922363852 imageWidget align-center" data-element-type="image" data-widget-type="image" id="1922363852" data-binding="W3siYmluZGluZ05hbWUiOiJpbWFnZSIsInZhbHVlIjoic2l0ZV9pbWFnZXMubG9nbyJ9XQ=="> <a href="index.html" id="1731424699"><img src="../lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/logo-49671cad-1920w.png" alt="Home | Ticker Automotive" id="1204201340" class="" title="Ticker Automotive" data-diy-image="" data-dm-image-path="https://irp.cdn-website.com/fd5deb14/dms3rep/multi/logo-49671cad.png" onerror="handleImageLoadError(this)"/></a> 
+ <div class="u_1957530368 dmRespCol small-12 large-4 medium-4" id="1957530368"> <div class="u_1922363852 imageWidget align-center" data-element-type="image" data-widget-type="image" id="1922363852" data-binding="W3siYmluZGluZ05hbWUiOiJpbWFnZSIsInZhbHVlIjoic2l0ZV9pbWFnZXMubG9nbyJ9XQ=="> <a href="index.html" id="1731424699"><img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/logo-49671cad-1920w.png" alt="Home | Ticker Automotive" id="1204201340" class="" title="Ticker Automotive" data-diy-image="" data-dm-image-path="https://irp.cdn-website.com/fd5deb14/dms3rep/multi/logo-49671cad.png" onerror="handleImageLoadError(this)"/></a>
 </div> 
 </div> 
  <div class="dmRespCol large-4 medium-4 small-12 u_1559890491" id="1559890491"> <a data-display-type="block" class="u_1392063210 align-center dmButtonLink dmWidget dmWwr default dmOnlyButton dmDefaultGradient" file="false" href="appointments.html" data-element-type="dButtonLinkId" id="1392063210"> <span class="iconBg" aria-hidden="true" id="1233488058"> <span class="icon hasFontIcon icon-star" id="1188129994"></span> 
@@ -2826,7 +2281,7 @@ new ZenogreNAPLinesWidget({ root: $(element).find('[data-zen-component="nap-line
 </div> 
 </section> 
 </div> 
- <div data-auto="flex-section" id="1038608572" data-flex-id="01c3759b" data-layout-section=""> <div class="flex-widgets-container" id="1847899752"> <div class="imageWidget align-center u_1114818437" data-element-type="image" data-widget-type="image" id="1114818437"><img src="../lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/slide_logo_1-1920w.png" alt="ASE | Ticker Automotive" id="1644710235" class="" data-dm-image-path="https://irp.cdn-website.com/fd5deb14/dms3rep/multi/slide_logo_1.png" width="74" height="99" onerror="handleImageLoadError(this)"/></div> 
+ <div data-auto="flex-section" id="1038608572" data-flex-id="01c3759b" data-layout-section=""> <div class="flex-widgets-container" id="1847899752"> <div class="imageWidget align-center u_1114818437" data-element-type="image" data-widget-type="image" id="1114818437"><img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/slide_logo_1-1920w.png" alt="ASE | Ticker Automotive" id="1644710235" class="" data-dm-image-path="https://irp.cdn-website.com/fd5deb14/dms3rep/multi/slide_logo_1.png" width="74" height="99" onerror="handleImageLoadError(this)"/></div>
 </div> 
  <section id="61238e85" class="flex-element section" data-auto="flex-element-section"> <div id="effbbc63" class="flex-element grid" data-auto="flex-element-grid" data-layout-grid=""> <div id="da9f0c0d" class="flex-element group" data-auto="flex-element-group"> <div id="5d5cb6f5" class="flex-element group" data-auto="flex-element-group"> <div id="widget_f7b" class="flex-element widget-wrapper" data-auto="flex-element-widget-wrapper" data-widget-type="paragraph" data-external-id="1387488580"> <div class="dmNewParagraph" data-element-type="paragraph" data-version="5" id="1387488580" style=""> <h2 class="m-text-align-center text-align-left"><span style="display: initial;">ABOUT TICKER AUTOMOTIVE</span></h2> 
  <h2 class="m-text-align-center text-align-left"><span style="display: initial;"><br/></span></h2> 
@@ -2834,7 +2289,7 @@ new ZenogreNAPLinesWidget({ root: $(element).find('[data-zen-component="nap-line
  <h3 class="m-text-align-center text-align-left"><span style="display: initial;"><br/></span></h3> 
 <p class="m-text-align-center text-align-left"><span style="display: initial;">As a family-owned and operated business on the Utah-Arizona border, Ticker Automotive is serving Hildale, Colorado City and surrounding areas with over 25 years of experience. It is our mission to provide outstanding quality service to our customers and a safe and enjoyable workplace for our employees.</span></p></div> 
 </div> 
- <div id="widget_k79" class="flex-element widget-wrapper" data-auto="flex-element-widget-wrapper" data-widget-type="image" data-external-id="1626252807"> <div class="imageWidget align-center u_1626252807" data-element-type="image" data-widget-type="image" id="1626252807"><img src="../lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/slide_logo_1-1920w.png" alt="ASE | Ticker Automotive" id="1971137565" class="" data-dm-image-path="https://irp.cdn-website.com/fd5deb14/dms3rep/multi/slide_logo_1.png" width="74" height="99" onerror="handleImageLoadError(this)"/></div> 
+ <div id="widget_k79" class="flex-element widget-wrapper" data-auto="flex-element-widget-wrapper" data-widget-type="image" data-external-id="1626252807"> <div class="imageWidget align-center u_1626252807" data-element-type="image" data-widget-type="image" id="1626252807"><img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/slide_logo_1-1920w.png" alt="ASE | Ticker Automotive" id="1971137565" class="" data-dm-image-path="https://irp.cdn-website.com/fd5deb14/dms3rep/multi/slide_logo_1.png" width="74" height="99" onerror="handleImageLoadError(this)"/></div>
 </div> 
 </div> 
 </div> 
@@ -2846,7 +2301,7 @@ new ZenogreNAPLinesWidget({ root: $(element).find('[data-zen-component="nap-line
 </div> 
 </div> 
  <div class="dmFooterContainer"> <div id="fcontainer" class="u_fcontainer f_hcontainer dmFooter p_hfcontainer" lock-element-for-editing="true"> <div dm:templateorder="250" class="dmFooterResp generalFooter" id="1943048428"> <div data-flex-id="e7dbe52c" data-auto="flex-section" id="1906277008" class="u_1906277008"> <div class="flex-widgets-container" id="1788293357"></div> 
- <section id="dfb2fd42" class="flex-element section" data-auto="flex-element-section"> <div id="e2edb131" class="flex-element grid" data-auto="flex-element-grid"> <div id="1ff19f78" class="flex-element group" data-auto="flex-element-group"> <div id="6d6a3a20" class="flex-element group" data-auto="flex-element-group"> <div id="238d8203" class="flex-element widget-wrapper" data-auto="flex-element-widget-wrapper" data-widget-type="image" data-external-id="1455294225"> <div class="imageWidget align-center" data-element-type="image" data-widget-type="image" id="1455294225" data-binding="W3siYmluZGluZ05hbWUiOiJpbWFnZSIsInZhbHVlIjoic2l0ZV9pbWFnZXMubG9nbyJ9XQ=="> <a href="index.html" id="1916098965"><img src="../lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/logo-49671cad-1920w.png" alt="Home | Ticker Automotive" id="1119197035" class="" title="Ticker Automotive" data-diy-image="" data-dm-image-path="https://irp.cdn-website.com/fd5deb14/dms3rep/multi/logo-49671cad.png" onerror="handleImageLoadError(this)"/></a> 
+ <section id="dfb2fd42" class="flex-element section" data-auto="flex-element-section"> <div id="e2edb131" class="flex-element grid" data-auto="flex-element-grid"> <div id="1ff19f78" class="flex-element group" data-auto="flex-element-group"> <div id="6d6a3a20" class="flex-element group" data-auto="flex-element-group"> <div id="238d8203" class="flex-element widget-wrapper" data-auto="flex-element-widget-wrapper" data-widget-type="image" data-external-id="1455294225"> <div class="imageWidget align-center" data-element-type="image" data-widget-type="image" id="1455294225" data-binding="W3siYmluZGluZ05hbWUiOiJpbWFnZSIsInZhbHVlIjoic2l0ZV9pbWFnZXMubG9nbyJ9XQ=="> <a href="index.html" id="1916098965"><img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/logo-49671cad-1920w.png" alt="Home | Ticker Automotive" id="1119197035" class="" title="Ticker Automotive" data-diy-image="" data-dm-image-path="https://irp.cdn-website.com/fd5deb14/dms3rep/multi/logo-49671cad.png" onerror="handleImageLoadError(this)"/></a>
 </div> 
 </div> 
 </div> 
@@ -2961,41 +2416,9 @@ new ZenogreNAPLinesWidget({ root: $(element).find('[data-zen-component="nap-line
   var _dm_insite = [];
 </script>
 
-<script type="text/javascript" id="d_track_sp">
-;(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalSnowplowNamespace=p.GlobalSnowplowNamespace||[];
-p.GlobalSnowplowNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments)
-};p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1;
-n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","../d32hwlnfiv2gyn.cloudfront.net/sp-2.0.0-dm-0.1.min.js","snowplow"));
-window.dmsnowplow  = window.snowplow;
-
-dmsnowplow('newTracker', 'cf', 'd32hwlnfiv2gyn.cloudfront.net', { // Initialise a tracker
-  appId: 'fd5deb14'
-});
-
-// snowplow queries element styles so we wait until CSS calculations are done.
-requestAnimationFrame(() => {
-	dmsnowplow('trackPageView');
-	_dm_insite.forEach((rule) => {
-		// Specifically in popup only the client knows if it is shown or not so we don't always want to track its impression here
-		// the tracking is in popup.js
-		if (rule.actionName !== "popup") {
-			dmsnowplow('trackStructEvent', 'insite', 'impression', rule.ruleType, rule.ruleId);
-		}
-		window?.waitForDeferred?.('dmAjax', () => {
-			$.DM.events.trigger('event-ruleTriggered', {value: rule});
-		});
-	});
-});
-</script>
    <div style="display:none;" id="P6iryBW0Wu"></div>
 
 <!-- photoswipe markup -->
-
-
-
-
-
-
 
 
 
@@ -3091,20 +2514,7 @@ requestAnimationFrame(() => {
     </script>
 <!--  End Script tags -->
 <!--  Begin Body End Markup -->
-<div data-inject="zenogre-body-end-assets">
- <script src="../zapi.kukui.com/ldschemad7f7.js?clientId=f6d46137-5904-4987-a641-8f89ecbde6ad">
- </script>
- <link href="../zapi.kukui.com/_WebBuilderAssets/Secured/GlobalSettings/style.html" type="text/css" rel="stylesheet"/>
- <script type="text/javascript" src="../zapi.kukui.com/_WebBuilderAssets/Secured/GlobalSettings/popup.html">
- </script>
- <script>
-//<![CDATA[
-	setTimeout(() => {
-		dmAPI.loadScript('https://connect.kukui.com/webchat?key=35622');
-	}, 7000);
-//]]>
- </script>
-</div>
+
 <!--  End Body End Markup -->
 <!--  Site Wide Html Markup -->
 <!--  Site Wide Html Markup -->
