@@ -1,0 +1,52 @@
+name: Apply Codex Patch
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: PR title
+        required: true
+      base:
+        description: Base branch
+        default: main
+      branch:
+        description: New branch name (optional)
+        required: false
+      patch_b64:
+        description: Base64-encoded unified diff
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.base }}
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Create branch
+        run: |
+          BR="${{ inputs.branch }}"
+          [ -z "$BR" ] && BR="bot/apply-$(date -u +%Y%m%d%H%M%S)"
+          echo "BR=$BR" >> $GITHUB_ENV
+          git switch -c "$BR"
+      - name: Write & apply patch
+        shell: bash
+        run: |
+          echo "${{ inputs.patch_b64 }}" | base64 -d > /tmp/patch.diff
+          git apply --whitespace=fix /tmp/patch.diff
+          git add -A
+          git commit -m "${{ inputs.title }}"
+      - name: Open PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ env.BR }}
+          title: ${{ inputs.title }}
+          body: "Automated patch applied by GitHub Actions."
