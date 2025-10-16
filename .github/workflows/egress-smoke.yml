@@ -1,0 +1,24 @@
+name: Egress smoke
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Make a tiny change
+        run: |
+          echo "$(date -u) ok" >> BOT_EGRESS_OK.txt
+
+      - name: Create PR from this change
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: bot/egress-smoke
+          commit-message: "chore: egress smoke"
+          title: "Egress smoke"
+          body: "Proves GH runner can push and open a PR."
