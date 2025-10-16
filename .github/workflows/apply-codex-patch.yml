@@ -47,6 +47,7 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          base: ${{ inputs.base }}
           branch: ${{ env.BR }}
           title: ${{ inputs.title }}
           body: "Automated patch applied by GitHub Actions."
