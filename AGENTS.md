@@ -27,6 +27,8 @@
 - Recent history shows short imperative subjects prefixed with `commit:` (for example, `commit: Bring in index.html`) and occasional `WIP:` commits on feature branches—mirror that style.
 - Keep commits scoped to one page or asset folder; reorder HTTrack artifacts in a dedicated commit if needed.
 - Pull requests should include: summary of the customer-facing change, list of touched pages/assets, screenshots before/after for visual edits, and any manual test notes (browser, viewport, mock submission IDs).
+- After updating any document or page, `git push` the branch to keep the remote mirror up to date.
+- GitHub HTTPS access is configured via `~/.git-credentials` (credential.helper=store); future sessions can push without reauth as long as the token remains valid.
 
 ## Security & Configuration Tips
 - Treat mirrored credentials and tracking IDs in the HTML as production data; never hard-code new secrets.
