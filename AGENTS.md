@@ -27,6 +27,7 @@
 - Recent history shows short imperative subjects prefixed with `commit:` (for example, `commit: Bring in index.html`) and occasional `WIP:` commits on feature branches—mirror that style.
 - Keep commits scoped to one page or asset folder; reorder HTTrack artifacts in a dedicated commit if needed.
 - Pull requests should include: summary of the customer-facing change, list of touched pages/assets, screenshots before/after for visual edits, and any manual test notes (browser, viewport, mock submission IDs).
+- Keep PR summaries free of IIS-specific details unless explicitly requested.
 - After updating any document or page, `git push` the branch to keep the remote mirror up to date.
 - After merging a PR, delete the local and remote branch unless explicitly asked to keep it.
 - GitHub HTTPS access is configured via `~/.git-credentials` (credential.helper=store); future sessions can push without reauth as long as the token remains valid.
@@ -34,3 +35,4 @@
 ## Security & Configuration Tips
 - Treat mirrored credentials and tracking IDs in the HTML as production data; never hard-code new secrets.
 - Host new third-party scripts under a dedicated folder (for example `zapi.kukui.com/`) and load them via relative paths to avoid mixed-content errors.
+- Keep IIS dev-only tweaks (such as `web.config`) local and untracked unless explicitly asked to commit them.
