@@ -28,6 +28,7 @@
 - Keep commits scoped to one page or asset folder; reorder HTTrack artifacts in a dedicated commit if needed.
 - Pull requests should include: summary of the customer-facing change, list of touched pages/assets, screenshots before/after for visual edits, and any manual test notes (browser, viewport, mock submission IDs).
 - After updating any document or page, `git push` the branch to keep the remote mirror up to date.
+- After merging a PR, delete the local and remote branch unless explicitly asked to keep it.
 - GitHub HTTPS access is configured via `~/.git-credentials` (credential.helper=store); future sessions can push without reauth as long as the token remains valid.
 
 ## Security & Configuration Tips
