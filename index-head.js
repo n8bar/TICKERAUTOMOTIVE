@@ -317,7 +317,7 @@ if (!window.requestIdleCallback) {
             throw e;
         }
     }
-    window.loadCSS = window.loadCSS || loadCSS;
+    window.loadCSS = loadCSS;
 })();
 
 /* usage: window.getDeferred(<deferred name>).resolve() or window.getDeferred(<deferred name>).promise.then(...)*/
