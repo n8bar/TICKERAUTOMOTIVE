@@ -1,15 +1,22 @@
 # Delivery Plan
 
 ## Completed Tasks
-- Mirror Site
-- Publish on Client's Godaddy Account
-- Get Codex working on local copy.
+- [x] Mirror Site
+- [x] Publish on Client's Godaddy Account
+- [x] Get Codex working on local copy.
 
 ## TODO
 ### 1) Mirror Cleanup (baseline for all other work)
 - Normalize indentation/whitespace across root HTML and shared JS; remove HTTrack artifacts via `python3 tools/tidy_html.py`.
 - Spot-check pages in desktop & mobile using `python3 -m http.server 4173`; ensure relative asset paths and service worker scope still work.
 - Keep CDN-sourced assets in their existing folders to preserve relative paths; avoid touching `hts-cache/` and `hts-log.txt`.
+- DOM Cleanup Strategy (preserve UX while simplifying markup):
+  - Inventory: build a selector/JS reference map and a do-not-touch list (any `id`, `class`, `data-*`, `role`, `aria-*`, inline `style`, and all `dm*` grid/runtime hooks).
+  - Safe removal rules: remove empty elements and single-child wrappers only when they have **meaningless attributes** (empty/default attributes not referenced by CSS/JS) and no selector depends on the wrapper chain.
+  - Preserve placeholders: keep runtime `<style>` placeholders and any nodes populated by JS at runtime.
+  - Definition of “meat and potatoes”: elements that carry layout/behavior styling (referenced by CSS/JS) or meaningful content; remove wrapper-only elements with **meaningless attributes**.
+  - UX constraint: preserving the look and feel means **do not change the UX at all** (layout, interactions, copy, flows).
+  - Pilot: apply the cleanup to `about-us.html` first; verify visually (desktop + mobile) before scaling to other pages.
 
 ### 2) Owner Login & Settings (new `settings.html`)
 - Choose lightweight auth path suitable for mostly static hosting (e.g., auth proxy, token-gated page, or external auth widget).
