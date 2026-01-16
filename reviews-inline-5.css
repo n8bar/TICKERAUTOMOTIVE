@@ -1,0 +1,38 @@
+               @font-face {
+             font-family: "Roboto Fallback";
+             src: local('Arial');
+             ascent-override: 92.6709%;
+             descent-override: 24.3871%;
+             size-adjust: 100.1106%;
+             line-gap-override: 0%;
+            }@font-face {
+             font-family: "Inter Fallback";
+             src: local('Arial');
+             ascent-override: 90.199%;
+             descent-override: 22.4836%;
+             size-adjust: 107.4014%;
+             line-gap-override: 0%;
+            }@font-face {
+             font-family: "Montserrat Fallback";
+             src: local('Arial');
+             ascent-override: 84.9466%;
+             descent-override: 22.0264%;
+             size-adjust: 113.954%;
+             line-gap-override: 0%;
+            }@font-face {
+             font-family: "Work Sans Fallback";
+             src: local('Arial');
+             ascent-override: 82.1016%;
+             descent-override: 21.4523%;
+             size-adjust: 113.2743%;
+             line-gap-override: 0%;
+            }@font-face {
+             font-family: "Alfa Slab One Fallback";
+             src: local('Arial');
+             ascent-override: 85.4761%;
+             descent-override: 27.4744%;
+             size-adjust: 121.2035%;
+             line-gap-override: 0%;
+            }
+
+        

@@ -1,0 +1,52 @@
+                                                                #dm #error-container {
+                                                                			display: block;
+                                                                			position: relative;
+                                                                			width: 100%;
+                                                                			padding-top:120px;
+                                                                			background: #fff;
+                                                                			color: #bababa;
+                                                                			text-align: center;
+                                                                			font-family: 'Source Sans Pro';
+                                                                			overflow: hidden;
+                                                                		}
+
+                                                                		.dmMobileBody #error-container {
+                                                                			padding-top: 60px;
+                                                                		}
+
+                                                                		.four-o-four {
+                                                                			font-family: 'Oswald', sans-serif;
+                                                                			font-size: 130px;
+                                                                			text-align: center;
+                                                                			line-height: 130px;
+                                                                		}
+
+                                                                		.lean {
+                                                                			display: inline-block;
+                                                                			-webkit-transform: rotate(15deg) translate(-5px,-4px);
+                                                                			-moz-transform: rotate(15deg) translate(-5px,-4px);
+                                                                			transform: rotate(15deg) translate(-5px,-4px);
+                                                                		}
+
+                                                                		.description {
+                                                                			font-size: 22px;
+                                                                			margin: 45px 0;
+                                                                		}
+
+                                                                		.dmInner .back-button {
+                                                                			display: inline-block;
+                                                                			width: 184px;
+                                                                			height: 37px;
+                                                                			margin-bottom: 20px;
+                                                                			background: #898989;
+                                                                			color: #fff;
+                                                                			text-align: center;
+                                                                			font-size: 16px;
+                                                                			line-height: 37px;
+                                                                			border-radius: 2px;
+                                                                			box-sizing: border-box;
+                                                                			text-decoration: none;
+                                                                			cursor: pointer;
+                                                                		}
+
+                                                            
