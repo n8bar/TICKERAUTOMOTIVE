@@ -43,7 +43,8 @@ img {
 }
 
 .top-bar {
-    background: #f4f5f7;
+    background: #141b3a;
+    color: var(--color_5);
 }
 
 .top-bar-inner {
@@ -64,14 +65,14 @@ img {
 
 .review-heading {
     font-family: 'Alfa Slab One', 'Alfa Slab One Fallback', serif;
-    color: var(--color_1);
+    color: var(--color_5);
     font-size: 16px;
 }
 
 .review-stars {
     display: inline-flex;
     gap: 2px;
-    color: #c7c7c7;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .review-stars .star.is-filled {
@@ -82,28 +83,15 @@ img {
     font-weight: 600;
 }
 
+.top-bar a {
+    color: var(--color_5);
+}
+
 .review-link {
-    color: var(--color_2);
+    color: var(--color_5);
     font-weight: 600;
 }
 
-.mygarage-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    border: 0;
-    border-radius: 999px;
-    padding: 8px 14px;
-    background: var(--color_1);
-    color: var(--color_5);
-    cursor: pointer;
-    font-family: 'Alfa Slab One', 'Alfa Slab One Fallback', serif;
-    font-size: 14px;
-}
-
-.mygarage-button svg {
-    display: block;
-}
 
 .main-bar {
     padding: 16px 0;
@@ -164,14 +152,10 @@ img {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--color_1), var(--color_2));
+    background: var(--color_2);
     color: var(--color_5);
 }
 
-.btn-secondary {
-    background: #1e2758;
-    color: var(--color_5);
-}
 
 .btn-icon {
     display: inline-flex;
@@ -366,8 +350,9 @@ img {
 }
 
 .social-link svg {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
+    display: block;
 }
 
 .footer-contact {

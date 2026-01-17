@@ -2,7 +2,6 @@ const CLIENT_ID = 'f6d46137-5904-4987-a641-8f89ecbde6ad';
 const SITE_NAME = 'fd5deb14';
 const LOCATION_ID = '562b146d-2b79-469a-879b-0583b6e1b5b6';
 const ZENOGRE_API = 'https://zapi.kukui.com/api/v1';
-const MY_GARAGE_URL = 'https://mygarage.kukui.com/MyGarageLoader.js?id=';
 
 function setupNavigation() {
     const navToggle = document.querySelector('.nav-toggle');
@@ -117,41 +116,6 @@ async function loadReviewSummary() {
     }
 }
 
-async function loadMyGarage() {
-    try {
-        const data = await fetchJson(`${ZENOGRE_API}/mygarage/${CLIENT_ID}/clientId`);
-        if (!data.myGarageId) {
-            return;
-        }
-
-        const loader = document.createElement('script');
-        loader.id = 'myGarageLoader';
-        loader.src = `${MY_GARAGE_URL}${data.myGarageId}`;
-        loader.defer = true;
-        const target = document.getElementById('myGarage');
-        if (target) {
-            target.appendChild(loader);
-        } else {
-            document.body.appendChild(loader);
-        }
-
-        const ctaButton = document.querySelector('[data-mygarage-cta]');
-        if (ctaButton && target) {
-            ctaButton.addEventListener('click', () => {
-                target.click();
-            });
-        }
-    } catch (error) {
-        const ctaButton = document.querySelector('[data-mygarage-cta]');
-        if (ctaButton) {
-            ctaButton.style.display = 'none';
-        }
-        const topButton = document.getElementById('myGarage');
-        if (topButton) {
-            topButton.style.display = 'none';
-        }
-    }
-}
 
 function setupAnalytics() {
     window.dataLayer = window.dataLayer || [];
@@ -170,5 +134,4 @@ document.addEventListener('DOMContentLoaded', () => {
     loadBusinessHours();
     loadNapLines();
     loadReviewSummary();
-    loadMyGarage();
 });
