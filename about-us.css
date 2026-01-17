@@ -53,43 +53,11 @@ img {
     justify-content: space-between;
     gap: 16px;
     padding: 8px 0;
-}
-
-.review-summary {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    font-size: 14px;
-}
-
-.review-heading {
-    font-family: 'Alfa Slab One', 'Alfa Slab One Fallback', serif;
-    color: var(--color_5);
-    font-size: 16px;
-}
-
-.review-stars {
-    display: inline-flex;
-    gap: 2px;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.review-stars .star.is-filled {
-    color: #f5b50a;
-}
-
-.review-rating {
-    font-weight: 600;
+    min-height: 36px;
 }
 
 .top-bar a {
     color: var(--color_5);
-}
-
-.review-link {
-    color: var(--color_5);
-    font-weight: 600;
 }
 
 
@@ -132,6 +100,10 @@ img {
     justify-content: center;
 }
 
+.logo img {
+    width: clamp(260px, 36vw, 440px);
+    height: auto;
+}
 .cta-group {
     display: flex;
     flex-direction: column;
@@ -142,13 +114,17 @@ img {
 .btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     border-radius: 999px;
-    padding: 12px 18px;
+    height: 50px;
+    padding: 0 20px;
     border: 0;
     cursor: pointer;
-    font-family: 'Alfa Slab One', 'Alfa Slab One Fallback', serif;
+    font-family: Inter, 'Inter Fallback', sans-serif;
     font-size: 15px;
+    font-weight: 600;
+    line-height: 1.1;
 }
 
 .btn-primary {
@@ -169,7 +145,7 @@ img {
 }
 
 .nav-bar {
-    background: var(--color_5);
+    background: #d9dce3;
     border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
@@ -177,7 +153,8 @@ img {
     display: flex;
     align-items: center;
     gap: 16px;
-    padding: 0 0 8px;
+    padding: 12px 0;
+    background: #d9dce3;
 }
 
 .nav-toggle {
@@ -190,10 +167,12 @@ img {
 }
 
 .site-nav {
+    background: #d9dce3;
     width: 100%;
 }
 
 .nav-list {
+    background: #d9dce3;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -220,11 +199,11 @@ img {
     padding: 10px 0;
     margin: 0;
     position: absolute;
-    top: calc(100% + 6px);
+    top: 100%;
     left: 0;
     min-width: 200px;
-    background: var(--color_5);
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: var(--color_2);
+    border: 1px solid var(--color_2);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     display: none;
     z-index: 10;
@@ -243,6 +222,12 @@ img {
     display: block;
     padding: 8px 16px;
     font-weight: 500;
+    color: var(--color_5);
+}
+
+.submenu a:hover,
+.submenu a:focus {
+    background: rgba(255, 255, 255, 0.18);
 }
 
 .has-submenu:hover > .submenu,
@@ -275,7 +260,13 @@ img {
 .about-logo {
     display: flex;
     justify-content: center;
-    margin-bottom: 16px;
+    flex: 0 0 auto;
+}
+
+.about-logo img {
+    max-height: 120px;
+    width: auto;
+    height: auto;
 }
 
 .about-intro-row {
@@ -311,7 +302,7 @@ img {
 }
 
 .footer-logo img {
-    max-width: 200px;
+    width: clamp(160px, 25vw, 220px);
 }
 
 .footer-call {
@@ -355,15 +346,21 @@ img {
     display: block;
 }
 
+.social-link .yelp-icon {
+    transform: translateY(-3px);
+}
+
 .footer-contact {
-    display: grid;
-    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
 }
 
 .footer-item {
     display: flex;
     gap: 10px;
-    align-items: flex-start;
+    align-items: center;
 }
 
 .footer-link {
@@ -371,9 +368,17 @@ img {
 }
 
 .footer-cta {
-    display: grid;
-    gap: 12px;
-    justify-items: start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2px;
+    text-align: center;
+}
+
+.footer-cta .btn {
+    width: 67%;
+    max-width: 240px;
 }
 
 .footer-heading {
@@ -439,7 +444,7 @@ img {
 
     .footer-contact,
     .footer-cta {
-        justify-items: center;
+        align-items: center;
     }
 }
 
@@ -502,6 +507,11 @@ img {
 
     .about-intro-row {
         flex-direction: column;
+    }
+
+    .about-logo {
+        order: -1;
+        margin-bottom: 16px;
     }
 
     .top-bar-inner {

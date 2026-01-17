@@ -25,18 +25,6 @@ function setupNavigation() {
     });
 }
 
-function setStars(rating) {
-    const stars = document.querySelectorAll('[data-review-summary] .star');
-    stars.forEach((star, index) => {
-        const starNumber = index + 1;
-        if (rating >= starNumber - 0.5) {
-            star.classList.add('is-filled');
-        } else {
-            star.classList.remove('is-filled');
-        }
-    });
-}
-
 function formatTime(value) {
     const [hours, minutes] = value.split(':').map((part) => Number(part));
     const normalizedHours = hours % 12 || 12;
@@ -98,25 +86,6 @@ async function loadNapLines() {
     }
 }
 
-async function loadReviewSummary() {
-    const ratingEl = document.querySelector('[data-review-rating]');
-    if (!ratingEl) {
-        return;
-    }
-
-    try {
-        const data = await fetchJson(`${ZENOGRE_API}/clients/${CLIENT_ID}/reviews/statistics`);
-        const stats = data.reviewsStatistics;
-        const rating = stats?.averageRating || 0;
-        ratingEl.textContent = rating ? rating.toFixed(1) : '0.0';
-        setStars(rating);
-    } catch (error) {
-        ratingEl.textContent = '0.0';
-        setStars(0);
-    }
-}
-
-
 function setupAnalytics() {
     window.dataLayer = window.dataLayer || [];
     function gtag() {
@@ -133,5 +102,4 @@ document.addEventListener('DOMContentLoaded', () => {
     setupAnalytics();
     loadBusinessHours();
     loadNapLines();
-    loadReviewSummary();
 });
