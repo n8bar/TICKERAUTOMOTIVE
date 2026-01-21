@@ -57,6 +57,6 @@
 - Updated footer social icons and credit.
 
 ## Post-Conversion
-- [ ] Update `PLAN.md` checkmarks for completed items.
+- [ ] Update `docs/PLAN.md` checkmarks for completed items.
 - [ ] Manual regression check in desktop + mobile emulation.
 - [ ] Commit per-page changes in small, scoped commits.
