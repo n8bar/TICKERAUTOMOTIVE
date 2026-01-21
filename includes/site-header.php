@@ -41,7 +41,7 @@
                     <img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/logo-49671cad-1920w.png" alt="Home | Ticker Automotive" width="320">
                 </a>
                 <div class="cta-group">
-                <a class="btn btn-primary" href="appointments.html">
+                <a class="btn btn-primary" href="appointments.php">
                     <span class="btn-text">
                         Schedule An Appointment
                     </span>
@@ -71,13 +71,13 @@
                                     <a href="specials.php">Specials</a>
                                 </li>
                                 <li class="has-submenu">
-                                    <a href="reviews.html" aria-haspopup="true" aria-expanded="false">Reviews</a>
+                                    <a href="reviews.php" aria-haspopup="true" aria-expanded="false">Reviews</a>
                                     <button class="submenu-toggle" type="button" aria-label="Toggle Reviews submenu">
                                         ▸
                                     </button>
                                     <ul class="submenu">
                                         <li>
-                                            <a href="leave-a-review.html">Leave a Review</a>
+                                            <a href="leave-a-review.php">Leave a Review</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -90,7 +90,7 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a href="appointments.html">Appointments</a>
+                            <a href="appointments.php">Appointments</a>
                         </li>
                         <li class="nav-item">
                             <a href="services.php">Services</a>
