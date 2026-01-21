@@ -10,6 +10,7 @@
 - `python3 -m http.server 4173` — launch a local preview from the repo root to verify relative links and service worker scope.
 - `npx serve .` — alternate HTTPS-friendly preview when testing on phones.
 - `git status -sb` — ensure only intentional files will ship.
+- Refer to `docs/PLAN.md` before starting work; update checkmarks as tasks are completed.
 
 ## Coding Style & Naming Conventions
 - Follow the existing 4-space indentation in HTML/JS snippets and keep attributes on separate lines when they exceed ~100 chars.
