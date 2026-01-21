@@ -37,7 +37,7 @@
                         </span>
                     </div>
                 </div>
-                <a class="logo" href="index.html">
+                <a class="logo" href="index.php">
                     <img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/logo-49671cad-1920w.png" alt="Home | Ticker Automotive" width="320">
                 </a>
                 <div class="cta-group">
@@ -57,7 +57,7 @@
                 <nav class="site-nav" id="site-nav">
                     <ul class="nav-list">
                         <li class="nav-item">
-                            <a href="index.html">Home</a>
+                            <a href="index.php">Home</a>
                         </li>
                         <li class="nav-item has-submenu">
                             <a href="about-us.php" aria-haspopup="true" aria-expanded="false">
@@ -82,7 +82,7 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <a href="contact-us.html">Contact Us</a>
+                                    <a href="contact-us.php">Contact Us</a>
                                 </li>
                                 <li>
                                     <a href="directions.php">Directions</a>

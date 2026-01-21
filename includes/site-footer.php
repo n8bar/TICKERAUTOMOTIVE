@@ -2,7 +2,7 @@
         <div class="footer-top">
             <div class="container footer-grid">
                 <div class="footer-brand">
-                    <a class="footer-logo" href="index.html">
+                    <a class="footer-logo" href="index.php">
                         <img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/logo-49671cad-1920w.png" alt="Home | Ticker Automotive" width="200">
                     </a>
                     <div class="footer-call">
