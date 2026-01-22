@@ -25,8 +25,16 @@
     <body class="home-page">
         <?php include __DIR__ . '/includes/site-header.php'; ?>
         <main class="home-main">
-            <section class="home-shell">
-                <div class="container">
+            <section class="home-hero">
+                <img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/slider_01-2304w.png?m" alt="Ticker Automotive Shop" width="1920" height="700" class="home-hero-image">
+                <div class="home-hero-content">
+                    <h1 class="home-hero-title">
+                        Family Owned &amp; Operated<br>
+                        With Over 25 Years Experience!
+                    </h1>
+                    <a class="btn btn-primary" href="appointments.php">
+                        Schedule An Appointment
+                    </a>
                 </div>
             </section>
         </main>
