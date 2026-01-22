@@ -56,8 +56,8 @@
         </div>
         <div class="footer-bottom">
             <div class="container footer-bottom-inner">
-                <div class="nap-lines" data-nap-lines>
-                    Loading ...
+                <div class="nap-lines">
+                    Ticker Automotive, 680 State St Hildale, UT 84784 (435) 656-9560
                 </div>
                 <!-- div class="footer-ada" aria-hidden="true">
                     <svg width="19" height="23" viewBox="0 0 19 23" xmlns="http://www.w3.org/2000/svg">

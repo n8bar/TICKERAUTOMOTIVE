@@ -32,8 +32,8 @@
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M1.54545 8.34045C1.54545 4.57166 4.65911 1.51645 8.5 1.51645C12.3409 1.51645 15.4545 4.57166 15.4545 8.34045C15.4545 12.1093 12.3409 15.1645 8.5 15.1645C4.65911 15.1645 1.54545 12.1093 1.54545 8.34045ZM8.5 0C3.80558 0 0 3.73415 0 8.34045C0 12.9468 3.80558 16.6809 8.5 16.6809C13.1944 16.6809 17 12.9468 17 8.34045C17 3.73415 13.1944 0 8.5 0ZM9.27202 3.79106C9.27202 3.3723 8.92605 3.03284 8.49929 3.03284C8.07252 3.03284 7.72656 3.3723 7.72656 3.79106V8.3404C7.72656 8.62759 7.89193 8.89014 8.15372 9.01857L11.2446 10.535C11.6263 10.7223 12.0905 10.5705 12.2813 10.1959C12.4722 9.82139 12.3175 9.36594 11.9358 9.17867L9.27202 7.87179V3.79106Z" fill="currentColor"></path>
                             </svg>
                         </span>
-                        <span class="contact-link" data-business-hours>
-                            Loading ...
+                        <span class="contact-link">
+                            MON-FRI 9:00 AM - 5:00 PM
                         </span>
                     </div>
                 </div>
@@ -61,8 +61,7 @@
                         </li>
                         <li class="nav-item has-submenu">
                             <a href="about-us.php" aria-haspopup="true" aria-expanded="false">
-                                About Us
-                                <span class="nav-caret" aria-hidden="true" style="margin-left: 2px;">▾</span>
+                                About Us<span class="nav-caret" aria-hidden="true">▾</span>
                             </a>
                             <button class="submenu-toggle" type="button" aria-label="Toggle About Us submenu">▾</button>
                             <ul class="submenu">
