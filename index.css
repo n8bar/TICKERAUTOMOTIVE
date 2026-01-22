@@ -347,10 +347,10 @@ img {
 
 .home-intro-panel {
     position: absolute;
-    right: 0;
+    right: -50%;
     top: 50%;
     width: 75%;
-    height: 120%;
+    height: 150%;
     background: #d9d9d9;
     transform: translateY(-50%);
 }
