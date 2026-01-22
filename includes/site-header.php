@@ -62,20 +62,16 @@
                         <li class="nav-item has-submenu">
                             <a href="about-us.php" aria-haspopup="true" aria-expanded="false">
                                 About Us
-                                <span class="nav-caret" aria-hidden="true" style="margin-left: 6px;">▾</span>
+                                <span class="nav-caret" aria-hidden="true" style="margin-left: 2px;">▾</span>
                             </a>
-                            <button class="submenu-toggle" type="button" aria-label="Toggle About Us submenu">
-                                ▾
-                            </button>
+                            <button class="submenu-toggle" type="button" aria-label="Toggle About Us submenu">▾</button>
                             <ul class="submenu">
                                 <li>
                                     <a href="specials.php">Specials</a>
                                 </li>
                                 <li class="has-submenu">
                                     <a href="reviews.php" aria-haspopup="true" aria-expanded="false">Reviews</a>
-                                    <button class="submenu-toggle" type="button" aria-label="Toggle Reviews submenu">
-                                        ▸
-                                    </button>
+                                    <button class="submenu-toggle" type="button" aria-label="Toggle Reviews submenu">▸</button>
                                     <ul class="submenu">
                                         <li>
                                             <a href="leave-a-review.php">Leave a Review</a>
