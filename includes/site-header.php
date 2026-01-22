@@ -41,7 +41,7 @@
                     <img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/logo-49671cad-1920w.png" alt="Home | Ticker Automotive" width="320">
                 </a>
                 <div class="cta-group">
-                <a class="btn btn-primary" href="appointments.php">
+                <a class="btn btn-primary" href="appointments.php" style="color: var(--color_5);">
                     <span class="btn-text">
                         Schedule An Appointment
                     </span>
@@ -62,6 +62,7 @@
                         <li class="nav-item has-submenu">
                             <a href="about-us.php" aria-haspopup="true" aria-expanded="false">
                                 About Us
+                                <span class="nav-caret" aria-hidden="true" style="margin-left: 6px;">▾</span>
                             </a>
                             <button class="submenu-toggle" type="button" aria-label="Toggle About Us submenu">
                                 ▾
