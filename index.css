@@ -237,7 +237,7 @@ img {
 
 .home-hero {
     position: relative;
-    min-height: 480px;
+    min-height: 720px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -253,6 +253,14 @@ img {
     height: 100%;
     object-fit: cover;
     object-position: center;
+}
+
+@media (min-width: 1200px) {
+    .home-hero-image {
+        width: calc(100% - 64px);
+        left: 32px;
+        right: 32px;
+    }
 }
 
 .home-hero-content {
@@ -273,6 +281,7 @@ img {
     font-size: 64px;
     line-height: 1.15;
     color: var(--color_5);
+    font-weight: normal;
 }
 
 .index-main {
