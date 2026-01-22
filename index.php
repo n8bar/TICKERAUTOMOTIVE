@@ -38,6 +38,7 @@
                 </div>
             </section>
             <section class="home-intro">
+                <div class="home-intro-panel"></div>
                 <div class="container home-intro-inner">
                     <div class="home-intro-copy">
                         <h2 class="home-intro-title">
@@ -58,7 +59,6 @@
                         </div>
                     </div>
                     <div class="home-intro-media">
-                        <div class="home-intro-panel"></div>
                         <img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/wel-img-702w.png" alt="Mechanic working" class="home-intro-image">
                     </div>
                 </div>
