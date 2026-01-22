@@ -257,9 +257,9 @@ img {
 
 @media (min-width: 1200px) {
     .home-hero-image {
-        width: calc(100% - 64px);
-        left: 32px;
-        right: 32px;
+        width: calc(100% - 256px);
+        left: 128px;
+        right: 128px;
     }
 }
 
