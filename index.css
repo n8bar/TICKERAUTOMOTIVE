@@ -32,6 +32,10 @@ img {
     text-align: left;
 }
 
+h2 {
+    font-weight: normal;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -337,7 +341,6 @@ img {
 }
 
 .home-intro-logos img {
-    height: 48px;
     width: auto;
 }
 
@@ -351,12 +354,11 @@ img {
 
 .home-intro-panel {
     position: absolute;
-    right: -50%;
-    top: 50%;
-    width: 75%;
-    height: 150%;
+    top:0;
+    right: 10%;
+    width: 512px;
+    height: 100%;
     background: #d9d9d9;
-    transform: translateY(-50%);
     z-index: 0;
 }
 
