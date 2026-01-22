@@ -37,6 +37,32 @@
                     </a>
                 </div>
             </section>
+            <section class="home-intro">
+                <div class="container home-intro-inner">
+                    <div class="home-intro-copy">
+                        <h2 class="home-intro-title">
+                            Ticker<br>
+                            Automotive
+                        </h2>
+                        <p class="home-intro-kicker">HONEST COMMUNITY AUTO REPAIR</p>
+                        <p class="home-intro-text">
+                            As a family-owned and operated business on the Utah-Arizona border, Ticker Automotive
+                            is serving Hildale, Colorado City and surrounding areas with over 25 years of experience.
+                            It is our mission to provide outstanding quality service to our customers and a safe and
+                            enjoyable workplace for our employees.
+                        </p>
+                        <a class="btn btn-primary" href="about-us.php">Learn More</a>
+                        <div class="home-intro-logos">
+                            <img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/napa-324w.png" alt="NAPA Auto Care">
+                            <img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/ASE-180w.png" alt="ASE Certified">
+                        </div>
+                    </div>
+                    <div class="home-intro-media">
+                        <div class="home-intro-panel"></div>
+                        <img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/wel-img-702w.png" alt="Mechanic working" class="home-intro-image">
+                    </div>
+                </div>
+            </section>
         </main>
         <?php include __DIR__ . '/includes/site-footer.php'; ?>
         <script src="index.js" defer></script>

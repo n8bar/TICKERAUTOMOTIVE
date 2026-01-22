@@ -284,6 +284,85 @@ img {
     font-weight: normal;
 }
 
+.home-intro {
+    padding: 72px 0;
+    background: var(--color_5);
+}
+
+.home-intro-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 48px;
+    align-items: center;
+}
+
+.home-intro-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.home-intro-title {
+    margin: 0;
+    font-family: 'Alfa Slab One', 'Alfa Slab One Fallback', serif;
+    font-size: clamp(38px, 4.5vw, 64px);
+    color: #2d3a86;
+    line-height: 1;
+}
+
+.home-intro-kicker {
+    margin: 0;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #2d3a86;
+}
+
+.home-intro-text {
+    margin: 0;
+    max-width: 520px;
+    line-height: 1.6;
+    color: #1c1c1c;
+}
+
+.home-intro-logos {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.home-intro-logos img {
+    height: 48px;
+    width: auto;
+}
+
+.home-intro-media {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 420px;
+}
+
+.home-intro-panel {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 70%;
+    height: 100%;
+    background: #d9d9d9;
+    transform: translateY(-50%);
+}
+
+.home-intro-image {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 440px);
+    height: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
 .index-main {
     padding: 48px 0 64px;
 }
@@ -547,6 +626,20 @@ img {
 
     .home-hero-title {
         font-size: 36px;
+    }
+
+    .home-intro-inner {
+        grid-template-columns: 1fr;
+    }
+
+    .home-intro-media {
+        min-height: 320px;
+    }
+
+    .home-intro-panel {
+        width: 100%;
+        height: 80%;
+        top: 60%;
     }
 }
 
