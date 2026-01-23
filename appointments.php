@@ -46,6 +46,7 @@
         <!-- Google Fonts Include -->
         <!-- loadCSS function fonts.jsp -->
         <link type="text/css" rel="stylesheet" href="https://irp.cdn-website.com/fonts/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;family=Inter:ital,wght@0,100..900;1,100..900&amp;family=Montserrat:ital,wght@0,100..900;1,100..900&amp;family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;family=Alfa+Slab+One:ital,wght@0,400&amp;subset=latin-ext&amp;display=swap">
+        <?php include __DIR__ . "/includes/site-head.php"; ?>
         <!-- RT CSS Include d-css-runtime-desktop-one-package-structured-global -->
         <link rel="stylesheet" type="text/css" href="../static.cdn-website.com/mnlt/production/5007/_dm/s/rt/dist/css/d-css-runtime-desktop-one-package-structured-global.min.css">
         <!-- End of RT CSS Include -->

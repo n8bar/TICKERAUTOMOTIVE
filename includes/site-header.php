@@ -69,8 +69,8 @@
                                     <a href="specials.php">Specials</a>
                                 </li>
                                 <li class="has-submenu">
-                                    <a href="reviews.php" aria-haspopup="true" aria-expanded="false">Reviews</a>
-                                    <button class="submenu-toggle" type="button" aria-label="Toggle Reviews submenu">▸</button>
+                                    <a href="reviews.php" aria-haspopup="true" aria-expanded="false">Reviews &emsp; &emsp; ▸</a>
+                                    <!-- button class="submenu-toggle" type="button" aria-label="Toggle Reviews submenu">▸</button -->
                                     <ul class="submenu">
                                         <li>
                                             <a href="leave-a-review.php">Leave a Review</a>

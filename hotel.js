@@ -3,28 +3,6 @@ const SITE_NAME = 'fd5deb14';
 const LOCATION_ID = '562b146d-2b79-469a-879b-0583b6e1b5b6';
 const ZENOGRE_API = 'https://zapi.kukui.com/api/v1';
 
-function setupNavigation() {
-    const navToggle = document.querySelector('.nav-toggle');
-    const nav = document.querySelector('.site-nav');
-
-    if (navToggle && nav) {
-        navToggle.addEventListener('click', () => {
-            const isOpen = nav.classList.toggle('is-open');
-            navToggle.setAttribute('aria-expanded', String(isOpen));
-        });
-    }
-
-    document.querySelectorAll('.submenu-toggle').forEach((toggle) => {
-        toggle.addEventListener('click', () => {
-            const parent = toggle.closest('.has-submenu');
-            if (!parent) {
-                return;
-            }
-            parent.classList.toggle('is-open');
-        });
-    });
-}
-
 function formatTime(value) {
     const [hours, minutes] = value.split(':').map((part) => Number(part));
     const normalizedHours = hours % 12 || 12;
@@ -98,7 +76,6 @@ function setupAnalytics() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    setupNavigation();
     setupAnalytics();
     loadBusinessHours();
     loadNapLines();
