@@ -102,23 +102,33 @@
                     <div class="home-reviews-media">
                         <img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/customer-review-715h.png" alt="Customer receiving keys" class="home-reviews-image">
                     </div>
-                    <div class="home-reviews-card">
+                    <a class="home-reviews-card" href="reviews.php" aria-labelledby="home-reviews-title">
                         <h2 id="home-reviews-title">What Our Clients Say</h2>
                         <div class="home-review">
                             <div class="home-review-meta">
                                 <span class="home-review-source">Google</span>
+                                <span class="home-review-name">Peter Landrum</span>
+                                <span class="home-review-date">June 2025</span>
                                 <span class="home-review-stars" aria-label="5 out of 5 stars">★★★★★</span>
                             </div>
-                            <p class="home-review-text">Latest 5-star Google review coming soon.</p>
+                            <p class="home-review-text">
+                                Arrived mid-trip with a rough idle. The team fit them in the same day, stayed late,
+                                and got the car running again. Praised for fair pricing and hard work.
+                            </p>
                         </div>
                         <div class="home-review">
                             <div class="home-review-meta">
                                 <span class="home-review-source">Yelp</span>
+                                <span class="home-review-name">Sandra A.</span>
+                                <span class="home-review-date">August 2016</span>
                                 <span class="home-review-stars" aria-label="5 out of 5 stars">★★★★★</span>
                             </div>
-                            <p class="home-review-text">Latest 5-star Yelp review coming soon.</p>
+                            <p class="home-review-text">
+                                Described a professional, honest shop with friendly staff and attentive service,
+                                even for out-of-towners. Highlighted excellent care and a clean facility.
+                            </p>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </section>
             <section class="home-carwash" aria-labelledby="home-carwash-title">
@@ -181,6 +191,7 @@
                         <div class="home-amenity">
                             <svg class="home-amenity-icon" viewBox="0 0 116 116" aria-hidden="true" focusable="false">
                                 <use href="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/amenity-icons.svg#dining"></use>
+                                <use href="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/amenity-icons.svg#dining"></use>
                             </svg>
                             <span>Nearby Dining Options</span>
                         </div>
@@ -209,9 +220,9 @@
             </section>
             <section class="home-appointment" aria-labelledby="home-appointment-title">
                 <div class="container home-appointment-inner">
-                    <h2 id="home-appointment-title">Schedule An Appointment</h2>
-                    <p>Online scheduling is coming soon. For now, call us to book your appointment.</p>
-                    <a class="btn btn-primary" href="tel:14356569560">Call (435) 656-9560</a>
+                    <a class="home-appointment-link" href="appointments.php">
+                        <h2 id="home-appointment-title">Schedule An Appointment</h2>
+                    </a>
                 </div>
             </section>
         </main>
