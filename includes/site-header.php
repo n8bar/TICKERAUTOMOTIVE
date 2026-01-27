@@ -1,3 +1,22 @@
+    <?php
+        $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $currentPage = $currentPath ? basename($currentPath) : '';
+        $homePages = ['', 'index.php', 'index.html'];
+        $aboutPages = [
+            'about-us.php',
+            'specials.php',
+            'reviews.php',
+            'leave-a-review.php',
+            'contact-us.php',
+            'directions.php',
+        ];
+        $reviewsPages = ['reviews.php', 'leave-a-review.php'];
+
+        $isActive = function ($pages) use ($currentPage) {
+            $pages = (array) $pages;
+            return in_array($currentPage, $pages, true);
+        };
+    ?>
     <header class="site-header">
         <div class="top-bar">
             <div class="container top-bar-inner">
@@ -57,48 +76,48 @@
                 <nav class="site-nav" id="site-nav">
                     <ul class="nav-list">
                         <li class="nav-item">
-                            <a href="index.php">Home</a>
+                            <a href="index.php" class="<?php echo $isActive($homePages) ? 'is-active' : ''; ?>">Home</a>
                         </li>
                         <li class="nav-item has-submenu">
-                            <a href="about-us.php" aria-haspopup="true" aria-expanded="false">
+                            <a href="about-us.php" class="<?php echo $isActive($aboutPages) ? 'is-active' : ''; ?>" aria-haspopup="true" aria-expanded="false">
                                 About Us<span class="nav-caret" aria-hidden="true">▾</span>
                             </a>
                             <button class="submenu-toggle" type="button" aria-label="Toggle About Us submenu">▾</button>
                             <ul class="submenu">
                                 <li>
-                                    <a href="specials.php">Specials</a>
+                                    <a href="specials.php" class="<?php echo $isActive('specials.php') ? 'is-active' : ''; ?>">Specials</a>
                                 </li>
                                 <li class="has-submenu">
-                                    <a href="reviews.php" aria-haspopup="true" aria-expanded="false">Reviews &emsp; &emsp; ▸</a>
+                                    <a href="reviews.php" class="<?php echo $isActive($reviewsPages) ? 'is-active' : ''; ?>" aria-haspopup="true" aria-expanded="false">Reviews &emsp; &emsp; ▸</a>
                                     <!-- button class="submenu-toggle" type="button" aria-label="Toggle Reviews submenu">▸</button -->
                                     <ul class="submenu">
                                         <li>
-                                            <a href="leave-a-review.php">Leave a Review</a>
+                                            <a href="leave-a-review.php" class="<?php echo $isActive('leave-a-review.php') ? 'is-active' : ''; ?>">Leave a Review</a>
                                         </li>
                                     </ul>
                                 </li>
                                 <li>
-                                    <a href="contact-us.php">Contact Us</a>
+                                    <a href="contact-us.php" class="<?php echo $isActive('contact-us.php') ? 'is-active' : ''; ?>">Contact Us</a>
                                 </li>
                                 <li>
-                                    <a href="directions.php">Directions</a>
+                                    <a href="directions.php" class="<?php echo $isActive('directions.php') ? 'is-active' : ''; ?>">Directions</a>
                                 </li>
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a href="appointments.php">Appointments</a>
+                            <a href="appointments.php" class="<?php echo $isActive('appointments.php') ? 'is-active' : ''; ?>">Appointments</a>
                         </li>
                         <li class="nav-item">
-                            <a href="services.php">Services</a>
+                            <a href="services.php" class="<?php echo $isActive('services.php') ? 'is-active' : ''; ?>">Services</a>
                         </li>
                         <li class="nav-item">
-                            <a href="vehicles.php">Vehicles</a>
+                            <a href="vehicles.php" class="<?php echo $isActive('vehicles.php') ? 'is-active' : ''; ?>">Vehicles</a>
                         </li>
                         <li class="nav-item">
-                            <a href="tires.php">Tires</a>
+                            <a href="tires.php" class="<?php echo $isActive('tires.php') ? 'is-active' : ''; ?>">Tires</a>
                         </li>
                         <li class="nav-item">
-                            <a href="careers.php">Careers</a>
+                            <a href="careers.php" class="<?php echo $isActive('careers.php') ? 'is-active' : ''; ?>">Careers</a>
                         </li>
                     </ul>
                 </nav>

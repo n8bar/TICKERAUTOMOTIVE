@@ -75,8 +75,119 @@ function setupAnalytics() {
     gtag('event', 'conversion', { 'send_to': 'AW-10784944369/FmqFCPuKjvkCEPHh1JYo' });
 }
 
+function setupVehicleDirectory() {
+    const items = window.vehicleItems;
+    if (!Array.isArray(items) || items.length === 0) {
+        return;
+    }
+
+    const buttons = Array.from(document.querySelectorAll('.vehicle-link[data-vehicle-index]'));
+    const detailCard = document.querySelector('.vehicle-detail-card');
+    if (!buttons.length || !detailCard) {
+        return;
+    }
+
+    const title = detailCard.querySelector('.vehicle-detail-title');
+    const copy = detailCard.querySelector('.vehicle-detail-copy');
+    const media = detailCard.querySelector('.vehicle-detail-media');
+    const image = media ? media.querySelector('img') : null;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const ensureDetailVisible = () => {
+        const padding = 16;
+        const rect = detailCard.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const bottomLimit = viewportHeight - padding;
+        if (rect.bottom > bottomLimit) {
+            const delta = rect.bottom - bottomLimit;
+            window.scrollBy({
+                top: delta,
+                behavior: prefersReducedMotion.matches ? 'auto' : 'smooth',
+            });
+        }
+    };
+
+    const scheduleEnsureVisible = () => {
+        requestAnimationFrame(() => {
+            ensureDetailVisible();
+            setTimeout(ensureDetailVisible, 160);
+        });
+    };
+
+    const setActive = (index) => {
+        const item = items[index];
+        if (!item) {
+            return;
+        }
+
+        detailCard.hidden = false;
+        buttons.forEach((button) => {
+            const isActive = Number(button.dataset.vehicleIndex) === index;
+            button.classList.toggle('is-active', isActive);
+            button.setAttribute('aria-pressed', String(isActive));
+        });
+
+        if (title) {
+            title.textContent = item.title || '';
+        }
+        if (copy) {
+            copy.textContent = item.content || '';
+        }
+
+        if (media && image && item.image) {
+            image.src = item.image;
+            image.alt = `${item.title} vehicle`;
+            media.hidden = false;
+            detailCard.classList.add('has-image');
+            if (!image.complete) {
+                image.addEventListener('load', scheduleEnsureVisible, { once: true });
+            }
+        } else if (media && image) {
+            image.removeAttribute('src');
+            image.alt = '';
+            media.hidden = true;
+            detailCard.classList.remove('has-image');
+        }
+
+        scheduleEnsureVisible();
+    };
+
+    const clearActive = () => {
+        buttons.forEach((button) => {
+            button.classList.remove('is-active');
+            button.setAttribute('aria-pressed', 'false');
+        });
+        if (title) {
+            title.textContent = '';
+        }
+        if (copy) {
+            copy.textContent = '';
+        }
+        if (media && image) {
+            image.removeAttribute('src');
+            image.alt = '';
+            media.hidden = true;
+        }
+        detailCard.classList.remove('has-image');
+        detailCard.hidden = true;
+    };
+
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const index = Number(button.dataset.vehicleIndex);
+            const isActive = button.classList.contains('is-active');
+            if (isActive) {
+                clearActive();
+                return;
+            }
+            setActive(index);
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     setupAnalytics();
     loadBusinessHours();
     loadNapLines();
+    setupVehicleDirectory();
 });

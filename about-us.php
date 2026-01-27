@@ -28,6 +28,7 @@
         <main class="about-us-main">
             <section class="about-hero">
                 <div class="container">
+                    <h1 class="about-hero-title">About Ticker Automotive</h1>
                     <img src="https://lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/banner-1920w.png?m" alt="Shop-Front-View | Ticker Automotive" width="1501" height="1001">
                 </div>
             </section>
@@ -36,11 +37,8 @@
                     <div class="about-intro-row">
                         <div class="about-text">
                             <h2 class="m-text-align-center text-align-left">
-                                ABOUT TICKER AUTOMOTIVE
-                            </h2>
-                            <h3 class="m-text-align-center text-align-left">
                                 Who We Are
-                            </h3>
+                            </h2>
                             <p class="m-text-align-center text-align-left">
                                 As a family-owned and operated business on the Utah-Arizona border, Ticker Automotive is serving Hildale, Colorado City and surrounding areas with over 25 years of experience. It is our mission to provide outstanding quality service to our customers and a safe and enjoyable workplace for our employees.
                             </p>

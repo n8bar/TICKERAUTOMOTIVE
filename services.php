@@ -23,6 +23,23 @@
         <meta property="og:title" content="Services - Ticker Automotive">
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-ME7X83EBJH"></script>
     </head>
+    <?php
+        include __DIR__ . '/includes/content-list.php';
+        $serviceItems = load_content_items(__DIR__ . '/services');
+        $serviceItems = array_map(function ($item) {
+            $extensions = ['webp', 'png', 'jpg', 'jpeg'];
+            $image = '';
+            foreach ($extensions as $ext) {
+                $path = __DIR__ . '/services/' . $item['basename'] . '.' . $ext;
+                if (file_exists($path)) {
+                    $image = 'services/' . $item['basename'] . '.' . $ext;
+                    break;
+                }
+            }
+            $item['image'] = $image;
+            return $item;
+        }, $serviceItems);
+    ?>
     <body class="services-page">
         <?php include __DIR__ . '/includes/site-header.php'; ?>
         <main class="services-main">
@@ -30,12 +47,47 @@
                 <div class="container services-hero-inner">
                     <h1 class="services-title">Services</h1>
                     <p class="services-subtitle">
-                        Content is coming soon. Please check back.
+                        Explore our service offerings and learn what we can help with.
                     </p>
+                </div>
+            </section>
+            <section class="services-directory">
+                <div class="container">
+                    <div class="services-directory-inner">
+                        <nav class="services-links" aria-label="Service list">
+                            <?php if ($serviceItems) { ?>
+                                <ul class="services-link-list" role="list">
+                                    <?php foreach ($serviceItems as $index => $service) { ?>
+                                        <li>
+                                            <button class="service-link" type="button" data-service-index="<?php echo $index; ?>" aria-pressed="false">
+                                                <?php echo htmlspecialchars($service['title']); ?>
+                                            </button>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                            <?php } else { ?>
+                                <p class="services-empty">Content is coming soon. Please check back.</p>
+                            <?php } ?>
+                        </nav>
+                        <?php if ($serviceItems) { ?>
+                            <div class="service-detail-card" aria-live="polite" hidden>
+                                <div class="service-detail-media" hidden>
+                                    <img src="" alt="" loading="lazy">
+                                </div>
+                                <div class="service-detail-content">
+                                    <h2 class="service-detail-title"></h2>
+                                    <div class="service-detail-copy"></div>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
                 </div>
             </section>
         </main>
         <?php include __DIR__ . '/includes/site-footer.php'; ?>
+        <script>
+            window.serviceItems = <?php echo json_encode($serviceItems, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>;
+        </script>
         <script src="services.js" defer></script>
     </body>
 </html>

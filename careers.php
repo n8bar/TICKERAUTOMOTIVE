@@ -15,11 +15,11 @@
             Careers - Ticker Automotive
         </title>
         <meta name="keywords" content="auto repair shop hildale, auto repair colorado city, auto repair, auto maintenance, auto service, auto mechanics">
-        <meta name="description" content="Ticker Automotive is a family-owned and operated auto repair shop in Hildale, UT with over 25 years of experience serving Hildale, Colorado City, and the area.">
+        <meta name="description" content="Apply to join Ticker Automotive. Call with your email address to receive an application, or stop by in person.">
         <meta name="twitter:card" content="summary">
         <meta name="twitter:title" content="Careers - Ticker Automotive">
-        <meta name="twitter:description" content="Ticker Automotive is a family-owned and operated auto repair shop in Hildale, UT with over 25 years of experience serving Hildale, Colorado City, and the area.">
-        <meta property="og:description" content="Ticker Automotive is a family-owned and operated auto repair shop in Hildale, UT with over 25 years of experience serving Hildale, Colorado City, and the area.">
+        <meta name="twitter:description" content="Apply to join Ticker Automotive. Call with your email address to receive an application, or stop by in person.">
+        <meta property="og:description" content="Apply to join Ticker Automotive. Call with your email address to receive an application, or stop by in person.">
         <meta property="og:title" content="Careers - Ticker Automotive">
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-ME7X83EBJH"></script>
     </head>
@@ -30,8 +30,30 @@
                 <div class="container careers-hero-inner">
                     <h1 class="careers-title">Careers</h1>
                     <p class="careers-subtitle">
-                        Content is coming soon. Please check back.
+                        Interested in joining Ticker Automotive? Call with your email address to receive an application,
+                        or stop by in person.
                     </p>
+                </div>
+            </section>
+            <section class="careers-info">
+                <div class="container careers-info-inner">
+                    <div class="careers-card">
+                        <h2>Apply by Phone</h2>
+                        <p>
+                            Call us and share your email address. We will send an application and let you know
+                            about current openings.
+                        </p>
+                        <a class="btn btn-primary" href="tel:14356569560">Call (435) 656-9560</a>
+                    </div>
+                    <div class="careers-card">
+                        <h2>Apply in Person</h2>
+                        <p>
+                            Stop by the shop and let us know you are interested in a position. We are happy to answer
+                            questions and point you in the right direction.
+                        </p>
+                        <p data-business-hours>MON-FRI 9:00 AM - 5:00 PM</p>
+                        <a class="btn btn-primary" href="directions.php">Get Directions</a>
+                    </div>
                 </div>
             </section>
         </main>

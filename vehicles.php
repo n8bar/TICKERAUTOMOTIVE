@@ -23,6 +23,15 @@
         <meta property="og:title" content="Vehicles - Ticker Automotive">
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-ME7X83EBJH"></script>
     </head>
+    <?php
+        include __DIR__ . '/includes/content-list.php';
+        $vehicleItems = load_content_items(__DIR__ . '/vehicles');
+        $vehicleItems = array_map(function ($item) {
+            $imagePath = __DIR__ . '/vehicles/' . $item['basename'] . '.webp';
+            $item['image'] = file_exists($imagePath) ? 'vehicles/' . $item['basename'] . '.webp' : '';
+            return $item;
+        }, $vehicleItems);
+    ?>
     <body class="vehicles-page">
         <?php include __DIR__ . '/includes/site-header.php'; ?>
         <main class="vehicles-main">
@@ -30,12 +39,47 @@
                 <div class="container vehicles-hero-inner">
                     <h1 class="vehicles-title">Vehicles</h1>
                     <p class="vehicles-subtitle">
-                        Content is coming soon. Please check back.
+                        Explore the makes and models we service.
                     </p>
+                </div>
+            </section>
+            <section class="vehicles-directory">
+                <div class="container">
+                    <div class="vehicles-directory-inner">
+                        <nav class="vehicles-links" aria-label="Vehicle list">
+                            <?php if ($vehicleItems) { ?>
+                                <ul class="vehicles-link-list" role="list">
+                                    <?php foreach ($vehicleItems as $index => $vehicle) { ?>
+                                        <li>
+                                            <button class="vehicle-link" type="button" data-vehicle-index="<?php echo $index; ?>" aria-pressed="false">
+                                                <?php echo htmlspecialchars($vehicle['title']); ?>
+                                            </button>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                            <?php } else { ?>
+                                <p class="vehicles-empty">Content is coming soon. Please check back.</p>
+                            <?php } ?>
+                        </nav>
+                        <?php if ($vehicleItems) { ?>
+                            <div class="vehicle-detail-card" aria-live="polite" hidden>
+                                <div class="vehicle-detail-media" hidden>
+                                    <img src="" alt="" loading="lazy">
+                                </div>
+                                <div class="vehicle-detail-content">
+                                    <h3 class="vehicle-detail-title"></h3>
+                                    <div class="vehicle-detail-copy"></div>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
                 </div>
             </section>
         </main>
         <?php include __DIR__ . '/includes/site-footer.php'; ?>
+        <script>
+            window.vehicleItems = <?php echo json_encode($vehicleItems, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>;
+        </script>
         <script src="vehicles.js" defer></script>
     </body>
 </html>

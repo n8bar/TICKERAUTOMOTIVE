@@ -68,13 +68,13 @@
                 <div class="container home-services-inner">
                     <h2 id="home-services-title">Our Services</h2>
                     <div class="home-services-grid">
-                        <a class="home-service-card" href="oil-change.php">
+                        <a class="home-service-card" href="services.php?service=oil-change">
                             <svg class="home-service-icon" width="56" height="60" viewBox="0 0 56 60" aria-hidden="true" focusable="false">
                                 <use href="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/service-icons.svg#oil-change"></use>
                             </svg>
                             <span class="home-service-title">Oil<br>Change</span>
                         </a>
-                        <a class="home-service-card" href="automotive-ac-service-and-repair.php">
+                        <a class="home-service-card" href="services.php?service=air-conditioning">
                             <svg class="home-service-icon" width="60" height="60" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
                                 <use href="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/service-icons.svg#ac"></use>
                             </svg>
@@ -86,7 +86,7 @@
                             </svg>
                             <span class="home-service-title">General<br>Maintenance</span>
                         </a>
-                        <a class="home-service-card" href="wheel-alignment.php">
+                        <a class="home-service-card" href="services.php?service=alignments">
                             <svg class="home-service-icon" width="44" height="60" viewBox="0 0 44 60" aria-hidden="true" focusable="false">
                                 <use href="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/service-icons.svg#alignment"></use>
                             </svg>

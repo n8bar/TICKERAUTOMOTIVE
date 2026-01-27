@@ -27,11 +27,14 @@
         <?php include __DIR__ . '/includes/site-header.php'; ?>
         <main class="tires-main">
             <section class="tires-hero">
+                <div class="tires-hero-bg" aria-hidden="true"></div>
                 <div class="container tires-hero-inner">
-                    <h1 class="tires-title">Tires</h1>
-                    <p class="tires-subtitle">
-                        We sell tires. This page is coming soon. Call or stop by for details.
-                    </p>
+                    <div class="tires-hero-card">
+                        <h1 class="tires-title">Tires</h1>
+                        <p class="tires-subtitle">
+                            We sell tires. This page is coming soon. Call or stop by for details.
+                        </p>
+                    </div>
                 </div>
             </section>
         </main>

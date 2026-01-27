@@ -15,11 +15,11 @@
             Directions - Ticker Automotive
         </title>
         <meta name="keywords" content="auto repair shop hildale, auto repair colorado city, auto repair, auto maintenance, auto service, auto mechanics">
-        <meta name="description" content="Ticker Automotive is a family-owned and operated auto repair shop in Hildale, UT with over 25 years of experience serving Hildale, Colorado City, and the area.">
+        <meta name="description" content="Get directions to Ticker Automotive. Choose Google Maps, Apple Maps, or OpenStreetMap.">
         <meta name="twitter:card" content="summary">
         <meta name="twitter:title" content="Directions - Ticker Automotive">
-        <meta name="twitter:description" content="Ticker Automotive is a family-owned and operated auto repair shop in Hildale, UT with over 25 years of experience serving Hildale, Colorado City, and the area.">
-        <meta property="og:description" content="Ticker Automotive is a family-owned and operated auto repair shop in Hildale, UT with over 25 years of experience serving Hildale, Colorado City, and the area.">
+        <meta name="twitter:description" content="Get directions to Ticker Automotive. Choose Google Maps, Apple Maps, or OpenStreetMap.">
+        <meta property="og:description" content="Get directions to Ticker Automotive. Choose Google Maps, Apple Maps, or OpenStreetMap.">
         <meta property="og:title" content="Directions - Ticker Automotive">
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-ME7X83EBJH"></script>
     </head>
@@ -30,8 +30,42 @@
                 <div class="container directions-hero-inner">
                     <h1 class="directions-title">Directions</h1>
                     <p class="directions-subtitle">
-                        Content is coming soon. Please check back.
+                        Choose your preferred map to get directions to Ticker Automotive.
                     </p>
+                </div>
+            </section>
+            <section class="directions-info">
+                <div class="container directions-info-inner">
+                    <div class="directions-card">
+                        <h2>Ticker Automotive</h2>
+                        <div class="directions-hero-image">
+                            <img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/slider_01-2304w.png" alt="Ticker Automotive shop exterior" loading="lazy">
+                        </div>
+                        <div class="directions-map-image">
+                            <img src="images/Map.png" alt="Ticker Automotive shop exterior" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="directions-card">
+                        <p class="directions-address">
+                            680 North State Street<br>
+                            Hildale, UT 84784
+                        </p>
+                        <p class="directions-hours" data-business-hours>
+                            MON-FRI 9:00 AM - 5:00 PM
+                        </p>
+                        <h2>Choose Your Map</h2>
+                        <div class="directions-buttons">
+                            <a class="btn btn-primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=680%20North%20State%20Street%2C%20Hildale%2C%20UT%2084784&amp;destination_place_id=ChIJd7uqBQEhy4ARBhv7lNfGcIc" target="_blank" rel="noopener">
+                                Google Maps
+                            </a>
+                            <a class="btn btn-primary" href="https://maps.apple.com/?daddr=680%20North%20State%20Street,%20Hildale,%20UT%2084784" target="_blank" rel="noopener">
+                                Apple Maps
+                            </a>
+                            <a class="btn btn-primary" href="https://share.here.com/g/37.001280710053706,-112.99949573063222,Your%20location/37.001280710053706,-112.99949573063222,680%20State%20St%2C%20Hildale%2C%20UT%2084784%2C%20United%20States?a=&amp;m=d&amp;z=20&amp;t=satellite" target="_blank" rel="noopener">
+                                HERE WeGo
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>

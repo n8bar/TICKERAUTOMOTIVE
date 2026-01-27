@@ -16,12 +16,12 @@
   - Preserve placeholders: keep runtime `<style>` placeholders and any nodes populated by JS at runtime.
   - Definition of “meat and potatoes”: elements that carry layout/behavior styling (referenced by CSS/JS) or meaningful content; remove wrapper-only elements with **meaningless attributes**.
   - UX constraint: preserving the look and feel means **do not change the UX at all** (layout, interactions, copy, flows).
-  - Pilot: apply the cleanup to `about-us.html` first; verify visually (desktop + mobile) before scaling to other pages.
+  - [x] Pilot: apply the cleanup to `about-us.html` first; verify visually (desktop + mobile) before scaling to other pages.
 
 ### 2) Reviews & Ratings (Homepage + Reviews Pages)
 - Replace static home page reviews with the latest 5-star Google and Yelp reviews.
 - Rework the `reviews` page to reflect the same reviews/sources.
-- Update `leave-a-review` flow to point to the correct review destinations.
+- [x] Update `leave-a-review` flow to point to the correct review destinations.
 
 ### 3) Owner Login & Settings (new `settings.html`)
 - Choose lightweight auth path suitable for mostly static hosting (e.g., auth proxy, token-gated page, or external auth widget).
@@ -31,7 +31,7 @@
 - Define storage/persistence approach for settings (secure backend, token store, or encrypted config); document the chosen method.
 
 ### 4) Appointment Scheduling (TBD)
-- Keep appointment placeholders for now while owner decides on the scheduling system.
+- [x] Keep appointment placeholders for now while owner decides on the scheduling system.
 - Revisit scheduling integration after settings and admin decisions are finalized.
 
 ### 5) Chat Integration

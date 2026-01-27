@@ -22,10 +22,22 @@ a {
     text-decoration: none;
 }
 
+h1, h2 {
+    font-weight: normal;
+    font-family: 'Alfa Slab One', 'Alfa Slab One Fallback', serif;
+    color: #2d3a86;
+    line-height: 1;
+}h1 {    font-size: clamp(38px, 4.5vw, 64px);    }
+h2 {    font-size: clamp(28px, 3.2vw, 42px);    }
+
 img {
     display: block;
     max-width: 100%;
     height: auto;
+}
+
+.text-align-left {
+    text-align: left;
 }
 
 .container {
@@ -172,7 +184,13 @@ img {
     align-items: center;
     gap: 6px;
     padding: 10px 0;
-    font-weight: 600;
+    font-weight: normal;
+}
+
+.nav-item > a.is-active {
+    color: #1f2758;
+    box-shadow: inset 0 -2px 0 var(--color_2);
+    font-weight: 900;
 }
 
 .has-submenu {
@@ -208,6 +226,11 @@ img {
     padding: 8px 16px;
     font-weight: 500;
     color: var(--color_5);
+}
+
+.submenu a.is-active {
+    background: rgba(255, 255, 255, 0.2);
+    font-weight: 700;
 }
 
 .submenu a:hover,
@@ -308,6 +331,23 @@ img {
     display: flex;
     gap: 10px;
     align-items: center;
+}
+
+.footer-contact .contact-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #1f2758;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.footer-contact .contact-icon svg {
+    width: 16px;
+    height: 16px;
 }
 
 .footer-link {
@@ -442,6 +482,10 @@ img {
         padding: 6px 0 0 18px;
         display: block;
         background: transparent;
+    }
+
+    .has-submenu.is-open > .submenu {
+        display: block;
     }
 
     .site-nav .submenu-toggle {
