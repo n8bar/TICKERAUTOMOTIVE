@@ -7,8 +7,8 @@
 
 ## TODO
 ### 1) Mirror Cleanup (baseline for all other work)
-- Normalize indentation/whitespace across root HTML and shared JS; remove HTTrack artifacts via `python3 tools/tidy_html.py`.
-- Spot-check pages in desktop & mobile using `python3 -m http.server 4173`; ensure relative asset paths and service worker scope still work.
+- [x] Normalize indentation/whitespace across root HTML and shared JS; remove HTTrack artifacts via `python3 tools/tidy_html.py`.
+- [x] Spot-check pages in desktop & mobile using `python3 -m http.server 4173`; ensure relative asset paths and service worker scope still work.
 - Keep CDN-sourced assets in their existing folders to preserve relative paths; avoid touching `hts-cache/` and `hts-log.txt`.
 - DOM Cleanup Strategy (preserve UX while simplifying markup):
   - Inventory: build a selector/JS reference map and a do-not-touch list (any `id`, `class`, `data-*`, `role`, `aria-*`, inline `style`, and all `dm*` grid/runtime hooks).
