@@ -50,6 +50,12 @@
                         <p data-nap-lines>
                             Ticker Automotive • 680 State St Hildale, UT 84784 • (435) 656-9560
                         </p>
+                        <p>
+                            After-hours: <a href="tel:14354675971">(435) 467-5971</a> (call or text, voicemail if no answer)
+                        </p>
+                        <p>
+                            Email: <a href="mailto:service84784@gmail.com">service84784@gmail.com</a>
+                        </p>
                         <a class="btn btn-primary" href="directions.php">Get Directions</a>
                     </div>
                 </div>

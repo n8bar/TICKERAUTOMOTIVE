@@ -52,6 +52,13 @@
                         </p>
                         <a class="btn btn-primary" href="directions.php">Get Directions</a>
                     </div>
+                    <div class="appointments-card">
+                        <h2>Email Us</h2>
+                        <p>
+                            Send your request anytime and we will follow up during business hours.
+                        </p>
+                        <a class="btn btn-primary" href="mailto:service84784@gmail.com">service84784@gmail.com</a>
+                    </div>
                 </div>
             </section>
         </main>

@@ -38,6 +38,15 @@
             <section class="careers-info">
                 <div class="container careers-info-inner">
                     <div class="careers-card">
+                        <h2>Apply in Person</h2>
+                        <p>
+                            Stop by the shop and let us know you are interested in a position. We are happy to answer
+                            questions and point you in the right direction.
+                        </p>
+                        <p data-business-hours>MON-FRI 9:00 AM - 5:00 PM</p>
+                        <a class="btn btn-primary" href="directions.php">Get Directions</a>
+                    </div>
+                    <div class="careers-card">
                         <h2>Apply by Phone</h2>
                         <p>
                             Call us and share your email address. We will send an application and let you know
@@ -46,13 +55,11 @@
                         <a class="btn btn-primary" href="tel:14356569560">Call (435) 656-9560</a>
                     </div>
                     <div class="careers-card">
-                        <h2>Apply in Person</h2>
+                        <h2>Inquire by Email</h2>
                         <p>
-                            Stop by the shop and let us know you are interested in a position. We are happy to answer
-                            questions and point you in the right direction.
+                            Send a quick note with your name, contact details, and the role you are interested in.
                         </p>
-                        <p data-business-hours>MON-FRI 9:00 AM - 5:00 PM</p>
-                        <a class="btn btn-primary" href="directions.php">Get Directions</a>
+                        <a class="btn btn-primary" href="mailto:service84784@gmail.com">service84784@gmail.com</a>
                     </div>
                 </div>
             </section>

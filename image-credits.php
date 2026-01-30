@@ -30,8 +30,32 @@
                 <div class="container image-credits-hero-inner">
                     <h1 class="image-credits-title">Image Credits</h1>
                     <p class="image-credits-subtitle">
-                        Content is coming soon. Please check back.
+                        Stock imagery used on this site is licensed from Adobe Stock.
                     </p>
+                </div>
+            </section>
+            <section class="image-credits-listing">
+                <div class="container">
+                    <ul class="image-credits-list">
+                        <li>
+                            <a href="https://stock.adobe.com/in/images/car-tires-with-a-great-profile-in-the-car-repair-shop-warehouse-stock/456995560" rel="nofollow noopener" target="_blank">
+                                Car tires with a great profile in the car repair shop - warehouse Stock
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://stock.adobe.com/in/images/abstract-modern-architecture-background-empty-white-open-space-interior-3d-rendering/173666860" rel="nofollow noopener" target="_blank">
+                                Abstract modern architecture background, empty white open space interior. 3D rendering
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://stock.adobe.com/in/images/we-take-care-of-cars-and-the-people-who-drive-them-shot-of-a-woman-receiving-her-car-keys/499337456?prev_url=detail" rel="nofollow noopener" target="_blank">
+                                We take care of cars and the people who drive them. Shot of a woman receiving her car keys.
+                            </a>
+                        </li>
+                        <li>
+                            All other images are owned by Ticker Automotive.
+                        </li>
+                    </ul>
                 </div>
             </section>
         </main>

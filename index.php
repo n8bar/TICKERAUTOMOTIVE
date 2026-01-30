@@ -150,7 +150,10 @@
                             <strong>During Business Hours:</strong><br>
                             <a href="tel:14356569560">(435) 656-9560</a> (Monday - Friday, 9am - 5pm)
                         </p>
-                        <p><strong>After Hours (availability coming soon!)</strong></p>
+                        <p>
+                            <strong>After Hours:</strong><br>
+                            <a href="tel:14354675971">(435) 467-5971</a> (call or text, voicemail if no answer)
+                        </p>
                     </div>
                     <div class="home-towing-media">
                         <img src="lirp.cdn-website.com/fd5deb14/dms3rep/multi/opt/towing-655h.png" alt="Vehicle being loaded onto a tow truck" class="home-towing-image">
