@@ -17,17 +17,17 @@
       - [x] Pilot: apply the cleanup to `about-us.html` first; verify visually (desktop + mobile) before scaling to other pages.
 
 ## TODO
-### 5) Reviews & Ratings (Homepage + Reviews Pages)
-- Replace static home page reviews with the latest 5-star Google and Yelp reviews.
-- Rework the `reviews` page to reflect the same reviews/sources.
-- [x] Update `leave-a-review` flow to point to the correct review destinations.
-
-### 6) Owner Login & Settings (new `settings.html`)
+### 5) Owner Login & Settings (new `settings.html`)
 - Choose lightweight auth path suitable for mostly static hosting (e.g., auth proxy, token-gated page, or external auth widget).
 - Build login screen plus owner dashboard page with controls for:
     - Calendar provider selection and credential entry.
     - Chat provider selection (placeholder until integration is wired).
 - Define storage/persistence approach for settings (secure backend, token store, or encrypted config); document the chosen method.
+
+### 6) Reviews & Ratings (Homepage + Reviews Pages)
+- Replace static home page reviews with the latest 5-star Google and Yelp reviews.
+- Rework the `reviews` page to reflect the same reviews/sources.
+- [x] Update `leave-a-review` flow to point to the correct review destinations.
 
 ### 7) Appointment Scheduling (TBD)
 - [x] Keep appointment placeholders for now while owner decides on the scheduling system.
