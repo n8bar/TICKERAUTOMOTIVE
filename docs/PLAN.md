@@ -22,6 +22,7 @@
 - Build login screen plus owner dashboard page.
 - Use `/owner/login` with no public nav link; add `noindex` guidance when implemented.
 - Include optional OTP (toggleable) for admin login.
+- Add SMTP setup (GoDaddy email or equivalent) for OTP delivery; keep OTP disabled until SMTP is configured.
 - Define storage/persistence approach for settings (secure backend, token store, or encrypted config); document the chosen method.
 
 ### 6) Contact Forms
