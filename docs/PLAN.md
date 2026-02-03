@@ -24,16 +24,21 @@
     - Chat provider selection (placeholder until integration is wired).
 - Define storage/persistence approach for settings (secure backend, token store, or encrypted config); document the chosen method.
 
-### 6) Reviews & Ratings (Homepage + Reviews Pages)
+### 6) Contact Forms
+- Add contact forms to `appointments.html` (Schedule an Appointment) and `contact-us.html`.
+- Add settings page controls for form fields and the destination email address.
+- Hold a placeholder note for any additional form location if needed later.
+
+### 7) Reviews & Ratings (Homepage + Reviews Pages)
 - Replace static home page reviews with the latest 5-star Google and Yelp reviews.
 - Rework the `reviews` page to reflect the same reviews/sources.
 - [x] Update `leave-a-review` flow to point to the correct review destinations.
 
-### 7) Appointment Scheduling (TBD)
+### 8) Appointment Scheduling (TBD)
 - [x] Keep appointment placeholders for now while owner decides on the scheduling system.
 - Revisit scheduling integration after settings and admin decisions are finalized.
 
-### 8) Chat Integration
+### 9) Chat Integration
 - Evaluate static-friendly chat providers or embed strategies; confirm compatibility with service worker caching rules.
 - Implement a widget loader that respects owner settings; ensure required assets cache via `f30f4.txt` without breaking offline behavior.
 - Verify chat presence and basic function on homepage, services, and appointments pages.
