@@ -20,6 +20,7 @@
 ### 5) Owner Login & Settings (new `settings.html`)
 - Choose lightweight auth path suitable for mostly static hosting (e.g., auth proxy, token-gated page, or external auth widget).
 - Build login screen plus owner dashboard page.
+- Include optional OTP (toggleable) for admin login.
 - Define storage/persistence approach for settings (secure backend, token store, or encrypted config); document the chosen method.
 
 ### 6) Contact Forms
