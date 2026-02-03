@@ -105,7 +105,7 @@ function toHash(str) {
     }
     if (hasServiceWorkerSupport && !isOffline) {
         window.addEventListener('load', function () {
-            const serviceWorkerPath = 'f30f4.txt?v=3';
+            const serviceWorkerPath = 'f30f4.txt?v=4';
             navigator.serviceWorker
                 .register(serviceWorkerPath, { scope: './' })
                 .then(

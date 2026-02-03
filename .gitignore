@@ -5,3 +5,5 @@
 web.config
 Thumbs.db
 .cybercreek/
+owner/config.php
+owner/data/settings.json

@@ -8,7 +8,7 @@
     
 
     const pwaSettings = {};
-    const version = 51; // version of this file
+    const version = 52; // version of this file
     const staticFileCdn = "https://static.cdn-website.com"
 // should any assets be cached at all
     pwaSettings.shouldUseCache = true;
@@ -353,6 +353,7 @@ const PAGES_CACHE_BLACKLIST = [
     '/rts/auth/authorize',
     '/rts/auth/code',
     '/rts/auth/redirect',
+    '/owner/',
 ];
 
 /**
@@ -628,4 +629,3 @@ self.addEventListener('fetch', () => {});
 //     })
 //   );
 // });
-

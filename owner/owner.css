@@ -1,0 +1,267 @@
+.owner-page {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #f4f5f9 0%, #eef0f6 45%, #f9fafc 100%);
+}
+
+.owner-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.owner-header {
+    background: #141b3a;
+    color: #ffffff;
+    border-bottom: 4px solid rgba(179, 57, 81, 0.7);
+}
+
+.owner-header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+}
+
+.owner-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.owner-brand-title {
+    font-family: 'Alfa Slab One', 'Alfa Slab One Fallback', serif;
+    font-size: 22px;
+    letter-spacing: 0.5px;
+}
+
+.owner-brand-subtitle {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.owner-user {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    font-size: 13px;
+}
+
+.owner-user-name {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.owner-link {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.owner-main {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 48px 16px 72px;
+}
+
+.owner-card {
+    width: min(460px, 100%);
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 32px;
+    box-shadow: 0 18px 45px rgba(20, 27, 58, 0.18);
+    border: 1px solid rgba(20, 27, 58, 0.08);
+}
+
+.owner-card-wide {
+    width: min(980px, 100%);
+}
+
+.owner-title {
+    margin: 0 0 12px;
+}
+
+.owner-subtitle {
+    margin: 0 0 24px;
+    color: rgba(0, 0, 0, 0.6);
+    line-height: 1.5;
+}
+
+.owner-alert {
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.owner-alert-success {
+    background: rgba(46, 125, 50, 0.12);
+    color: #1e5127;
+}
+
+.owner-alert-error {
+    background: rgba(179, 57, 81, 0.12);
+    color: #8d2d3f;
+}
+
+.owner-form {
+    display: grid;
+    gap: 16px;
+}
+
+.owner-form-inline {
+    margin-top: 8px;
+}
+
+.owner-field {
+    display: grid;
+    gap: 8px;
+}
+
+.owner-field-full {
+    grid-column: 1 / -1;
+}
+
+.owner-label {
+    font-weight: 600;
+    color: #1f2758;
+}
+
+.owner-input {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.16);
+    padding: 12px 14px;
+    font-size: 15px;
+    font-family: Inter, 'Inter Fallback', sans-serif;
+}
+
+.owner-textarea {
+    min-height: 88px;
+    resize: vertical;
+}
+
+.owner-button {
+    width: 100%;
+}
+
+.owner-link-button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #2d3a86;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.owner-note {
+    margin: 20px 0 0;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.55);
+}
+
+.owner-section {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding-top: 24px;
+    margin-top: 24px;
+    display: grid;
+    gap: 16px;
+}
+
+.owner-section:first-of-type {
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.owner-section-title {
+    margin: 0;
+    font-size: 22px;
+}
+
+.owner-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.owner-section-sub {
+    margin-top: 12px;
+    display: grid;
+    gap: 12px;
+}
+
+.owner-section-subtitle {
+    margin: 0;
+    font-size: 18px;
+    color: #1f2758;
+}
+
+.owner-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.owner-fields-grid {
+    display: grid;
+    gap: 12px;
+}
+
+.owner-field-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(20, 27, 58, 0.04);
+}
+
+.owner-field-name {
+    font-weight: 600;
+}
+
+.owner-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.owner-help {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.owner-actions {
+    margin-top: 12px;
+}
+
+@media (max-width: 720px) {
+    .owner-header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .owner-user {
+        align-items: flex-start;
+    }
+
+    .owner-main {
+        padding: 32px 12px 56px;
+    }
+
+    .owner-card {
+        padding: 24px;
+    }
+
+    .owner-field-row {
+        grid-template-columns: 1fr;
+        justify-items: flex-start;
+    }
+}
