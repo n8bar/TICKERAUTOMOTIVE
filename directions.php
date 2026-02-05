@@ -57,13 +57,13 @@
                         </p>
                         <h2>Choose Your Map</h2>
                         <div class="directions-buttons">
-                            <a class="btn btn-primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=<?php echo htmlspecialchars($siteAddressQuery, ENT_QUOTES); ?>" target="_blank" rel="noopener">
+                            <a class="btn btn-primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=680%20North%20State%20Street%2C%20Hildale%2C%20UT%2084784&amp;destination_place_id=ChIJd7uqBQEhy4ARBhv7lNfGcIc" target="_blank" rel="noopener">
                                 Google Maps
                             </a>
-                            <a class="btn btn-primary" href="https://maps.apple.com/?daddr=<?php echo htmlspecialchars($siteAddressQuery, ENT_QUOTES); ?>" target="_blank" rel="noopener">
+                            <a class="btn btn-primary" href="https://maps.apple.com/?daddr=680%20North%20State%20Street,%20Hildale,%20UT%2084784" target="_blank" rel="noopener">
                                 Apple Maps
                             </a>
-                            <a class="btn btn-primary" href="https://share.here.com/g/37.001280710053706,-112.99949573063222,Your%20location/37.001280710053706,-112.99949573063222,<?php echo htmlspecialchars($siteAddressHereQuery, ENT_QUOTES); ?>?a=&amp;m=d&amp;z=20&amp;t=satellite" target="_blank" rel="noopener">
+                            <a class="btn btn-primary" href="https://share.here.com/g/37.001280710053706,-112.99949573063222,Your%20location/37.001280710053706,-112.99949573063222,680%20State%20St%2C%20Hildale%2C%20UT%2084784%2C%20United%20States?a=&amp;m=d&amp;z=20&amp;t=satellite" target="_blank" rel="noopener">
                                 HERE WeGo
                             </a>
                         </div>
