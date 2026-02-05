@@ -30,6 +30,11 @@ async function loadBusinessHours() {
         return;
     }
 
+    const hasServerValue = Array.from(targets).some((target) => target.textContent.trim().length > 0);
+    if (hasServerValue) {
+        return;
+    }
+
     try {
         const data = await fetchJson(`${ZENOGRE_API}/websites/${SITE_NAME}/businesshours?getContentLibraryData=false&locationId=${LOCATION_ID}`);
         const hours = (data.businessHours || []).map((entry) => {
@@ -56,6 +61,10 @@ async function loadNapLines() {
         return;
     }
 
+    if (target.textContent.trim().length > 0) {
+        return;
+    }
+
     try {
         const data = await fetchJson(`${ZENOGRE_API}/clients/${CLIENT_ID}/nap/${SITE_NAME}`);
         target.textContent = (data.napLines || []).join(' • ') || 'Ticker Automotive';
@@ -77,6 +86,4 @@ function setupAnalytics() {
 
 document.addEventListener('DOMContentLoaded', () => {
     setupAnalytics();
-    loadBusinessHours();
-    loadNapLines();
 });

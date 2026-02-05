@@ -43,7 +43,7 @@
                             Stop by the shop and let us know you are interested in a position. We are happy to answer
                             questions and point you in the right direction.
                         </p>
-                        <p data-business-hours>MON-FRI 9:00 AM - 5:00 PM</p>
+                        <p data-business-hours><?php echo htmlspecialchars($siteBusinessHours, ENT_QUOTES); ?></p>
                         <a class="btn btn-primary" href="directions.php">Get Directions</a>
                     </div>
                     <div class="careers-card">
@@ -52,14 +52,14 @@
                             Call us and share your email address. We will send an application and let you know
                             about current openings.
                         </p>
-                        <a class="btn btn-primary" href="tel:14356569560">Call (435) 656-9560</a>
+                        <a class="btn btn-primary" href="<?php echo htmlspecialchars($sitePrimaryPhoneHref, ENT_QUOTES); ?>">Call <?php echo htmlspecialchars($sitePrimaryPhone, ENT_QUOTES); ?></a>
                     </div>
                     <div class="careers-card">
                         <h2>Inquire by Email</h2>
                         <p>
                             Send a quick note with your name, contact details, and the role you are interested in.
                         </p>
-                        <a class="btn btn-primary" href="mailto:service84784@gmail.com">service84784@gmail.com</a>
+                        <a class="btn btn-primary" href="<?php echo htmlspecialchars($sitePrimaryEmailHref, ENT_QUOTES); ?>"><?php echo htmlspecialchars($sitePrimaryEmail, ENT_QUOTES); ?></a>
                     </div>
                 </div>
             </section>

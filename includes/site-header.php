@@ -31,8 +31,8 @@
                                 <path d="M15.3322 11.0229L13.9035 9.59422C13.4776 9.17175 12.9028 8.93357 12.303 8.93102C11.7031 8.92847 11.1263 9.16175 10.6968 9.58058C10.4677 9.81104 10.1653 9.95443 9.8419 9.98607C9.51845 10.0177 9.19408 9.93564 8.92461 9.75397C7.86103 9.04415 6.94733 8.13221 6.23546 7.07C6.05699 6.79752 5.97788 6.47185 6.01147 6.14786C6.04507 5.82386 6.18931 5.52135 6.41989 5.29129C6.83492 4.86143 7.06519 4.28619 7.06143 3.68869C7.05767 3.09118 6.82017 2.51889 6.39976 2.09429L4.97109 0.66561C4.54337 0.239348 3.96413 0 3.36027 0C2.75641 0 2.17717 0.239348 1.74945 0.66561L1.33838 1.07733C-0.804622 3.22035 -0.644222 7.72589 3.81452 12.1821C6.50301 14.8712 9.20904 15.9973 11.4033 15.9973C12.0493 16.0188 12.693 15.9115 13.2971 15.6818C13.9011 15.452 14.4534 15.1043 14.9218 14.6589L15.3335 14.2472C15.7605 13.8192 16.0002 13.2393 16 12.6348C15.9998 12.0302 15.7596 11.4505 15.3322 11.0229Z" fill="currentColor"></path>
                             </svg>
                         </span>
-                        <a class="contact-link contact-link-phone" href="tel:(435) 656-9560">
-                            (435) 656-9560
+                        <a class="contact-link contact-link-phone" href="<?php echo htmlspecialchars($sitePrimaryPhoneHref, ENT_QUOTES); ?>">
+                            <?php echo htmlspecialchars($sitePrimaryPhone, ENT_QUOTES); ?>
                         </a>
                     </div>
                     <div class="contact-item">
@@ -42,7 +42,7 @@
                             </svg>
                         </span>
                         <a class="contact-link" href="directions.php">
-                            680 North State Street, Hildale, UT 84784
+                            <?php echo htmlspecialchars($siteAddressComma, ENT_QUOTES); ?>
                         </a>
                     </div>
                     <div class="contact-item">
@@ -52,7 +52,7 @@
                             </svg>
                         </span>
                         <span class="contact-link">
-                            MON-FRI 9:00 AM - 5:00 PM
+                            <?php echo htmlspecialchars($siteBusinessHours, ENT_QUOTES); ?>
                         </span>
                     </div>
                 </div>

@@ -10,14 +10,15 @@ function owner_default_settings(): array
         'site' => [
             'primary_phone' => '(435) 656-9560',
             'after_hours_phone' => '(435) 467-5971',
-            'primary_email' => 'info@tickerautomotive.com',
-            'address_line1' => '391 W Utah Ave',
+            'primary_email' => 'service84784@gmail.com',
+            'business_hours' => '',
+            'address_line1' => '680 North State Street',
             'address_line2' => 'Hildale, UT 84784',
         ],
         'contact_forms' => [
             'appointments' => [
                 'enabled' => true,
-                'recipients' => ['service@tickerautomotive.com'],
+                'recipients' => ['service84784@gmail.com'],
                 'thank_you_message' => 'Thanks for reaching out! We will contact you shortly to confirm your appointment.',
                 'auto_reply' => [
                     'enabled' => false,
@@ -28,7 +29,7 @@ function owner_default_settings(): array
             ],
             'contact_us' => [
                 'enabled' => true,
-                'recipients' => ['info@tickerautomotive.com'],
+                'recipients' => ['service84784@gmail.com'],
                 'thank_you_message' => 'Thanks for the message! We will get back to you soon.',
                 'auto_reply' => [
                     'enabled' => false,
@@ -148,11 +149,26 @@ function owner_build_settings_from_post(array $input, array $current): array
 {
     $settings = $current;
 
-    $settings['site']['primary_phone'] = owner_sanitize_text($input['site']['primary_phone'] ?? '');
-    $settings['site']['after_hours_phone'] = owner_sanitize_text($input['site']['after_hours_phone'] ?? '');
-    $settings['site']['primary_email'] = owner_sanitize_text($input['site']['primary_email'] ?? '');
-    $settings['site']['address_line1'] = owner_sanitize_text($input['site']['address_line1'] ?? '');
-    $settings['site']['address_line2'] = owner_sanitize_text($input['site']['address_line2'] ?? '');
+    $siteInput = $input['site'] ?? [];
+
+    if (array_key_exists('primary_phone', $siteInput)) {
+        $settings['site']['primary_phone'] = owner_sanitize_text($siteInput['primary_phone'] ?? '');
+    }
+    if (array_key_exists('after_hours_phone', $siteInput)) {
+        $settings['site']['after_hours_phone'] = owner_sanitize_text($siteInput['after_hours_phone'] ?? '');
+    }
+    if (array_key_exists('primary_email', $siteInput)) {
+        $settings['site']['primary_email'] = owner_sanitize_text($siteInput['primary_email'] ?? '');
+    }
+    if (array_key_exists('business_hours', $siteInput)) {
+        $settings['site']['business_hours'] = owner_sanitize_text($siteInput['business_hours'] ?? '');
+    }
+    if (array_key_exists('address_line1', $siteInput)) {
+        $settings['site']['address_line1'] = owner_sanitize_text($siteInput['address_line1'] ?? '');
+    }
+    if (array_key_exists('address_line2', $siteInput)) {
+        $settings['site']['address_line2'] = owner_sanitize_text($siteInput['address_line2'] ?? '');
+    }
 
     $forms = ['appointments', 'contact_us'];
     foreach ($forms as $formKey) {
