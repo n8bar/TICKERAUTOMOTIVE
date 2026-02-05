@@ -53,7 +53,7 @@
                             <?php echo htmlspecialchars($siteAddressLine2, ENT_QUOTES); ?>
                         </p>
                         <p class="directions-hours" data-business-hours>
-                            MON-FRI 9:00 AM - 5:00 PM
+                            <?php echo htmlspecialchars($siteBusinessHours, ENT_QUOTES); ?>
                         </p>
                         <h2>Choose Your Map</h2>
                         <div class="directions-buttons">

@@ -43,7 +43,7 @@
                             Stop by the shop and let us know you are interested in a position. We are happy to answer
                             questions and point you in the right direction.
                         </p>
-                        <p data-business-hours>MON-FRI 9:00 AM - 5:00 PM</p>
+                        <p data-business-hours><?php echo htmlspecialchars($siteBusinessHours, ENT_QUOTES); ?></p>
                         <a class="btn btn-primary" href="directions.php">Get Directions</a>
                     </div>
                     <div class="careers-card">

@@ -46,7 +46,7 @@
                     </div>
                     <div class="contact-us-card">
                         <h2>Visit the Shop</h2>
-                        <p data-business-hours>Mon-Fri 9:00 AM - 5:00 PM</p>
+                        <p data-business-hours><?php echo htmlspecialchars($siteBusinessHours, ENT_QUOTES); ?></p>
                         <p data-nap-lines>
                             <?php echo htmlspecialchars($siteNapLine, ENT_QUOTES); ?>
                         </p>

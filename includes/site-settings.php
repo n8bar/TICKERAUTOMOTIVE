@@ -5,8 +5,9 @@ declare(strict_types=1);
 $siteSettingsDefaults = [
     'primary_phone' => '(435) 656-9560',
     'after_hours_phone' => '(435) 467-5971',
-    'primary_email' => 'info@tickerautomotive.com',
-    'address_line1' => '391 W Utah Ave',
+    'primary_email' => 'service84784@gmail.com',
+    'business_hours' => 'MON-FRI 9:00 AM - 5:00 PM',
+    'address_line1' => '680 State St',
     'address_line2' => 'Hildale, UT 84784',
 ];
 
@@ -30,6 +31,7 @@ if (is_array($settings) && isset($settings['site']) && is_array($settings['site'
 $sitePrimaryPhone = (string) ($siteSettings['primary_phone'] ?? '');
 $siteAfterHoursPhone = (string) ($siteSettings['after_hours_phone'] ?? '');
 $sitePrimaryEmail = (string) ($siteSettings['primary_email'] ?? '');
+$siteBusinessHours = (string) ($siteSettings['business_hours'] ?? '');
 $siteAddressLine1 = (string) ($siteSettings['address_line1'] ?? '');
 $siteAddressLine2 = (string) ($siteSettings['address_line2'] ?? '');
 

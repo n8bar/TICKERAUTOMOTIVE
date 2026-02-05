@@ -40,7 +40,7 @@
                             </svg>
                         </span>
                         <span class="footer-link">
-                            MON-FRI 9:00 AM - 5:00 PM
+                            <?php echo htmlspecialchars($siteBusinessHours, ENT_QUOTES); ?>
                         </span>
                     </div>
                 </div>

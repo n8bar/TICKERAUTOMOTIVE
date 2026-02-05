@@ -183,24 +183,12 @@ function owner_checked(bool $value): string
                                     <h2 class="owner-section-title">Site Contact Info</h2>
                                     <div class="owner-grid">
                                         <label class="owner-field">
-                                            <span class="owner-label">Primary phone</span>
-                                            <input class="owner-input" type="text" name="settings[site][primary_phone]" value="<?php echo htmlspecialchars($settings['site']['primary_phone'] ?? '', ENT_QUOTES); ?>">
-                                        </label>
-                                        <label class="owner-field">
-                                            <span class="owner-label">After hours phone</span>
-                                            <input class="owner-input" type="text" name="settings[site][after_hours_phone]" value="<?php echo htmlspecialchars($settings['site']['after_hours_phone'] ?? '', ENT_QUOTES); ?>">
-                                        </label>
-                                        <label class="owner-field">
                                             <span class="owner-label">Primary email</span>
                                             <input class="owner-input" type="email" name="settings[site][primary_email]" value="<?php echo htmlspecialchars($settings['site']['primary_email'] ?? '', ENT_QUOTES); ?>">
                                         </label>
                                         <label class="owner-field">
-                                            <span class="owner-label">Street address</span>
-                                            <input class="owner-input" type="text" name="settings[site][address_line1]" value="<?php echo htmlspecialchars($settings['site']['address_line1'] ?? '', ENT_QUOTES); ?>">
-                                        </label>
-                                        <label class="owner-field">
-                                            <span class="owner-label">City, State ZIP</span>
-                                            <input class="owner-input" type="text" name="settings[site][address_line2]" value="<?php echo htmlspecialchars($settings['site']['address_line2'] ?? '', ENT_QUOTES); ?>">
+                                            <span class="owner-label">Business hours</span>
+                                            <input class="owner-input" type="text" name="settings[site][business_hours]" value="<?php echo htmlspecialchars($settings['site']['business_hours'] ?? '', ENT_QUOTES); ?>">
                                         </label>
                                     </div>
                                 </div>
