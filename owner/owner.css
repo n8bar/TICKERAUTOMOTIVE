@@ -90,6 +90,10 @@
     line-height: 1.5;
 }
 
+.owner-subtitle-tight {
+    margin-bottom: 12px;
+}
+
 .owner-alert {
     padding: 12px 14px;
     border-radius: 10px;
@@ -201,6 +205,42 @@
     color: #1f2758;
 }
 
+.owner-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 6px;
+    border-radius: 14px;
+    background: rgba(20, 27, 58, 0.06);
+}
+
+.owner-tab {
+    border: none;
+    background: transparent;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-weight: 600;
+    color: #1f2758;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.owner-tab.is-active {
+    background: #141b3a;
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(20, 27, 58, 0.2);
+}
+
+.owner-tab-panels {
+    display: grid;
+    gap: 12px;
+}
+
+.owner-tab-panel {
+    display: grid;
+    gap: 16px;
+}
+
 .owner-grid {
     display: grid;
     gap: 16px;
@@ -236,6 +276,41 @@
 .owner-help {
     font-size: 12px;
     color: rgba(0, 0, 0, 0.5);
+}
+
+.owner-users-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.owner-user-card {
+    border-radius: 14px;
+    padding: 16px;
+    background: rgba(20, 27, 58, 0.04);
+    border: 1px solid rgba(20, 27, 58, 0.12);
+    display: grid;
+    gap: 12px;
+}
+
+.owner-user-role {
+    margin: 0;
+    font-size: 16px;
+    color: #1f2758;
+}
+
+.owner-user-entry {
+    display: grid;
+    gap: 4px;
+}
+
+.owner-user-entry-name {
+    font-weight: 600;
+}
+
+.owner-user-entry-email {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.55);
 }
 
 .owner-actions {

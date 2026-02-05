@@ -49,6 +49,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $user = $_SESSION['auth'] ?? [];
 $csrfToken = owner_csrf_token();
+$isAuthor = ($user['role'] ?? '') === 'author';
+$config = owner_get_config();
+$accounts = $config['accounts'] ?? [];
+$roleOrder = ['owner', 'admin'];
+
+if ($isAuthor) {
+    $roleOrder[] = 'author';
+}
+
+$roleLabels = [
+    'owner' => 'Owner',
+    'admin' => 'Admin',
+    'author' => 'Author',
+];
+
+$accountsByRole = [];
+foreach ($roleOrder as $role) {
+    $accountsByRole[$role] = [];
+}
+
+foreach ($accounts as $account) {
+    if (empty($account['enabled'])) {
+        continue;
+    }
+
+    $role = $account['role'] ?? 'admin';
+    if (!array_key_exists($role, $accountsByRole)) {
+        continue;
+    }
+
+    if (!$isAuthor && !empty($account['hidden'])) {
+        continue;
+    }
+
+    $accountsByRole[$role][] = $account;
+}
 
 function owner_checked(bool $value): string
 {
@@ -107,96 +143,135 @@ function owner_checked(bool $value): string
                     <form class="owner-form" method="post" action="">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
 
-                        <div class="owner-section">
-                            <h2 class="owner-section-title">Site Contact Info</h2>
-                            <div class="owner-grid">
-                                <label class="owner-field">
-                                    <span class="owner-label">Primary phone</span>
-                                    <input class="owner-input" type="text" name="settings[site][primary_phone]" value="<?php echo htmlspecialchars($settings['site']['primary_phone'] ?? '', ENT_QUOTES); ?>">
-                                </label>
-                                <label class="owner-field">
-                                    <span class="owner-label">After hours phone</span>
-                                    <input class="owner-input" type="text" name="settings[site][after_hours_phone]" value="<?php echo htmlspecialchars($settings['site']['after_hours_phone'] ?? '', ENT_QUOTES); ?>">
-                                </label>
-                                <label class="owner-field">
-                                    <span class="owner-label">Primary email</span>
-                                    <input class="owner-input" type="email" name="settings[site][primary_email]" value="<?php echo htmlspecialchars($settings['site']['primary_email'] ?? '', ENT_QUOTES); ?>">
-                                </label>
-                                <label class="owner-field">
-                                    <span class="owner-label">Street address</span>
-                                    <input class="owner-input" type="text" name="settings[site][address_line1]" value="<?php echo htmlspecialchars($settings['site']['address_line1'] ?? '', ENT_QUOTES); ?>">
-                                </label>
-                                <label class="owner-field">
-                                    <span class="owner-label">City, State ZIP</span>
-                                    <input class="owner-input" type="text" name="settings[site][address_line2]" value="<?php echo htmlspecialchars($settings['site']['address_line2'] ?? '', ENT_QUOTES); ?>">
-                                </label>
-                            </div>
+                        <div class="owner-tabs" role="tablist" aria-label="Settings sections">
+                            <button class="owner-tab is-active" type="button" data-tab="general" role="tab" aria-selected="true" aria-controls="tab-general" id="tab-general-button">General</button>
+                            <button class="owner-tab" type="button" data-tab="forms" role="tab" aria-selected="false" aria-controls="tab-forms" id="tab-forms-button">Forms</button>
+                            <button class="owner-tab" type="button" data-tab="users" role="tab" aria-selected="false" aria-controls="tab-users" id="tab-users-button">Users</button>
                         </div>
 
-                        <?php foreach ($formLabels as $formKey => $formLabel): ?>
-                            <?php
-                                $formSettings = $settings['contact_forms'][$formKey] ?? [];
-                                $recipients = $formSettings['recipients'] ?? [];
-                                $recipientValue = implode(', ', $recipients);
-                                $fields = $formSettings['fields'] ?? [];
-                                $autoReply = $formSettings['auto_reply'] ?? [];
-                            ?>
-                            <div class="owner-section">
-                                <div class="owner-section-header">
-                                    <h2 class="owner-section-title"><?php echo htmlspecialchars($formLabel, ENT_QUOTES); ?> Form</h2>
-                                    <label class="owner-toggle">
-                                        <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][enabled]" value="1"<?php echo owner_checked(!empty($formSettings['enabled'])); ?>>
-                                        <span>Enabled</span>
-                                    </label>
-                                </div>
-                                <div class="owner-grid">
-                                    <label class="owner-field owner-field-full">
-                                        <span class="owner-label">Recipient email(s)</span>
-                                        <input class="owner-input" type="text" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][recipients]" value="<?php echo htmlspecialchars($recipientValue, ENT_QUOTES); ?>" placeholder="email1@domain.com, email2@domain.com">
-                                        <span class="owner-help">Separate multiple emails with commas.</span>
-                                    </label>
-                                </div>
-                                <div class="owner-fields-grid">
-                                    <?php foreach ($fieldLabels as $fieldKey => $fieldLabel): ?>
-                                        <?php $fieldState = $fields[$fieldKey] ?? ['enabled' => true, 'required' => false]; ?>
-                                        <div class="owner-field-row">
-                                            <div class="owner-field-meta">
-                                                <span class="owner-field-name"><?php echo htmlspecialchars($fieldLabel, ENT_QUOTES); ?></span>
-                                            </div>
-                                            <label class="owner-toggle">
-                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][enabled]" value="1"<?php echo owner_checked(!empty($fieldState['enabled'])); ?>>
-                                                <span>Show</span>
-                                            </label>
-                                            <label class="owner-toggle">
-                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][required]" value="1"<?php echo owner_checked(!empty($fieldState['required'])); ?>>
-                                                <span>Required</span>
-                                            </label>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                                <label class="owner-field owner-field-full">
-                                    <span class="owner-label">Thank you message</span>
-                                    <textarea class="owner-input owner-textarea" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][thank_you_message]" rows="3"><?php echo htmlspecialchars($formSettings['thank_you_message'] ?? '', ENT_QUOTES); ?></textarea>
-                                </label>
-                                <div class="owner-section-sub">
-                                    <h3 class="owner-section-subtitle">Auto-reply</h3>
-                                    <label class="owner-toggle">
-                                        <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][enabled]" value="1"<?php echo owner_checked(!empty($autoReply['enabled'])); ?>>
-                                        <span>Send auto-reply</span>
-                                    </label>
+                        <div class="owner-tab-panels">
+                            <section class="owner-tab-panel" data-tab-panel="general" role="tabpanel" aria-labelledby="tab-general-button" id="tab-general">
+                                <div class="owner-section">
+                                    <h2 class="owner-section-title">Site Contact Info</h2>
                                     <div class="owner-grid">
-                                        <label class="owner-field owner-field-full">
-                                            <span class="owner-label">Auto-reply subject</span>
-                                            <input class="owner-input" type="text" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][subject]" value="<?php echo htmlspecialchars($autoReply['subject'] ?? '', ENT_QUOTES); ?>">
+                                        <label class="owner-field">
+                                            <span class="owner-label">Primary phone</span>
+                                            <input class="owner-input" type="text" name="settings[site][primary_phone]" value="<?php echo htmlspecialchars($settings['site']['primary_phone'] ?? '', ENT_QUOTES); ?>">
                                         </label>
-                                        <label class="owner-field owner-field-full">
-                                            <span class="owner-label">Auto-reply message</span>
-                                            <textarea class="owner-input owner-textarea" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][body]" rows="4"><?php echo htmlspecialchars($autoReply['body'] ?? '', ENT_QUOTES); ?></textarea>
+                                        <label class="owner-field">
+                                            <span class="owner-label">After hours phone</span>
+                                            <input class="owner-input" type="text" name="settings[site][after_hours_phone]" value="<?php echo htmlspecialchars($settings['site']['after_hours_phone'] ?? '', ENT_QUOTES); ?>">
+                                        </label>
+                                        <label class="owner-field">
+                                            <span class="owner-label">Primary email</span>
+                                            <input class="owner-input" type="email" name="settings[site][primary_email]" value="<?php echo htmlspecialchars($settings['site']['primary_email'] ?? '', ENT_QUOTES); ?>">
+                                        </label>
+                                        <label class="owner-field">
+                                            <span class="owner-label">Street address</span>
+                                            <input class="owner-input" type="text" name="settings[site][address_line1]" value="<?php echo htmlspecialchars($settings['site']['address_line1'] ?? '', ENT_QUOTES); ?>">
+                                        </label>
+                                        <label class="owner-field">
+                                            <span class="owner-label">City, State ZIP</span>
+                                            <input class="owner-input" type="text" name="settings[site][address_line2]" value="<?php echo htmlspecialchars($settings['site']['address_line2'] ?? '', ENT_QUOTES); ?>">
                                         </label>
                                     </div>
                                 </div>
-                            </div>
-                        <?php endforeach; ?>
+                            </section>
+
+                            <section class="owner-tab-panel" data-tab-panel="forms" role="tabpanel" aria-labelledby="tab-forms-button" id="tab-forms" hidden>
+                                <?php foreach ($formLabels as $formKey => $formLabel): ?>
+                                    <?php
+                                        $formSettings = $settings['contact_forms'][$formKey] ?? [];
+                                        $recipients = $formSettings['recipients'] ?? [];
+                                        $recipientValue = implode(', ', $recipients);
+                                        $fields = $formSettings['fields'] ?? [];
+                                        $autoReply = $formSettings['auto_reply'] ?? [];
+                                    ?>
+                                    <div class="owner-section">
+                                        <div class="owner-section-header">
+                                            <h2 class="owner-section-title"><?php echo htmlspecialchars($formLabel, ENT_QUOTES); ?> Form</h2>
+                                            <label class="owner-toggle">
+                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][enabled]" value="1"<?php echo owner_checked(!empty($formSettings['enabled'])); ?>>
+                                                <span>Enabled</span>
+                                            </label>
+                                        </div>
+                                        <div class="owner-grid">
+                                            <label class="owner-field owner-field-full">
+                                                <span class="owner-label">Recipient email(s)</span>
+                                                <input class="owner-input" type="text" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][recipients]" value="<?php echo htmlspecialchars($recipientValue, ENT_QUOTES); ?>" placeholder="email1@domain.com, email2@domain.com">
+                                                <span class="owner-help">Separate multiple emails with commas.</span>
+                                            </label>
+                                        </div>
+                                        <div class="owner-fields-grid">
+                                            <?php foreach ($fieldLabels as $fieldKey => $fieldLabel): ?>
+                                                <?php $fieldState = $fields[$fieldKey] ?? ['enabled' => true, 'required' => false]; ?>
+                                                <div class="owner-field-row">
+                                                    <div class="owner-field-meta">
+                                                        <span class="owner-field-name"><?php echo htmlspecialchars($fieldLabel, ENT_QUOTES); ?></span>
+                                                    </div>
+                                                    <label class="owner-toggle">
+                                                        <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][enabled]" value="1"<?php echo owner_checked(!empty($fieldState['enabled'])); ?>>
+                                                        <span>Show</span>
+                                                    </label>
+                                                    <label class="owner-toggle">
+                                                        <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][required]" value="1"<?php echo owner_checked(!empty($fieldState['required'])); ?>>
+                                                        <span>Required</span>
+                                                    </label>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                        <label class="owner-field owner-field-full">
+                                            <span class="owner-label">Thank you message</span>
+                                            <textarea class="owner-input owner-textarea" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][thank_you_message]" rows="3"><?php echo htmlspecialchars($formSettings['thank_you_message'] ?? '', ENT_QUOTES); ?></textarea>
+                                        </label>
+                                        <div class="owner-section-sub">
+                                            <h3 class="owner-section-subtitle">Auto-reply</h3>
+                                            <label class="owner-toggle">
+                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][enabled]" value="1"<?php echo owner_checked(!empty($autoReply['enabled'])); ?>>
+                                                <span>Send auto-reply</span>
+                                            </label>
+                                            <div class="owner-grid">
+                                                <label class="owner-field owner-field-full">
+                                                    <span class="owner-label">Auto-reply subject</span>
+                                                    <input class="owner-input" type="text" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][subject]" value="<?php echo htmlspecialchars($autoReply['subject'] ?? '', ENT_QUOTES); ?>">
+                                                </label>
+                                                <label class="owner-field owner-field-full">
+                                                    <span class="owner-label">Auto-reply message</span>
+                                                    <textarea class="owner-input owner-textarea" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][body]" rows="4"><?php echo htmlspecialchars($autoReply['body'] ?? '', ENT_QUOTES); ?></textarea>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </section>
+
+                            <section class="owner-tab-panel" data-tab-panel="users" role="tabpanel" aria-labelledby="tab-users-button" id="tab-users" hidden>
+                                <div class="owner-section">
+                                    <h2 class="owner-section-title">Users</h2>
+                                    <p class="owner-subtitle owner-subtitle-tight">Review who has access to the owner portal.</p>
+                                    <div class="owner-users-grid">
+                                        <?php foreach ($roleOrder as $role): ?>
+                                            <div class="owner-user-card">
+                                                <h3 class="owner-user-role"><?php echo htmlspecialchars($roleLabels[$role] ?? ucfirst($role), ENT_QUOTES); ?></h3>
+                                                <?php if (empty($accountsByRole[$role])): ?>
+                                                    <p class="owner-help">No active accounts yet.</p>
+                                                <?php else: ?>
+                                                    <?php foreach ($accountsByRole[$role] as $account): ?>
+                                                        <div class="owner-user-entry">
+                                                            <span class="owner-user-entry-name"><?php echo htmlspecialchars($account['name'] ?? 'User', ENT_QUOTES); ?></span>
+                                                            <span class="owner-user-entry-email"><?php echo htmlspecialchars($account['email'] ?? '', ENT_QUOTES); ?></span>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    <?php if (!$isAuthor): ?>
+                                        <p class="owner-help">Need to update users? Contact the development team.</p>
+                                    <?php endif; ?>
+                                </div>
+                            </section>
+                        </div>
 
                         <div class="owner-actions">
                             <button class="btn btn-primary owner-button" type="submit">Save Settings</button>
@@ -205,5 +280,51 @@ function owner_checked(bool $value): string
                 </section>
             </main>
         </div>
+        <script>
+            (function () {
+                const tabs = Array.from(document.querySelectorAll('[data-tab]'));
+                const panels = Array.from(document.querySelectorAll('[data-tab-panel]'));
+                const actions = document.querySelector('.owner-actions');
+
+                if (!tabs.length || !panels.length) {
+                    return;
+                }
+
+                const setActive = (tab) => {
+                    tabs.forEach((button) => {
+                        const isActive = button.dataset.tab === tab;
+                        button.classList.toggle('is-active', isActive);
+                        button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                        button.setAttribute('tabindex', isActive ? '0' : '-1');
+                    });
+
+                    panels.forEach((panel) => {
+                        panel.hidden = panel.dataset.tabPanel !== tab;
+                    });
+
+                    if (actions) {
+                        actions.hidden = tab === 'users';
+                    }
+
+                    if (window.history && window.history.replaceState) {
+                        const url = new URL(window.location.href);
+                        url.searchParams.set('tab', tab);
+                        window.history.replaceState({}, '', url);
+                    }
+                };
+
+                const params = new URLSearchParams(window.location.search);
+                const requested = params.get('tab');
+                const initial = tabs.find((button) => button.dataset.tab === requested)?.dataset.tab || tabs[0].dataset.tab;
+
+                setActive(initial);
+
+                tabs.forEach((button) => {
+                    button.addEventListener('click', () => {
+                        setActive(button.dataset.tab);
+                    });
+                });
+            })();
+        </script>
     </body>
 </html>
