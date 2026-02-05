@@ -18,13 +18,16 @@
 
 ## TODO
 ### 5) Owner Login & Settings (new `settings.html`)
-- Choose lightweight auth path suitable for mostly static hosting (e.g., auth proxy, token-gated page, or external auth widget).
-- Build login screen plus owner dashboard page.
-- Use `/owner/login` with no public nav link; add `noindex` guidance when implemented.
-- Include optional OTP (toggleable) for admin login.
-- Add SMTP setup (GoDaddy email or equivalent) for OTP delivery; keep OTP disabled until SMTP is configured.
-- Define storage/persistence approach for settings (secure backend, token store, or encrypted config); document the chosen method.
-- Decide dev stack to match production (IIS vs Linux/Apache/Nginx) to avoid environment-specific issues (e.g., IIS 403.14 on `/owner/login` when PHP/default docs aren’t configured).
+- [x] Choose lightweight auth path suitable for mostly static hosting (e.g., auth proxy, token-gated page, or external auth widget).
+- [x] Build login screen plus owner dashboard page.
+- [x] Use `/owner/login` with no public nav link; add `noindex` guidance when implemented.
+- [x] Define storage/persistence approach for settings (secure backend, token store, or encrypted config); document the chosen method.
+- [x] Decide dev stack to match production (IIS vs Linux/Apache/Nginx) to avoid environment-specific issues (e.g., IIS 403.14 on `/owner/login` when PHP/default docs aren’t configured).
+- [ ] Add User Settings UI so owners can add/remove admin accounts.
+- [ ] Require strong passwords (OTP deferred for now).
+    - [ ] Enforce minimum 12 characters with 3-of-4 character classes.
+    - [ ] Add “Generate strong password” helper in the change password UI.
+    - [ ] Include show/hide + copy UX for generated passwords.
 
 ### 6) Contact Forms
 - Add contact forms to `appointments.html` (Schedule an Appointment) and `contact-us.html`.
