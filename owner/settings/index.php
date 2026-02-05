@@ -11,6 +11,18 @@ $settings = owner_load_settings();
 $errors = [];
 $notices = [];
 $flash = owner_get_flash();
+$allowedTabs = ['general', 'forms', 'users'];
+$requestedTab = $_GET['tab'] ?? '';
+if (!in_array($requestedTab, $allowedTabs, true)) {
+    $requestedTab = $_SESSION['owner_active_tab'] ?? 'general';
+}
+if (in_array($_GET['tab'] ?? '', $allowedTabs, true)) {
+    $_SESSION['owner_active_tab'] = $requestedTab;
+}
+$accordionState = $_SESSION['owner_accordion_state'] ?? [];
+if (!is_array($accordionState)) {
+    $accordionState = [];
+}
 
 $formLabels = [
     'appointments' => 'Schedule an Appointment',
@@ -39,6 +51,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $settings = owner_build_settings_from_post($input, $settings);
 
         if (owner_save_settings($settings)) {
+            $postedAccordion = $_POST['accordion_state'] ?? [];
+            if (is_array($postedAccordion)) {
+                $nextAccordion = [];
+                foreach (array_keys($formLabels) as $formKey) {
+                    $nextAccordion[$formKey] = !empty($postedAccordion[$formKey]);
+                }
+                $_SESSION['owner_accordion_state'] = $nextAccordion;
+                $accordionState = $nextAccordion;
+            }
+            $activeTab = $_POST['active_tab'] ?? '';
+            if (is_string($activeTab) && in_array($activeTab, $allowedTabs, true)) {
+                $_SESSION['owner_active_tab'] = $activeTab;
+                owner_set_flash('success', 'Settings saved.');
+                owner_redirect('/owner/settings/?tab=' . rawurlencode($activeTab));
+            }
             owner_set_flash('success', 'Settings saved.');
             owner_redirect('/owner/settings/');
         } else {
@@ -142,8 +169,9 @@ function owner_checked(bool $value): string
 
                     <form class="owner-form" method="post" action="">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+                        <input type="hidden" name="active_tab" value="<?php echo htmlspecialchars($requestedTab, ENT_QUOTES); ?>" data-active-tab>
 
-                        <div class="owner-tabs" role="tablist" aria-label="Settings sections">
+                        <div class="owner-tabs" role="tablist" aria-label="Settings sections" data-default-tab="<?php echo htmlspecialchars($requestedTab, ENT_QUOTES); ?>">
                             <button class="owner-tab is-active" type="button" data-tab="general" role="tab" aria-selected="true" aria-controls="tab-general" id="tab-general-button">General</button>
                             <button class="owner-tab" type="button" data-tab="forms" role="tab" aria-selected="false" aria-controls="tab-forms" id="tab-forms-button">Forms</button>
                             <button class="owner-tab" type="button" data-tab="users" role="tab" aria-selected="false" aria-controls="tab-users" id="tab-users-button">Users</button>
@@ -186,59 +214,68 @@ function owner_checked(bool $value): string
                                         $recipientValue = implode(', ', $recipients);
                                         $fields = $formSettings['fields'] ?? [];
                                         $autoReply = $formSettings['auto_reply'] ?? [];
+                                        $isOpen = !empty($accordionState[$formKey]);
                                     ?>
-                                    <div class="owner-section">
-                                        <div class="owner-section-header">
-                                            <h2 class="owner-section-title"><?php echo htmlspecialchars($formLabel, ENT_QUOTES); ?> Form</h2>
-                                            <label class="owner-toggle">
+                                    <div class="owner-accordion" data-accordion="<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>">
+                                        <div class="owner-accordion-header">
+                                            <button class="owner-accordion-toggle" type="button" aria-expanded="<?php echo $isOpen ? 'true' : 'false'; ?>" aria-controls="form-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>" id="form-toggle-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>">
+                                                <span class="owner-accordion-title"><?php echo htmlspecialchars($formLabel, ENT_QUOTES); ?> Form</span>
+                                                <span class="owner-accordion-indicator"><?php echo $isOpen ? 'Collapse' : 'Expand'; ?></span>
+                                            </button>
+                                            <input type="hidden" name="accordion_state[<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>]" value="<?php echo $isOpen ? '1' : '0'; ?>" data-accordion-state="<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>">
+                                            <label class="owner-toggle owner-toggle-inline">
                                                 <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][enabled]" value="1"<?php echo owner_checked(!empty($formSettings['enabled'])); ?>>
                                                 <span>Enabled</span>
                                             </label>
                                         </div>
-                                        <div class="owner-grid">
-                                            <label class="owner-field owner-field-full">
-                                                <span class="owner-label">Recipient email(s)</span>
-                                                <input class="owner-input" type="text" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][recipients]" value="<?php echo htmlspecialchars($recipientValue, ENT_QUOTES); ?>" placeholder="email1@domain.com, email2@domain.com">
-                                                <span class="owner-help">Separate multiple emails with commas.</span>
-                                            </label>
-                                        </div>
-                                        <div class="owner-fields-grid">
-                                            <?php foreach ($fieldLabels as $fieldKey => $fieldLabel): ?>
-                                                <?php $fieldState = $fields[$fieldKey] ?? ['enabled' => true, 'required' => false]; ?>
-                                                <div class="owner-field-row">
-                                                    <div class="owner-field-meta">
-                                                        <span class="owner-field-name"><?php echo htmlspecialchars($fieldLabel, ENT_QUOTES); ?></span>
-                                                    </div>
-                                                    <label class="owner-toggle">
-                                                        <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][enabled]" value="1"<?php echo owner_checked(!empty($fieldState['enabled'])); ?>>
-                                                        <span>Show</span>
-                                                    </label>
-                                                    <label class="owner-toggle">
-                                                        <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][required]" value="1"<?php echo owner_checked(!empty($fieldState['required'])); ?>>
-                                                        <span>Required</span>
+                                        <div class="owner-accordion-panel" id="form-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>" role="region" aria-labelledby="form-toggle-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>"<?php echo $isOpen ? '' : ' hidden'; ?>>
+                                            <div class="owner-section owner-section-compact">
+                                                <div class="owner-grid">
+                                                    <label class="owner-field owner-field-full">
+                                                        <span class="owner-label">Recipient email(s)</span>
+                                                        <input class="owner-input" type="text" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][recipients]" value="<?php echo htmlspecialchars($recipientValue, ENT_QUOTES); ?>" placeholder="email1@domain.com, email2@domain.com">
+                                                        <span class="owner-help">Separate multiple emails with commas.</span>
                                                     </label>
                                                 </div>
-                                            <?php endforeach; ?>
-                                        </div>
-                                        <label class="owner-field owner-field-full">
-                                            <span class="owner-label">Thank you message</span>
-                                            <textarea class="owner-input owner-textarea" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][thank_you_message]" rows="3"><?php echo htmlspecialchars($formSettings['thank_you_message'] ?? '', ENT_QUOTES); ?></textarea>
-                                        </label>
-                                        <div class="owner-section-sub">
-                                            <h3 class="owner-section-subtitle">Auto-reply</h3>
-                                            <label class="owner-toggle">
-                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][enabled]" value="1"<?php echo owner_checked(!empty($autoReply['enabled'])); ?>>
-                                                <span>Send auto-reply</span>
-                                            </label>
-                                            <div class="owner-grid">
+                                                <div class="owner-fields-grid">
+                                                    <?php foreach ($fieldLabels as $fieldKey => $fieldLabel): ?>
+                                                        <?php $fieldState = $fields[$fieldKey] ?? ['enabled' => true, 'required' => false]; ?>
+                                                        <div class="owner-field-row">
+                                                            <div class="owner-field-meta">
+                                                                <span class="owner-field-name"><?php echo htmlspecialchars($fieldLabel, ENT_QUOTES); ?></span>
+                                                            </div>
+                                                            <label class="owner-toggle">
+                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][enabled]" value="1"<?php echo owner_checked(!empty($fieldState['enabled'])); ?>>
+                                                                <span>Show</span>
+                                                            </label>
+                                                            <label class="owner-toggle">
+                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][required]" value="1"<?php echo owner_checked(!empty($fieldState['required'])); ?>>
+                                                                <span>Required</span>
+                                                            </label>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                </div>
                                                 <label class="owner-field owner-field-full">
-                                                    <span class="owner-label">Auto-reply subject</span>
-                                                    <input class="owner-input" type="text" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][subject]" value="<?php echo htmlspecialchars($autoReply['subject'] ?? '', ENT_QUOTES); ?>">
+                                                    <span class="owner-label">Thank you message</span>
+                                                    <textarea class="owner-input owner-textarea" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][thank_you_message]" rows="3"><?php echo htmlspecialchars($formSettings['thank_you_message'] ?? '', ENT_QUOTES); ?></textarea>
                                                 </label>
-                                                <label class="owner-field owner-field-full">
-                                                    <span class="owner-label">Auto-reply message</span>
-                                                    <textarea class="owner-input owner-textarea" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][body]" rows="4"><?php echo htmlspecialchars($autoReply['body'] ?? '', ENT_QUOTES); ?></textarea>
-                                                </label>
+                                                <div class="owner-section-sub">
+                                                    <h3 class="owner-section-subtitle">Auto-reply</h3>
+                                                    <label class="owner-toggle">
+                                                        <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][enabled]" value="1"<?php echo owner_checked(!empty($autoReply['enabled'])); ?>>
+                                                        <span>Send auto-reply</span>
+                                                    </label>
+                                                    <div class="owner-grid">
+                                                        <label class="owner-field owner-field-full">
+                                                            <span class="owner-label">Auto-reply subject</span>
+                                                            <input class="owner-input" type="text" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][subject]" value="<?php echo htmlspecialchars($autoReply['subject'] ?? '', ENT_QUOTES); ?>">
+                                                        </label>
+                                                        <label class="owner-field owner-field-full">
+                                                            <span class="owner-label">Auto-reply message</span>
+                                                            <textarea class="owner-input owner-textarea" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][body]" rows="4"><?php echo htmlspecialchars($autoReply['body'] ?? '', ENT_QUOTES); ?></textarea>
+                                                        </label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -285,9 +322,19 @@ function owner_checked(bool $value): string
                 const tabs = Array.from(document.querySelectorAll('[data-tab]'));
                 const panels = Array.from(document.querySelectorAll('[data-tab-panel]'));
                 const actions = document.querySelector('.owner-actions');
+                const accordions = Array.from(document.querySelectorAll('[data-accordion]'));
+                const activeInput = document.querySelector('[data-active-tab]');
+                const tabList = document.querySelector('.owner-tabs');
+                let storedAccordionStates = {};
 
                 if (!tabs.length || !panels.length) {
                     return;
+                }
+
+                try {
+                    storedAccordionStates = JSON.parse(window.localStorage.getItem('ownerAccordionState') || '{}');
+                } catch (err) {
+                    storedAccordionStates = {};
                 }
 
                 const setActive = (tab) => {
@@ -306,6 +353,16 @@ function owner_checked(bool $value): string
                         actions.hidden = tab === 'users';
                     }
 
+                    if (activeInput) {
+                        activeInput.value = tab;
+                    }
+
+                    try {
+                        window.localStorage.setItem('ownerSettingsTab', tab);
+                    } catch (err) {
+                        // Ignore storage failures.
+                    }
+
                     if (window.history && window.history.replaceState) {
                         const url = new URL(window.location.href);
                         url.searchParams.set('tab', tab);
@@ -315,13 +372,66 @@ function owner_checked(bool $value): string
 
                 const params = new URLSearchParams(window.location.search);
                 const requested = params.get('tab');
-                const initial = tabs.find((button) => button.dataset.tab === requested)?.dataset.tab || tabs[0].dataset.tab;
+                let stored = null;
+                try {
+                    stored = window.localStorage.getItem('ownerSettingsTab');
+                } catch (err) {
+                    stored = null;
+                }
+                const defaultTab = tabList?.dataset.defaultTab;
+                const initial =
+                    tabs.find((button) => button.dataset.tab === requested)?.dataset.tab ||
+                    tabs.find((button) => button.dataset.tab === stored)?.dataset.tab ||
+                    tabs.find((button) => button.dataset.tab === defaultTab)?.dataset.tab ||
+                    tabs[0].dataset.tab;
 
                 setActive(initial);
 
                 tabs.forEach((button) => {
                     button.addEventListener('click', () => {
                         setActive(button.dataset.tab);
+                    });
+                });
+
+                accordions.forEach((accordion) => {
+                    const toggle = accordion.querySelector('.owner-accordion-toggle');
+                    const panel = accordion.querySelector('.owner-accordion-panel');
+                    const indicator = accordion.querySelector('.owner-accordion-indicator');
+                    const stateInput = accordion.querySelector('[data-accordion-state]');
+                    const accordionKey = accordion.dataset.accordion;
+
+                    if (!toggle || !panel) {
+                        return;
+                    }
+
+                    const setOpen = (open, persist = true) => {
+                        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                        panel.hidden = !open;
+                        if (indicator) {
+                            indicator.textContent = open ? 'Collapse' : 'Expand';
+                        }
+                        if (stateInput) {
+                            stateInput.value = open ? '1' : '0';
+                        }
+                        if (persist && accordionKey) {
+                            storedAccordionStates[accordionKey] = open;
+                            try {
+                                window.localStorage.setItem('ownerAccordionState', JSON.stringify(storedAccordionStates));
+                            } catch (err) {
+                                // Ignore storage failures.
+                            }
+                        }
+                    };
+
+                    const storedState = accordionKey ? storedAccordionStates[accordionKey] : null;
+                    if (typeof storedState === 'boolean') {
+                        setOpen(storedState, false);
+                    } else {
+                        setOpen(!panel.hidden, false);
+                    }
+
+                    toggle.addEventListener('click', () => {
+                        setOpen(panel.hidden);
                     });
                 });
             })();

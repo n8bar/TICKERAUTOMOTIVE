@@ -241,6 +241,88 @@
     gap: 16px;
 }
 
+.owner-tab-panel[hidden] {
+    display: none;
+}
+
+.owner-accordion {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid #2d3a86;
+    background: #ffffff;
+}
+
+.owner-accordion + .owner-accordion {
+    margin-top: 18px;
+}
+
+.owner-accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 18px;
+    background: #141b3a;
+    color: #ffffff;
+}
+
+.owner-accordion-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 0;
+    cursor: pointer;
+    flex: 1;
+    text-align: left;
+}
+
+.owner-accordion-title {
+    font-family: Inter, 'Inter Fallback', sans-serif;
+    letter-spacing: 0.2px;
+    font-weight: 400;
+}
+
+.owner-accordion-indicator {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.owner-accordion-indicator::after {
+    content: '+';
+    font-size: 18px;
+    line-height: 1;
+}
+
+.owner-accordion-toggle[aria-expanded="true"] .owner-accordion-indicator::after {
+    content: '–';
+}
+
+.owner-accordion-header .owner-toggle {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.owner-accordion-panel {
+    padding: 18px;
+    background: #ffffff;
+}
+
+.owner-section-compact {
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+}
+
 .owner-grid {
     display: grid;
     gap: 16px;
@@ -338,5 +420,14 @@
     .owner-field-row {
         grid-template-columns: 1fr;
         justify-items: flex-start;
+    }
+
+    .owner-accordion-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .owner-accordion-toggle {
+        width: 100%;
     }
 }
