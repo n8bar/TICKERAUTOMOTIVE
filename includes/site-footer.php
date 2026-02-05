@@ -7,7 +7,7 @@
                     </a>
                     <div class="footer-call">
                         <span class="footer-label">Call Us:</span>
-                        <a class="footer-phone" href="tel:(435) 656-9560">(435) 656-9560</a>
+                        <a class="footer-phone" href="<?php echo htmlspecialchars($sitePrimaryPhoneHref, ENT_QUOTES); ?>"><?php echo htmlspecialchars($sitePrimaryPhone, ENT_QUOTES); ?></a>
                     </div>
                     <div class="footer-social">
                         <a class="social-link" href="https://yelp.com/biz/streamline-automotive-hildale-4" target="_blank" aria-label="Yelp">
@@ -30,7 +30,7 @@
                             </svg>
                         </span>
                         <a class="footer-link" href="directions.php">
-                            680 North State Street Hildale, UT 84784
+                            <?php echo htmlspecialchars($siteAddressInline, ENT_QUOTES); ?>
                         </a>
                     </div>
                     <div class="footer-item">
@@ -57,7 +57,7 @@
         <div class="footer-bottom">
             <div class="container footer-bottom-inner">
                 <div class="nap-lines">
-                    Ticker Automotive, 680 State St Hildale, UT 84784 (435) 656-9560
+                    <?php echo htmlspecialchars($siteNapFooter, ENT_QUOTES); ?>
                 </div>
                 <!-- div class="footer-ada" aria-hidden="true">
                     <svg width="19" height="23" viewBox="0 0 19 23" xmlns="http://www.w3.org/2000/svg">

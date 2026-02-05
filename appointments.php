@@ -42,13 +42,13 @@
                             We will confirm availability and the best time for your vehicle. If you need towing or
                             have questions, let us know when you call.
                         </p>
-                        <a class="btn btn-primary" href="tel:14356569560">Call (435) 656-9560</a>
+                        <a class="btn btn-primary" href="<?php echo htmlspecialchars($sitePrimaryPhoneHref, ENT_QUOTES); ?>">Call <?php echo htmlspecialchars($sitePrimaryPhone, ENT_QUOTES); ?></a>
                     </div>
                     <div class="appointments-card">
                         <h2>Hours &amp; Location</h2>
                         <p data-business-hours>Mon-Fri 9:00 AM - 5:00 PM</p>
                         <p data-nap-lines>
-                            Ticker Automotive • 680 State St Hildale, UT 84784 • (435) 656-9560
+                            <?php echo htmlspecialchars($siteNapLine, ENT_QUOTES); ?>
                         </p>
                         <a class="btn btn-primary" href="directions.php">Get Directions</a>
                     </div>
@@ -57,7 +57,7 @@
                         <p>
                             Send your request anytime and we will follow up during business hours.
                         </p>
-                        <a class="btn btn-primary" href="mailto:service84784@gmail.com">service84784@gmail.com</a>
+                        <a class="btn btn-primary" href="<?php echo htmlspecialchars($sitePrimaryEmailHref, ENT_QUOTES); ?>"><?php echo htmlspecialchars($sitePrimaryEmail, ENT_QUOTES); ?></a>
                     </div>
                 </div>
             </section>

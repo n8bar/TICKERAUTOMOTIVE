@@ -148,11 +148,11 @@
                         <p>To schedule a towing or for emergency assistance, please call:</p>
                         <p>
                             <strong>During Business Hours:</strong><br>
-                            <a href="tel:14356569560">(435) 656-9560</a> (Monday - Friday, 9am - 5pm)
+                            <a href="<?php echo htmlspecialchars($sitePrimaryPhoneHref, ENT_QUOTES); ?>"><?php echo htmlspecialchars($sitePrimaryPhone, ENT_QUOTES); ?></a> (Monday - Friday, 9am - 5pm)
                         </p>
                         <p>
                             <strong>After Hours:</strong><br>
-                            <a href="tel:14354675971">(435) 467-5971</a> (call or text, voicemail if no answer)
+                            <a href="<?php echo htmlspecialchars($siteAfterHoursPhoneHref, ENT_QUOTES); ?>"><?php echo htmlspecialchars($siteAfterHoursPhone, ENT_QUOTES); ?></a> (call or text, voicemail if no answer)
                         </p>
                     </div>
                     <div class="home-towing-media">

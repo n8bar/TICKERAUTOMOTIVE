@@ -42,19 +42,19 @@
                             Talk with our team about repairs, tires, towing, or scheduling. We will help you find
                             the right next step.
                         </p>
-                        <a class="btn btn-primary" href="tel:14356569560">Call (435) 656-9560</a>
+                        <a class="btn btn-primary" href="<?php echo htmlspecialchars($sitePrimaryPhoneHref, ENT_QUOTES); ?>">Call <?php echo htmlspecialchars($sitePrimaryPhone, ENT_QUOTES); ?></a>
                     </div>
                     <div class="contact-us-card">
                         <h2>Visit the Shop</h2>
                         <p data-business-hours>Mon-Fri 9:00 AM - 5:00 PM</p>
                         <p data-nap-lines>
-                            Ticker Automotive • 680 State St Hildale, UT 84784 • (435) 656-9560
+                            <?php echo htmlspecialchars($siteNapLine, ENT_QUOTES); ?>
                         </p>
                         <p>
-                            After-hours: <a href="tel:14354675971">(435) 467-5971</a> (call or text, voicemail if no answer)
+                            After-hours: <a href="<?php echo htmlspecialchars($siteAfterHoursPhoneHref, ENT_QUOTES); ?>"><?php echo htmlspecialchars($siteAfterHoursPhone, ENT_QUOTES); ?></a> (call or text, voicemail if no answer)
                         </p>
                         <p>
-                            Email: <a href="mailto:service84784@gmail.com">service84784@gmail.com</a>
+                            Email: <a href="<?php echo htmlspecialchars($sitePrimaryEmailHref, ENT_QUOTES); ?>"><?php echo htmlspecialchars($sitePrimaryEmail, ENT_QUOTES); ?></a>
                         </p>
                         <a class="btn btn-primary" href="directions.php">Get Directions</a>
                     </div>

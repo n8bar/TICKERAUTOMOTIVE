@@ -30,7 +30,7 @@
                 <div class="container after-hours-hero-inner">
                     <h1 class="after-hours-title">After Hours</h1>
                     <p class="after-hours-subtitle">
-                        For after-hours assistance, please call or text <a href="tel:14354675971">(435) 467-5971</a>.
+                        For after-hours assistance, please call or text <a href="<?php echo htmlspecialchars($siteAfterHoursPhoneHref, ENT_QUOTES); ?>"><?php echo htmlspecialchars($siteAfterHoursPhone, ENT_QUOTES); ?></a>.
                         Voicemail is available if there is no answer.
                     </p>
                 </div>
