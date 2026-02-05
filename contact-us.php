@@ -48,7 +48,9 @@
                         <h2>Visit the Shop</h2>
                         <p data-business-hours><?php echo htmlspecialchars($siteBusinessHours, ENT_QUOTES); ?></p>
                         <p data-nap-lines>
-                            <?php echo htmlspecialchars($siteNapLine, ENT_QUOTES); ?>
+                            Ticker Automotive<br>
+                            <?php echo htmlspecialchars($siteAddressInline, ENT_QUOTES); ?><br>
+                            <?php echo htmlspecialchars($sitePrimaryPhone, ENT_QUOTES); ?>
                         </p>
                         <p>
                             After-hours: <a href="<?php echo htmlspecialchars($siteAfterHoursPhoneHref, ENT_QUOTES); ?>"><?php echo htmlspecialchars($siteAfterHoursPhone, ENT_QUOTES); ?></a> (call or text, voicemail if no answer)

@@ -12,7 +12,7 @@ function owner_default_settings(): array
             'after_hours_phone' => '(435) 467-5971',
             'primary_email' => 'service84784@gmail.com',
             'business_hours' => '',
-            'address_line1' => '680 State St',
+            'address_line1' => '680 North State Street',
             'address_line2' => 'Hildale, UT 84784',
         ],
         'contact_forms' => [

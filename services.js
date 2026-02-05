@@ -30,6 +30,11 @@ async function loadBusinessHours() {
         return;
     }
 
+    const hasServerValue = Array.from(targets).some((target) => target.textContent.trim().length > 0);
+    if (hasServerValue) {
+        return;
+    }
+
     try {
         const data = await fetchJson(`${ZENOGRE_API}/websites/${SITE_NAME}/businesshours?getContentLibraryData=false&locationId=${LOCATION_ID}`);
         const hours = (data.businessHours || []).map((entry) => {
@@ -53,6 +58,10 @@ async function loadBusinessHours() {
 async function loadNapLines() {
     const target = document.querySelector('[data-nap-lines]');
     if (!target) {
+        return;
+    }
+
+    if (target.textContent.trim().length > 0) {
         return;
     }
 
@@ -214,7 +223,5 @@ function setupServiceDirectory() {
 
 document.addEventListener('DOMContentLoaded', () => {
     setupAnalytics();
-    loadBusinessHours();
-    loadNapLines();
     setupServiceDirectory();
 });
