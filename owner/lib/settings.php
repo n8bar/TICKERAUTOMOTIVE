@@ -11,7 +11,7 @@ function owner_default_settings(): array
             'primary_phone' => '(435) 656-9560',
             'after_hours_phone' => '(435) 467-5971',
             'primary_email' => 'service84784@gmail.com',
-            'business_hours' => 'MON-FRI 9:00 AM - 5:00 PM',
+            'business_hours' => '',
             'address_line1' => '680 State St',
             'address_line2' => 'Hildale, UT 84784',
         ],
