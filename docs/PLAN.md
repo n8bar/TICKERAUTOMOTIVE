@@ -46,3 +46,6 @@
 - Implement a widget loader that respects owner settings; ensure required assets cache via `f30f4.txt` without breaking offline behavior.
 - Verify chat presence and basic function on homepage, services, and appointments pages.
 - Add chat provider selection (placeholder until integration is wired) in `settings.html`.
+
+### 10) Dev Environment
+- Keep a tracked `.env.example` in sync with local `.env` whenever Docker-related settings change.
