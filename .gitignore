@@ -8,3 +8,4 @@ Thumbs.db
 owner/config.php
 owner/data/settings.json
 .env
+.idea/
