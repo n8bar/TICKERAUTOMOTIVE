@@ -24,6 +24,7 @@
 - Include optional OTP (toggleable) for admin login.
 - Add SMTP setup (GoDaddy email or equivalent) for OTP delivery; keep OTP disabled until SMTP is configured.
 - Define storage/persistence approach for settings (secure backend, token store, or encrypted config); document the chosen method.
+- Decide dev stack to match production (IIS vs Linux/Apache/Nginx) to avoid environment-specific issues (e.g., IIS 403.14 on `/owner/login` when PHP/default docs aren’t configured).
 
 ### 6) Contact Forms
 - Add contact forms to `appointments.html` (Schedule an Appointment) and `contact-us.html`.
