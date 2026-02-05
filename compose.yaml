@@ -1,0 +1,10 @@
+services:
+  web:
+    image: php:8.2-apache
+    ports:
+      - "${TICKER_WEB_BIND:-192.168.68.29}:${TICKER_WEB_PORT:-80}:80"
+    volumes:
+      - ./:/var/www/html:ro,Z
+      - ./owner/data:/var/www/html/owner/data:rw,Z
+      - ./docker/apache.conf:/etc/apache2/conf-enabled/ticker.conf:ro,Z
+    restart: unless-stopped
