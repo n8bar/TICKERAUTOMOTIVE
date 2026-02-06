@@ -185,10 +185,10 @@ function owner_build_settings_from_post(array $input, array $current): array
         foreach ($fields as $fieldKey => $defaultField) {
             $fieldInput = $formInput['fields'][$fieldKey] ?? [];
             $enabled = !empty($fieldInput['enabled']);
-            $required = !empty($fieldInput['required']);
-
-            if (!$enabled) {
-                $required = false;
+            $currentField = $settings['contact_forms'][$formKey]['fields'][$fieldKey] ?? $defaultField;
+            $required = !empty($currentField['required']);
+            if ($enabled) {
+                $required = !empty($fieldInput['required']);
             }
 
             $settings['contact_forms'][$formKey]['fields'][$fieldKey] = [

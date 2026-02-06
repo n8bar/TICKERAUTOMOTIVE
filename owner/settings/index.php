@@ -835,16 +835,16 @@ function owner_checked(bool $value): string
                                                 <div class="owner-fields-grid">
                                                     <?php foreach ($fieldLabels as $fieldKey => $fieldLabel): ?>
                                                         <?php $fieldState = $fields[$fieldKey] ?? ['enabled' => true, 'required' => false]; ?>
-                                                        <div class="owner-field-row">
+                                                        <div class="owner-field-row<?php echo !empty($fieldState['enabled']) ? '' : ' is-required-disabled'; ?>" data-field-row>
                                                             <div class="owner-field-meta">
                                                                 <span class="owner-field-name"><?php echo htmlspecialchars($fieldLabel, ENT_QUOTES); ?></span>
                                                             </div>
                                                             <label class="owner-toggle">
-                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][enabled]" value="1"<?php echo owner_checked(!empty($fieldState['enabled'])); ?>>
+                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][enabled]" value="1" data-field-toggle="show"<?php echo owner_checked(!empty($fieldState['enabled'])); ?>>
                                                                 <span>Show</span>
                                                             </label>
                                                             <label class="owner-toggle">
-                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][required]" value="1"<?php echo owner_checked(!empty($fieldState['required'])); ?>>
+                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][required]" value="1" data-field-toggle="required"<?php echo owner_checked(!empty($fieldState['required'])); ?><?php echo !empty($fieldState['enabled']) ? '' : ' disabled'; ?>>
                                                                 <span>Required</span>
                                                             </label>
                                                         </div>
@@ -1321,6 +1321,34 @@ function owner_checked(bool $value): string
 
                     toggle.addEventListener('click', () => {
                         setOpen(panel.hidden);
+                    });
+                });
+
+                const fieldRows = Array.from(document.querySelectorAll('[data-field-row]'));
+                const syncFieldRow = (row) => {
+                    const showToggle = row.querySelector('[data-field-toggle="show"]');
+                    const requiredToggle = row.querySelector('[data-field-toggle="required"]');
+                    if (!showToggle || !requiredToggle) {
+                        return;
+                    }
+                    const shouldDisable = !showToggle.checked;
+                    requiredToggle.disabled = shouldDisable;
+                    if (shouldDisable) {
+                        requiredToggle.setAttribute('aria-disabled', 'true');
+                    } else {
+                        requiredToggle.removeAttribute('aria-disabled');
+                    }
+                    row.classList.toggle('is-required-disabled', shouldDisable);
+                };
+
+                fieldRows.forEach((row) => {
+                    const showToggle = row.querySelector('[data-field-toggle="show"]');
+                    if (!showToggle) {
+                        return;
+                    }
+                    syncFieldRow(row);
+                    showToggle.addEventListener('change', () => {
+                        syncFieldRow(row);
                     });
                 });
 

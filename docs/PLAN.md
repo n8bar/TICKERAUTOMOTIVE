@@ -15,25 +15,42 @@
       - Definition of “meat and potatoes”: elements that carry layout/behavior styling (referenced by CSS/JS) or meaningful content; remove wrapper-only elements with **meaningless attributes**.
       - UX constraint: preserving the look and feel means **do not change the UX at all** (layout, interactions, copy, flows).
       - [x] Pilot: apply the cleanup to `about-us.html` first; verify visually (desktop + mobile) before scaling to other pages.
+- [x] 5) Owner Login & Settings (new `settings.html`)
+    - [x] Choose lightweight auth path suitable for mostly static hosting (e.g., auth proxy, token-gated page, or external auth widget).
+    - [x] Build login screen plus owner dashboard page.
+    - [x] Use `/owner/login` with no public nav link; add `noindex` guidance when implemented.
+    - [x] Define storage/persistence approach for settings (secure backend, token store, or encrypted config); document the chosen method.
+    - [x] Decide dev stack to match production (IIS vs Linux/Apache/Nginx) to avoid environment-specific issues (e.g., IIS 403.14 on `/owner/login` when PHP/default docs aren’t configured).
+    - [x] Add User Settings UI so owners can add/remove admin accounts.
+    - [x] Require strong passwords (OTP deferred for now).
+        - [x] Enforce minimum 12 characters with 3-of-4 character classes.
+        - [x] Add “Generate strong password” helper in the change password UI.
+        - [x] Include show/hide + copy UX for generated passwords.
+    - [x] Expand user controls to support creating/editing accounts, access-based visibility, and login email changes.
 
 ## TODO
-### 5) Owner Login & Settings (new `settings.html`)
-- [x] Choose lightweight auth path suitable for mostly static hosting (e.g., auth proxy, token-gated page, or external auth widget).
-- [x] Build login screen plus owner dashboard page.
-- [x] Use `/owner/login` with no public nav link; add `noindex` guidance when implemented.
-- [x] Define storage/persistence approach for settings (secure backend, token store, or encrypted config); document the chosen method.
-- [x] Decide dev stack to match production (IIS vs Linux/Apache/Nginx) to avoid environment-specific issues (e.g., IIS 403.14 on `/owner/login` when PHP/default docs aren’t configured).
-- [x] Add User Settings UI so owners can add/remove admin accounts.
-- [x] Require strong passwords (OTP deferred for now).
-    - [x] Enforce minimum 12 characters with 3-of-4 character classes.
-    - [x] Add “Generate strong password” helper in the change password UI.
-    - [x] Include show/hide + copy UX for generated passwords.
-- [x] Expand user controls to support creating/editing accounts, access-based visibility, and login email changes.
-
 ### 6) Contact Forms
-- Add contact forms to `appointments.html` (Schedule an Appointment) and `contact-us.html`.
-- Add settings page controls for form fields and the destination email address.
-- Hold a placeholder note for any additional form location if needed later.
+- [ ] Build new contact forms in `appointments.html` and `contact-us.html` (no existing forms to inventory).
+    - [ ] Add base form markup with labels, inputs, and submit actions for each page.
+    - [ ] Match field order to settings schema (name, phone, email, vehicle, preferred time, message).
+    - [ ] Add inline helper text where needed (privacy note, required indicator).
+- [ ] Forms settings UI
+    - [x] Add form sections and field toggles in owner settings (per-form recipients + optional auto-reply).
+    - [x] Align settings fields with page schema and ensure hidden fields are not required.
+    - [ ] Add a dev-only delivery override toggle in the Forms tab to route submissions to a developer email for debugging (visible only to developer role).
+- [ ] Submission handling (SMTP)
+    - [ ] Implement SMTP delivery for form submissions (prefer GoDaddy SMTP if available).
+    - [ ] Add SMTP configuration fields in the settings file but keep them hidden in the UI for now (edit settings directly until client requests UI exposure).
+    - [ ] Wire settings to frontend forms (field visibility + required flags).
+    - [ ] Add validation for required fields, email format, and phone normalization on submit.
+    - [ ] Add success + error states (inline, accessible, and non-blocking).
+    - [ ] Add spam controls (honeypot + time-to-submit guard) without breaking current UX.
+    - [ ] Ensure submissions include page/source metadata (page name, timestamp, user agent).
+    - [ ] Add lightweight email template for admin notifications (subject + body summary).
+- [ ] Verification
+    - [ ] Verify service worker caching does not block form POSTs.
+    - [ ] Manual regression: desktop + mobile emulation and a mock submission for each form.
+    - [ ] Hold a placeholder note for any additional form location if needed later.
 
 ### 7) Reviews & Ratings (Homepage + Reviews Pages)
 - Replace static home page reviews with the latest 5-star Google and Yelp reviews.
