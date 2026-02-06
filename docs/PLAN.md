@@ -23,11 +23,12 @@
 - [x] Use `/owner/login` with no public nav link; add `noindex` guidance when implemented.
 - [x] Define storage/persistence approach for settings (secure backend, token store, or encrypted config); document the chosen method.
 - [x] Decide dev stack to match production (IIS vs Linux/Apache/Nginx) to avoid environment-specific issues (e.g., IIS 403.14 on `/owner/login` when PHP/default docs aren’t configured).
-- [ ] Add User Settings UI so owners can add/remove admin accounts.
-- [ ] Require strong passwords (OTP deferred for now).
-    - [ ] Enforce minimum 12 characters with 3-of-4 character classes.
-    - [ ] Add “Generate strong password” helper in the change password UI.
-    - [ ] Include show/hide + copy UX for generated passwords.
+- [x] Add User Settings UI so owners can add/remove admin accounts.
+- [x] Require strong passwords (OTP deferred for now).
+    - [x] Enforce minimum 12 characters with 3-of-4 character classes.
+    - [x] Add “Generate strong password” helper in the change password UI.
+    - [x] Include show/hide + copy UX for generated passwords.
+- [x] Expand user controls to support creating/editing accounts, access-based visibility, and login email changes.
 
 ### 6) Contact Forms
 - Add contact forms to `appointments.html` (Schedule an Appointment) and `contact-us.html`.

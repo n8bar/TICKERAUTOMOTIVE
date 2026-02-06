@@ -7,5 +7,6 @@ Thumbs.db
 .cybercreek/
 owner/config.php
 owner/data/settings.json
+owner/data/accounts.json
 .env
 .idea/

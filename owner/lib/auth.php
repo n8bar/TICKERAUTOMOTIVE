@@ -26,6 +26,196 @@ function owner_get_config(): array
     return $config;
 }
 
+function owner_accounts_data_file(): string
+{
+    $config = owner_get_config();
+    $file = $config['accounts_file'] ?? '';
+
+    if ($file === '') {
+        $file = __DIR__ . '/../data/accounts.json';
+    }
+
+    return $file;
+}
+
+function owner_normalize_email(string $email): string
+{
+    return strtolower(trim($email));
+}
+
+function owner_account_key(?string $email): string
+{
+    return owner_normalize_email($email ?? '');
+}
+
+function owner_load_managed_accounts(): array
+{
+    $dataFile = owner_accounts_data_file();
+
+    if ($dataFile === '' || !is_file($dataFile)) {
+        return [];
+    }
+
+    $contents = file_get_contents($dataFile);
+    $decoded = json_decode((string) $contents, true);
+
+    if (!is_array($decoded)) {
+        return [];
+    }
+
+    $accounts = $decoded;
+    if (isset($decoded['accounts']) && is_array($decoded['accounts'])) {
+        $accounts = $decoded['accounts'];
+    }
+
+    $clean = [];
+    foreach ($accounts as $account) {
+        if (is_array($account)) {
+            $clean[] = $account;
+        }
+    }
+
+    return $clean;
+}
+
+function owner_normalize_account(array $account): ?array
+{
+    $email = owner_account_key($account['email'] ?? '');
+    if ($email === '') {
+        return null;
+    }
+
+    $account['email'] = $email;
+    if (isset($account['previous_email'])) {
+        $previous = owner_account_key((string) $account['previous_email']);
+        if ($previous === '' || $previous === $email) {
+            unset($account['previous_email']);
+        } else {
+            $account['previous_email'] = $previous;
+        }
+    }
+    if (!array_key_exists('enabled', $account)) {
+        $account['enabled'] = true;
+    }
+    if (!array_key_exists('role', $account)) {
+        $account['role'] = 'admin';
+    }
+    if ($account['role'] === 'author') {
+        $account['role'] = 'developer';
+    }
+
+    return $account;
+}
+
+function owner_save_managed_accounts(array $accounts): bool
+{
+    $dataFile = owner_accounts_data_file();
+    if ($dataFile === '') {
+        return false;
+    }
+
+    $dataDir = dirname($dataFile);
+    if (!is_dir($dataDir)) {
+        mkdir($dataDir, 0755, true);
+    }
+
+    $payload = json_encode(array_values($accounts), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+    return file_put_contents($dataFile, (string) $payload, LOCK_EX) !== false;
+}
+
+function owner_load_accounts(): array
+{
+    $config = owner_get_config();
+    $baseAccounts = $config['accounts'] ?? [];
+    $managedAccounts = owner_load_managed_accounts();
+
+    $merged = [];
+    $index = [];
+
+    foreach ($baseAccounts as $account) {
+        if (!is_array($account)) {
+            continue;
+        }
+        $normalized = owner_normalize_account($account);
+        if (!$normalized) {
+            continue;
+        }
+        $email = $normalized['email'];
+        $index[$email] = $normalized;
+    }
+
+    foreach ($managedAccounts as $account) {
+        if (!is_array($account)) {
+            continue;
+        }
+        $normalized = owner_normalize_account($account);
+        if (!$normalized) {
+            continue;
+        }
+        $email = $normalized['email'];
+        $previousEmail = owner_account_key($normalized['previous_email'] ?? '');
+        if ($previousEmail !== '' && isset($index[$previousEmail])) {
+            unset($index[$previousEmail]);
+        }
+        if (isset($index[$email])) {
+            if (!empty($normalized['override'])) {
+                $index[$email] = array_merge($index[$email], $normalized);
+            }
+            continue;
+        }
+        $index[$email] = $normalized;
+    }
+
+    foreach ($index as $account) {
+        $merged[] = $account;
+    }
+
+    return $merged;
+}
+
+function owner_is_base_account(string $email): bool
+{
+    $config = owner_get_config();
+    $email = owner_account_key($email);
+
+    foreach ($config['accounts'] ?? [] as $account) {
+        if (owner_account_key($account['email'] ?? '') === $email) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function owner_password_strength_errors(string $password): array
+{
+    $errors = [];
+    if (strlen($password) < 12) {
+        $errors[] = 'Password must be at least 12 characters.';
+    }
+
+    $classes = 0;
+    if (preg_match('/[A-Z]/', $password)) {
+        $classes++;
+    }
+    if (preg_match('/[a-z]/', $password)) {
+        $classes++;
+    }
+    if (preg_match('/[0-9]/', $password)) {
+        $classes++;
+    }
+    if (preg_match('/[^A-Za-z0-9]/', $password)) {
+        $classes++;
+    }
+
+    if ($classes < 3) {
+        $errors[] = 'Password must include at least three of: uppercase, lowercase, number, symbol.';
+    }
+
+    return $errors;
+}
+
 function owner_abort_setup(string $message): void
 {
     if (!headers_sent()) {
@@ -134,8 +324,7 @@ function owner_get_flash(): ?array
 
 function owner_find_account(string $email): ?array
 {
-    $config = owner_get_config();
-    $accounts = $config['accounts'] ?? [];
+    $accounts = owner_load_accounts();
 
     foreach ($accounts as $account) {
         if (empty($account['enabled'])) {
@@ -145,7 +334,7 @@ function owner_find_account(string $email): ?array
             continue;
         }
 
-        if (strcasecmp($account['email'], $email) === 0) {
+        if (owner_account_key($account['email']) === owner_account_key($email)) {
             return $account;
         }
     }

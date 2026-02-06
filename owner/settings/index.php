@@ -7,6 +7,12 @@ require_once __DIR__ . '/../lib/settings.php';
 owner_send_no_cache_headers();
 owner_require_login();
 
+$user = $_SESSION['auth'] ?? [];
+$isOwner = ($user['role'] ?? '') === 'owner';
+$isDeveloper = ($user['role'] ?? '') === 'developer';
+$canManageAdmins = $isOwner || $isDeveloper;
+$canManageAll = $isDeveloper;
+
 $settings = owner_load_settings();
 $errors = [];
 $notices = [];
@@ -38,57 +44,632 @@ $fieldLabels = [
     'message' => 'Message',
 ];
 
+$addAdminValues = [
+    'name' => '',
+    'email' => '',
+];
+$action = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $csrfToken = $_POST['csrf_token'] ?? '';
     if (!owner_verify_csrf(is_string($csrfToken) ? $csrfToken : null)) {
         $errors[] = 'Security check failed. Please try again.';
     } else {
-        $input = $_POST['settings'] ?? [];
-        if (!is_array($input)) {
-            $input = [];
+        $action = $_POST['action'] ?? 'save_settings';
+        if (!is_string($action) || $action === '') {
+            $action = 'save_settings';
         }
 
-        $settings = owner_build_settings_from_post($input, $settings);
+        $activeTab = $_POST['active_tab'] ?? '';
+        if (is_string($activeTab) && in_array($activeTab, $allowedTabs, true)) {
+            $_SESSION['owner_active_tab'] = $activeTab;
+            $requestedTab = $activeTab;
+        }
 
-        if (owner_save_settings($settings)) {
-            $postedAccordion = $_POST['accordion_state'] ?? [];
-            if (is_array($postedAccordion)) {
-                $nextAccordion = [];
-                foreach (array_keys($formLabels) as $formKey) {
-                    $nextAccordion[$formKey] = !empty($postedAccordion[$formKey]);
+        if ($action === 'save_settings') {
+            $input = $_POST['settings'] ?? [];
+            if (!is_array($input)) {
+                $input = [];
+            }
+
+            $settings = owner_build_settings_from_post($input, $settings);
+
+            if (owner_save_settings($settings)) {
+                $postedAccordion = $_POST['accordion_state'] ?? [];
+                if (is_array($postedAccordion)) {
+                    $nextAccordion = [];
+                    foreach (array_keys($formLabels) as $formKey) {
+                        $nextAccordion[$formKey] = !empty($postedAccordion[$formKey]);
+                    }
+                    $_SESSION['owner_accordion_state'] = $nextAccordion;
+                    $accordionState = $nextAccordion;
                 }
-                $_SESSION['owner_accordion_state'] = $nextAccordion;
-                $accordionState = $nextAccordion;
-            }
-            $activeTab = $_POST['active_tab'] ?? '';
-            if (is_string($activeTab) && in_array($activeTab, $allowedTabs, true)) {
-                $_SESSION['owner_active_tab'] = $activeTab;
+                $redirectTab = is_string($activeTab) && in_array($activeTab, $allowedTabs, true) ? $activeTab : 'general';
                 owner_set_flash('success', 'Settings saved.');
-                owner_redirect('/owner/settings/?tab=' . rawurlencode($activeTab));
+                owner_redirect('/owner/settings/?tab=' . rawurlencode($redirectTab));
+            } else {
+                $errors[] = 'Unable to save settings. Check file permissions.';
             }
-            owner_set_flash('success', 'Settings saved.');
-            owner_redirect('/owner/settings/');
-        } else {
-            $errors[] = 'Unable to save settings. Check file permissions.';
+        }
+
+        if ($action === 'add_admin') {
+            if (!$canManageAdmins) {
+                $errors[] = 'Only owners or developers can add admin accounts.';
+            } else {
+                $userInput = $_POST['user_add'] ?? [];
+                if (!is_array($userInput)) {
+                    $userInput = [];
+                }
+
+                $name = owner_sanitize_text($userInput['name'] ?? '');
+                $email = owner_normalize_email((string) ($userInput['email'] ?? ''));
+                $password = (string) ($userInput['password'] ?? '');
+                $passwordConfirm = (string) ($userInput['password_confirm'] ?? '');
+
+                $addAdminValues['name'] = $name;
+                $addAdminValues['email'] = $email;
+
+                if ($name === '' || $email === '') {
+                    $errors[] = 'Enter a name and email for the admin account.';
+                } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $errors[] = 'Enter a valid email address.';
+                }
+
+                if ($password === '' || $passwordConfirm === '') {
+                    $errors[] = 'Enter and confirm a password for the new admin.';
+                } elseif ($password !== $passwordConfirm) {
+                    $errors[] = 'The admin passwords do not match.';
+                } else {
+                    $errors = array_merge($errors, owner_password_strength_errors($password));
+                }
+
+                if (owner_find_account($email)) {
+                    $errors[] = 'An account already exists for that email.';
+                }
+
+                if (!$errors) {
+                    $managedAccounts = owner_load_managed_accounts();
+                    $managedAccounts[] = [
+                        'email' => $email,
+                        'name' => $name,
+                        'role' => 'admin',
+                        'password_hash' => password_hash($password, PASSWORD_DEFAULT),
+                        'enabled' => true,
+                        'created_at' => gmdate('c'),
+                    ];
+
+                    if (owner_save_managed_accounts($managedAccounts)) {
+                        owner_set_flash('success', 'Admin account added.');
+                        owner_redirect('/owner/settings/?tab=users');
+                    } else {
+                        $errors[] = 'Unable to save the admin account.';
+                    }
+                }
+            }
+        }
+
+        if ($action === 'update_admin') {
+            if (!$canManageAdmins) {
+                $errors[] = 'Only owners or developers can edit admin accounts.';
+            } else {
+                $userUpdate = $_POST['user_update'] ?? [];
+                if (!is_array($userUpdate)) {
+                    $userUpdate = [];
+                }
+
+                $originalEmail = owner_normalize_email((string) ($userUpdate['original_email'] ?? ''));
+                $name = owner_sanitize_text($userUpdate['name'] ?? '');
+                $email = owner_normalize_email((string) ($userUpdate['email'] ?? ''));
+
+                if ($originalEmail === '' || $email === '' || $name === '') {
+                    $errors[] = 'Enter a name and email for the admin account.';
+                } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $errors[] = 'Enter a valid email address.';
+                }
+
+                if ($originalEmail !== '' && owner_is_base_account($originalEmail) && !$isDeveloper) {
+                    $errors[] = 'Base admin accounts must be edited by a developer.';
+                }
+
+                if ($email !== '' && $email !== $originalEmail && owner_find_account($email)) {
+                    $errors[] = 'Another account already uses that email address.';
+                }
+
+                if (!$errors) {
+                    $existingAccount = owner_find_account($originalEmail);
+                    if (!$existingAccount) {
+                        $errors[] = 'Admin account not found.';
+                    } elseif (($existingAccount['role'] ?? 'admin') !== 'admin') {
+                        $errors[] = 'Only admin accounts can be edited here.';
+                    }
+                }
+
+                if (!$errors) {
+                    $managedAccounts = owner_load_managed_accounts();
+                    $isBaseAccount = owner_is_base_account($originalEmail);
+                    $updated = false;
+                    foreach ($managedAccounts as &$account) {
+                        if (owner_account_key($account['email'] ?? '') === $originalEmail) {
+                            $account['name'] = $name;
+                            $account['email'] = $email;
+                            $account['enabled'] = true;
+                            if ($isBaseAccount) {
+                                $account['override'] = true;
+                            }
+                            if ($email !== $originalEmail) {
+                                $account['previous_email'] = $originalEmail;
+                            }
+                            $account['updated_at'] = gmdate('c');
+                            $updated = true;
+                            break;
+                        }
+                    }
+                    unset($account);
+
+                    if (!$errors && !$updated) {
+                        $passwordHash = (string) ($existingAccount['password_hash'] ?? '');
+                        if ($passwordHash === '') {
+                            $errors[] = 'Unable to update the admin account.';
+                        } else {
+                            $newEntry = [
+                                'email' => $email,
+                                'name' => $name,
+                                'role' => 'admin',
+                                'password_hash' => $passwordHash,
+                                'enabled' => true,
+                                'override' => $isBaseAccount,
+                                'updated_at' => gmdate('c'),
+                            ];
+                            if ($email !== $originalEmail) {
+                                $newEntry['previous_email'] = $originalEmail;
+                            }
+                            $managedAccounts[] = $newEntry;
+                            $updated = true;
+                        }
+                    }
+
+                    if (!$errors) {
+                        if (owner_save_managed_accounts($managedAccounts)) {
+                            owner_set_flash('success', 'Admin details updated.');
+                            owner_redirect('/owner/settings/?tab=users');
+                        } else {
+                            $errors[] = 'Unable to update the admin account.';
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($action === 'remove_admin') {
+            if (!$canManageAdmins) {
+                $errors[] = 'Only owners or developers can remove admin accounts.';
+            } else {
+                $userRemove = $_POST['user_remove'] ?? [];
+                if (!is_array($userRemove)) {
+                    $userRemove = [];
+                }
+                $email = owner_normalize_email((string) ($userRemove['email'] ?? ''));
+                if ($email === '') {
+                    $errors[] = 'Missing admin account details.';
+                } elseif (owner_is_base_account($email)) {
+                    $errors[] = 'Base accounts cannot be removed here.';
+                } else {
+                    $managedAccounts = owner_load_managed_accounts();
+                    $nextAccounts = [];
+                    $removed = false;
+                    foreach ($managedAccounts as $account) {
+                        if (owner_account_key($account['email'] ?? '') === $email) {
+                            if (($account['role'] ?? 'admin') !== 'admin') {
+                                $errors[] = 'Only admin accounts can be removed here.';
+                                $nextAccounts[] = $account;
+                            } else {
+                                $removed = true;
+                            }
+                            continue;
+                        }
+                        $nextAccounts[] = $account;
+                    }
+
+                    if (!$errors && !$removed) {
+                        $errors[] = 'Admin account not found.';
+                    }
+
+                    if (!$errors) {
+                        if (owner_save_managed_accounts($nextAccounts)) {
+                            owner_set_flash('success', 'Admin access removed.');
+                            owner_redirect('/owner/settings/?tab=users');
+                        } else {
+                            $errors[] = 'Unable to update admin accounts.';
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($action === 'reset_admin_password') {
+            if (!$canManageAdmins) {
+                $errors[] = 'Only owners or developers can reset admin passwords.';
+            } else {
+                $userReset = $_POST['user_reset'] ?? [];
+                if (!is_array($userReset)) {
+                    $userReset = [];
+                }
+                $email = owner_normalize_email((string) ($userReset['email'] ?? ''));
+                $password = (string) ($userReset['password'] ?? '');
+                $passwordConfirm = (string) ($userReset['password_confirm'] ?? '');
+
+                if ($email === '') {
+                    $errors[] = 'Missing admin account details.';
+                }
+                if ($password === '' || $passwordConfirm === '') {
+                    $errors[] = 'Enter and confirm the new admin password.';
+                } elseif ($password !== $passwordConfirm) {
+                    $errors[] = 'The admin passwords do not match.';
+                } else {
+                    $errors = array_merge($errors, owner_password_strength_errors($password));
+                }
+
+                if (!$errors) {
+                    $existingAccount = owner_find_account($email);
+                    if (!$existingAccount) {
+                        $errors[] = 'Admin account not found.';
+                    } elseif (($existingAccount['role'] ?? 'admin') !== 'admin') {
+                        $errors[] = 'Only admin accounts can be updated here.';
+                    } elseif (owner_is_base_account($email) && !$isDeveloper) {
+                        $errors[] = 'Base admin accounts must be edited by a developer.';
+                    }
+                }
+
+                if (!$errors) {
+                    $managedAccounts = owner_load_managed_accounts();
+                    $updated = false;
+                    foreach ($managedAccounts as &$account) {
+                        if (owner_account_key($account['email'] ?? '') === $email) {
+                            $account['password_hash'] = password_hash($password, PASSWORD_DEFAULT);
+                            $account['enabled'] = true;
+                            $account['override'] = owner_is_base_account($email) || !empty($account['override']);
+                            $account['updated_at'] = gmdate('c');
+                            $updated = true;
+                            break;
+                        }
+                    }
+                    unset($account);
+
+                    if (!$errors && !$updated) {
+                        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+                        $managedAccounts[] = [
+                            'email' => $email,
+                            'name' => $existingAccount['name'] ?? 'Admin',
+                            'role' => 'admin',
+                            'password_hash' => $passwordHash,
+                            'enabled' => true,
+                            'override' => owner_is_base_account($email),
+                            'updated_at' => gmdate('c'),
+                        ];
+                        $updated = true;
+                    }
+
+                    if (!$errors) {
+                        if (owner_save_managed_accounts($managedAccounts)) {
+                            owner_set_flash('success', 'Admin password updated.');
+                            owner_redirect('/owner/settings/?tab=users');
+                        } else {
+                            $errors[] = 'Unable to update the admin password.';
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($action === 'change_password') {
+            $userPassword = $_POST['user_password'] ?? [];
+            if (!is_array($userPassword)) {
+                $userPassword = [];
+            }
+            $currentPassword = (string) ($userPassword['current'] ?? '');
+            $newPassword = (string) ($userPassword['new'] ?? '');
+            $confirmPassword = (string) ($userPassword['confirm'] ?? '');
+
+            if ($currentPassword === '' || $newPassword === '' || $confirmPassword === '') {
+                $errors[] = 'Fill out all password fields.';
+            } elseif (($user['email'] ?? '') === '' || !owner_verify_credentials($user['email'], $currentPassword)) {
+                $errors[] = 'Current password is incorrect.';
+            } elseif ($newPassword !== $confirmPassword) {
+                $errors[] = 'New passwords do not match.';
+            } else {
+                $errors = array_merge($errors, owner_password_strength_errors($newPassword));
+            }
+
+            if (!$errors) {
+                $managedAccounts = owner_load_managed_accounts();
+                $email = owner_account_key($user['email'] ?? '');
+                $updated = false;
+                foreach ($managedAccounts as &$account) {
+                    if (owner_account_key($account['email'] ?? '') === $email) {
+                        $account['password_hash'] = password_hash($newPassword, PASSWORD_DEFAULT);
+                        $account['enabled'] = true;
+                        if (owner_is_base_account($email)) {
+                            $account['override'] = true;
+                        }
+                        $updated = true;
+                        break;
+                    }
+                }
+                unset($account);
+
+                if (!$updated) {
+                    $currentAccount = owner_find_account($email) ?? [];
+                    $managedAccounts[] = [
+                        'email' => $email,
+                        'name' => $currentAccount['name'] ?? ($user['name'] ?? 'Admin'),
+                        'role' => $currentAccount['role'] ?? ($user['role'] ?? 'admin'),
+                        'password_hash' => password_hash($newPassword, PASSWORD_DEFAULT),
+                        'enabled' => true,
+                        'override' => owner_is_base_account($email),
+                        'updated_at' => gmdate('c'),
+                    ];
+                }
+
+                if (owner_save_managed_accounts($managedAccounts)) {
+                    owner_set_flash('success', 'Password updated.');
+                    owner_redirect('/owner/settings/?tab=users');
+                } else {
+                    $errors[] = 'Unable to update your password.';
+                }
+            }
+        }
+
+        if ($action === 'change_email') {
+            $userEmail = $_POST['user_email'] ?? [];
+            if (!is_array($userEmail)) {
+                $userEmail = [];
+            }
+            $currentPassword = (string) ($userEmail['current'] ?? '');
+            $newEmail = owner_normalize_email((string) ($userEmail['new'] ?? ''));
+            $confirmEmail = owner_normalize_email((string) ($userEmail['confirm'] ?? ''));
+            $currentEmail = owner_account_key($user['email'] ?? '');
+
+            if ($currentPassword === '' || $newEmail === '' || $confirmEmail === '') {
+                $errors[] = 'Fill out all login email fields.';
+            } elseif (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = 'Enter a valid email address.';
+            } elseif ($newEmail !== $confirmEmail) {
+                $errors[] = 'Login emails do not match.';
+            } elseif ($currentEmail === '' || !owner_verify_credentials($currentEmail, $currentPassword)) {
+                $errors[] = 'Current password is incorrect.';
+            } elseif ($newEmail === $currentEmail) {
+                $errors[] = 'That email is already your login.';
+            } elseif (owner_find_account($newEmail)) {
+                $errors[] = 'Another account already uses that email address.';
+            }
+
+            if (!$errors) {
+                $currentAccount = owner_find_account($currentEmail);
+                if (!$currentAccount) {
+                    $errors[] = 'Account not found.';
+                }
+            }
+
+            if (!$errors) {
+                $managedAccounts = owner_load_managed_accounts();
+                $updated = false;
+                foreach ($managedAccounts as &$account) {
+                    if (owner_account_key($account['email'] ?? '') === $currentEmail) {
+                        $account['email'] = $newEmail;
+                        $account['enabled'] = true;
+                        $account['previous_email'] = $currentEmail;
+                        if (owner_is_base_account($currentEmail)) {
+                            $account['override'] = true;
+                        }
+                        $account['updated_at'] = gmdate('c');
+                        $updated = true;
+                        break;
+                    }
+                }
+                unset($account);
+
+                if (!$updated) {
+                    $passwordHash = (string) ($currentAccount['password_hash'] ?? '');
+                    if ($passwordHash === '') {
+                        $errors[] = 'Unable to update your login email.';
+                    } else {
+                        $managedAccounts[] = [
+                            'email' => $newEmail,
+                            'name' => $currentAccount['name'] ?? ($user['name'] ?? 'Admin'),
+                            'role' => $currentAccount['role'] ?? ($user['role'] ?? 'admin'),
+                            'password_hash' => $passwordHash,
+                            'enabled' => true,
+                            'override' => owner_is_base_account($currentEmail),
+                            'previous_email' => $currentEmail,
+                            'updated_at' => gmdate('c'),
+                        ];
+                    }
+                }
+
+                if (!$errors) {
+                    if (owner_save_managed_accounts($managedAccounts)) {
+                        $_SESSION['auth']['email'] = $newEmail;
+                        owner_set_flash('success', 'Login email updated.');
+                        owner_redirect('/owner/settings/?tab=users');
+                    } else {
+                        $errors[] = 'Unable to update your login email.';
+                    }
+                }
+            }
+        }
+
+        if ($action === 'update_account') {
+            if (!$canManageAll) {
+                $errors[] = 'Only developers can edit accounts.';
+            } else {
+                $userUpdate = $_POST['user_update_all'] ?? [];
+                if (!is_array($userUpdate)) {
+                    $userUpdate = [];
+                }
+
+                $originalEmail = owner_normalize_email((string) ($userUpdate['original_email'] ?? ''));
+                $name = owner_sanitize_text($userUpdate['name'] ?? '');
+                $email = owner_normalize_email((string) ($userUpdate['email'] ?? ''));
+
+                if ($originalEmail === '' || $email === '' || $name === '') {
+                    $errors[] = 'Enter a name and email for the account.';
+                } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $errors[] = 'Enter a valid email address.';
+                } elseif ($email !== $originalEmail && owner_find_account($email)) {
+                    $errors[] = 'Another account already uses that email address.';
+                }
+
+                if (!$errors) {
+                    $existingAccount = owner_find_account($originalEmail);
+                    if (!$existingAccount) {
+                        $errors[] = 'Account not found.';
+                    }
+                }
+
+                if (!$errors) {
+                    $managedAccounts = owner_load_managed_accounts();
+                    $isBaseAccount = owner_is_base_account($originalEmail);
+                    $updated = false;
+                    foreach ($managedAccounts as &$account) {
+                        if (owner_account_key($account['email'] ?? '') === $originalEmail) {
+                            $account['name'] = $name;
+                            $account['email'] = $email;
+                            $account['enabled'] = true;
+                            if ($isBaseAccount) {
+                                $account['override'] = true;
+                            }
+                            if ($email !== $originalEmail) {
+                                $account['previous_email'] = $originalEmail;
+                            }
+                            $account['updated_at'] = gmdate('c');
+                            $updated = true;
+                            break;
+                        }
+                    }
+                    unset($account);
+
+                    if (!$updated) {
+                        $passwordHash = (string) ($existingAccount['password_hash'] ?? '');
+                        if ($passwordHash === '') {
+                            $errors[] = 'Unable to update the account.';
+                        } else {
+                            $newEntry = [
+                                'email' => $email,
+                                'name' => $name,
+                                'role' => $existingAccount['role'] ?? 'admin',
+                                'password_hash' => $passwordHash,
+                                'enabled' => true,
+                                'override' => $isBaseAccount,
+                                'updated_at' => gmdate('c'),
+                            ];
+                            if ($email !== $originalEmail) {
+                                $newEntry['previous_email'] = $originalEmail;
+                            }
+                            $managedAccounts[] = $newEntry;
+                        }
+                    }
+
+                    if (!$errors) {
+                        if (owner_save_managed_accounts($managedAccounts)) {
+                            if ($originalEmail === owner_account_key($user['email'] ?? '')) {
+                                $_SESSION['auth']['email'] = $email;
+                            }
+                            owner_set_flash('success', 'Account updated.');
+                            owner_redirect('/owner/settings/?tab=users');
+                        } else {
+                            $errors[] = 'Unable to update the account.';
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($action === 'reset_account_password') {
+            if (!$canManageAll) {
+                $errors[] = 'Only developers can reset passwords.';
+            } else {
+                $userReset = $_POST['user_reset'] ?? [];
+                if (!is_array($userReset)) {
+                    $userReset = [];
+                }
+                $email = owner_normalize_email((string) ($userReset['email'] ?? ''));
+                $password = (string) ($userReset['password'] ?? '');
+                $passwordConfirm = (string) ($userReset['password_confirm'] ?? '');
+
+                if ($email === '') {
+                    $errors[] = 'Missing account details.';
+                }
+                if ($password === '' || $passwordConfirm === '') {
+                    $errors[] = 'Enter and confirm the new password.';
+                } elseif ($password !== $passwordConfirm) {
+                    $errors[] = 'The passwords do not match.';
+                } else {
+                    $errors = array_merge($errors, owner_password_strength_errors($password));
+                }
+
+                if (!$errors) {
+                    $existingAccount = owner_find_account($email);
+                    if (!$existingAccount) {
+                        $errors[] = 'Account not found.';
+                    }
+                }
+
+                if (!$errors) {
+                    $managedAccounts = owner_load_managed_accounts();
+                    $updated = false;
+                    foreach ($managedAccounts as &$account) {
+                        if (owner_account_key($account['email'] ?? '') === $email) {
+                            $account['password_hash'] = password_hash($password, PASSWORD_DEFAULT);
+                            $account['enabled'] = true;
+                            if (owner_is_base_account($email)) {
+                                $account['override'] = true;
+                            }
+                            $account['updated_at'] = gmdate('c');
+                            $updated = true;
+                            break;
+                        }
+                    }
+                    unset($account);
+
+                    if (!$updated) {
+                        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+                        $managedAccounts[] = [
+                            'email' => $email,
+                            'name' => $existingAccount['name'] ?? 'User',
+                            'role' => $existingAccount['role'] ?? 'admin',
+                            'password_hash' => $passwordHash,
+                            'enabled' => true,
+                            'override' => owner_is_base_account($email),
+                            'updated_at' => gmdate('c'),
+                        ];
+                    }
+
+                    if (owner_save_managed_accounts($managedAccounts)) {
+                        owner_set_flash('success', 'Password updated.');
+                        owner_redirect('/owner/settings/?tab=users');
+                    } else {
+                        $errors[] = 'Unable to update the password.';
+                    }
+                }
+            }
         }
     }
 }
 
-$user = $_SESSION['auth'] ?? [];
 $csrfToken = owner_csrf_token();
-$isAuthor = ($user['role'] ?? '') === 'author';
 $config = owner_get_config();
-$accounts = $config['accounts'] ?? [];
+$accounts = owner_load_accounts();
+$managedAccounts = owner_load_managed_accounts();
 $roleOrder = ['owner', 'admin'];
 
-if ($isAuthor) {
-    $roleOrder[] = 'author';
+if ($isDeveloper) {
+    $roleOrder[] = 'developer';
 }
 
 $roleLabels = [
     'owner' => 'Owner',
     'admin' => 'Admin',
-    'author' => 'Author',
+    'developer' => 'Developer',
 ];
 
 $accountsByRole = [];
@@ -106,11 +687,34 @@ foreach ($accounts as $account) {
         continue;
     }
 
-    if (!$isAuthor && !empty($account['hidden'])) {
+    if ($role === 'developer' && !$isDeveloper) {
+        continue;
+    }
+
+    if (!$isDeveloper && !empty($account['hidden'])) {
         continue;
     }
 
     $accountsByRole[$role][] = $account;
+}
+
+$managedAdmins = [];
+foreach ($managedAccounts as $account) {
+    if (empty($account['enabled'])) {
+        continue;
+    }
+    if (($account['role'] ?? 'admin') !== 'admin') {
+        continue;
+    }
+    $managedAdmins[] = $account;
+}
+
+$managedAdminIndex = [];
+foreach ($managedAdmins as $admin) {
+    $email = owner_account_key($admin['email'] ?? '');
+    if ($email !== '') {
+        $managedAdminIndex[$email] = $admin;
+    }
 }
 
 function owner_checked(bool $value): string
@@ -167,18 +771,19 @@ function owner_checked(bool $value): string
                         </div>
                     <?php endforeach; ?>
 
-                    <form class="owner-form" method="post" action="">
-                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
-                        <input type="hidden" name="active_tab" value="<?php echo htmlspecialchars($requestedTab, ENT_QUOTES); ?>" data-active-tab>
+                    <div class="owner-tabs" role="tablist" aria-label="Settings sections" data-default-tab="<?php echo htmlspecialchars($requestedTab, ENT_QUOTES); ?>">
+                        <button class="owner-tab is-active" type="button" data-tab="general" role="tab" aria-selected="true" aria-controls="tab-general" id="tab-general-button">General</button>
+                        <button class="owner-tab" type="button" data-tab="forms" role="tab" aria-selected="false" aria-controls="tab-forms" id="tab-forms-button">Forms</button>
+                        <button class="owner-tab" type="button" data-tab="users" role="tab" aria-selected="false" aria-controls="tab-users" id="tab-users-button">Users</button>
+                    </div>
 
-                        <div class="owner-tabs" role="tablist" aria-label="Settings sections" data-default-tab="<?php echo htmlspecialchars($requestedTab, ENT_QUOTES); ?>">
-                            <button class="owner-tab is-active" type="button" data-tab="general" role="tab" aria-selected="true" aria-controls="tab-general" id="tab-general-button">General</button>
-                            <button class="owner-tab" type="button" data-tab="forms" role="tab" aria-selected="false" aria-controls="tab-forms" id="tab-forms-button">Forms</button>
-                            <button class="owner-tab" type="button" data-tab="users" role="tab" aria-selected="false" aria-controls="tab-users" id="tab-users-button">Users</button>
-                        </div>
+                    <div class="owner-tab-panels">
+                        <form class="owner-form" method="post" action="">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+                            <input type="hidden" name="active_tab" value="<?php echo htmlspecialchars($requestedTab, ENT_QUOTES); ?>" data-active-tab>
 
-                        <div class="owner-tab-panels">
                             <section class="owner-tab-panel" data-tab-panel="general" role="tabpanel" aria-labelledby="tab-general-button" id="tab-general">
+                                <br />
                                 <div class="owner-section">
                                     <h2 class="owner-section-title">Site Contact Info</h2>
                                     <div class="owner-grid">
@@ -204,6 +809,7 @@ function owner_checked(bool $value): string
                                         $autoReply = $formSettings['auto_reply'] ?? [];
                                         $isOpen = !empty($accordionState[$formKey]);
                                     ?>
+                                    <br />
                                     <div class="owner-accordion" data-accordion="<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>">
                                         <div class="owner-accordion-header">
                                             <button class="owner-accordion-toggle" type="button" aria-expanded="<?php echo $isOpen ? 'true' : 'false'; ?>" aria-controls="form-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>" id="form-toggle-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>">
@@ -270,38 +876,331 @@ function owner_checked(bool $value): string
                                 <?php endforeach; ?>
                             </section>
 
-                            <section class="owner-tab-panel" data-tab-panel="users" role="tabpanel" aria-labelledby="tab-users-button" id="tab-users" hidden>
-                                <div class="owner-section">
-                                    <h2 class="owner-section-title">Users</h2>
-                                    <p class="owner-subtitle owner-subtitle-tight">Review who has access to the owner portal.</p>
-                                    <div class="owner-users-grid">
-                                        <?php foreach ($roleOrder as $role): ?>
-                                            <div class="owner-user-card">
-                                                <h3 class="owner-user-role"><?php echo htmlspecialchars($roleLabels[$role] ?? ucfirst($role), ENT_QUOTES); ?></h3>
-                                                <?php if (empty($accountsByRole[$role])): ?>
-                                                    <p class="owner-help">No active accounts yet.</p>
-                                                <?php else: ?>
-                                                    <?php foreach ($accountsByRole[$role] as $account): ?>
-                                                        <div class="owner-user-entry">
-                                                            <span class="owner-user-entry-name"><?php echo htmlspecialchars($account['name'] ?? 'User', ENT_QUOTES); ?></span>
-                                                            <span class="owner-user-entry-email"><?php echo htmlspecialchars($account['email'] ?? '', ENT_QUOTES); ?></span>
+                            <div class="owner-actions">
+                                <button class="btn btn-primary owner-button" type="submit" name="action" value="save_settings">Save Settings</button>
+                            </div>
+                        </form>
+
+                        <section class="owner-tab-panel" data-tab-panel="users" role="tabpanel" aria-labelledby="tab-users-button" id="tab-users" hidden>
+                            <?php $usersOverviewOpen = true; ?>
+                            <div class="owner-accordion" data-accordion="users_overview">
+                                <div class="owner-accordion-header">
+                                    <button class="owner-accordion-toggle" type="button" aria-expanded="<?php echo $usersOverviewOpen ? 'true' : 'false'; ?>" aria-controls="users-overview-panel" id="users-overview-toggle">
+                                        <span class="owner-accordion-title">Users Overview</span>
+                                        <span class="owner-accordion-indicator"><?php echo $usersOverviewOpen ? 'Collapse' : 'Expand'; ?></span>
+                                    </button>
+                                </div>
+                                <div class="owner-accordion-panel" id="users-overview-panel" role="region" aria-labelledby="users-overview-toggle"<?php echo $usersOverviewOpen ? '' : ' hidden'; ?>>
+                                    <div class="owner-section owner-section-compact">
+                                        <p class="owner-subtitle owner-subtitle-tight">Manage who can access the owner portal.</p>
+                                        <div class="owner-users-grid">
+                                            <?php foreach ($roleOrder as $role): ?>
+                                                <div class="owner-user-card">
+                                                    <h3 class="owner-user-role"><?php echo htmlspecialchars($roleLabels[$role] ?? ucfirst($role), ENT_QUOTES); ?></h3>
+                                                    <?php if (empty($accountsByRole[$role])): ?>
+                                                        <p class="owner-help">No active accounts yet.</p>
+                                                    <?php else: ?>
+                                                        <?php foreach ($accountsByRole[$role] as $account): ?>
+                                                            <div class="owner-user-entry">
+                                                                <span class="owner-user-entry-name"><?php echo htmlspecialchars($account['name'] ?? 'User', ENT_QUOTES); ?></span>
+                                                                <span class="owner-user-entry-email"><?php echo htmlspecialchars($account['email'] ?? '', ENT_QUOTES); ?></span>
+                                                            </div>
+                                                        <?php endforeach; ?>
+                                                    <?php endif; ?>
+                                                    <?php if ($role === 'owner' && !$isDeveloper): ?>
+                                                        <p class="owner-help">Owner accounts are read-only here.</p>
+                                                    <?php endif; ?>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                        <?php if (!$canManageAdmins): ?>
+                                            <p class="owner-help">Only owners or developers can manage users.</p>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <?php $adminAccessOpen = false; ?>
+                            <div class="owner-accordion" data-accordion="users_admin_access">
+                                <div class="owner-accordion-header">
+                                    <button class="owner-accordion-toggle" type="button" aria-expanded="<?php echo $adminAccessOpen ? 'true' : 'false'; ?>" aria-controls="users-admin-panel" id="users-admin-toggle">
+                                        <span class="owner-accordion-title">Admin Access</span>
+                                        <span class="owner-accordion-indicator"><?php echo $adminAccessOpen ? 'Collapse' : 'Expand'; ?></span>
+                                    </button>
+                                </div>
+                                <div class="owner-accordion-panel" id="users-admin-panel" role="region" aria-labelledby="users-admin-toggle"<?php echo $adminAccessOpen ? '' : ' hidden'; ?>>
+                                    <div class="owner-section owner-section-compact">
+                                        <p class="owner-subtitle owner-subtitle-tight">Add, edit, or remove admin logins.</p>
+                                        <?php if (!$canManageAdmins): ?>
+                                            <p class="owner-help">Only owners or developers can manage admin accounts.</p>
+                                        <?php else: ?>
+                                            <div class="owner-grid">
+                                                <div class="owner-panel">
+                                                    <h3 class="owner-panel-title">Add an admin</h3>
+                                                    <form class="owner-form" method="post" action="">
+                                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+                                                        <input type="hidden" name="action" value="add_admin">
+                                                        <input type="hidden" name="active_tab" value="users" data-active-tab>
+                                                        <label class="owner-field">
+                                                            <span class="owner-label">Name</span>
+                                                            <input class="owner-input" type="text" name="user_add[name]" value="<?php echo htmlspecialchars($addAdminValues['name'], ENT_QUOTES); ?>" placeholder="Admin name">
+                                                        </label>
+                                                        <label class="owner-field">
+                                                            <span class="owner-label">Email</span>
+                                                            <input class="owner-input" type="email" name="user_add[email]" value="<?php echo htmlspecialchars($addAdminValues['email'], ENT_QUOTES); ?>" placeholder="admin@email.com">
+                                                        </label>
+                                                        <div class="owner-password-panel" data-password-group>
+                                                            <label class="owner-field">
+                                                                <span class="owner-label">Password</span>
+                                                                <input class="owner-input" type="password" name="user_add[password]" autocomplete="new-password" placeholder="At least 12 characters" data-password-input="primary">
+                                                            </label>
+                                                            <label class="owner-field">
+                                                                <span class="owner-label">Confirm password</span>
+                                                                <input class="owner-input" type="password" name="user_add[password_confirm]" autocomplete="new-password" placeholder="Repeat password" data-password-input="confirm">
+                                                            </label>
+                                                            <div class="owner-password-actions">
+                                                                <button class="owner-link-button" type="button" data-password-generate>Generate strong password</button>
+                                                                <button class="owner-link-button" type="button" data-password-toggle>Show</button>
+                                                                <button class="owner-link-button" type="button" data-password-copy>Copy</button>
+                                                            </div>
+                                                            <span class="owner-help owner-password-status" data-password-status aria-live="polite"></span>
+                                                        </div>
+                                                        <p class="owner-help">Passwords must be at least 12 characters and include three of: uppercase, lowercase, number, symbol.</p>
+                                                        <button class="btn btn-primary owner-button-inline" type="submit">Add Admin</button>
+                                                    </form>
+                                                </div>
+
+                                                <div class="owner-panel">
+                                                    <h3 class="owner-panel-title">Manage admins</h3>
+                                                    <?php $adminAccounts = $accountsByRole['admin'] ?? []; ?>
+                                                    <?php if (empty($adminAccounts)): ?>
+                                                        <p class="owner-help">No admin accounts yet.</p>
+                                                    <?php else: ?>
+                                                        <div class="owner-admin-list">
+                                                            <?php foreach ($adminAccounts as $admin): ?>
+                                                                <?php
+                                                                    $adminEmail = owner_account_key($admin['email'] ?? '');
+                                                                    $isManaged = isset($managedAdminIndex[$adminEmail]);
+                                                                    $canEditAdmin = $isManaged || $isDeveloper;
+                                                                    $isBaseAdmin = $adminEmail !== '' && owner_is_base_account($adminEmail);
+                                                                ?>
+                                                                <div class="owner-admin-card">
+                                                                    <div class="owner-admin-meta">
+                                                                        <span class="owner-user-entry-name"><?php echo htmlspecialchars($admin['name'] ?? 'Admin', ENT_QUOTES); ?></span>
+                                                                        <span class="owner-user-entry-email"><?php echo htmlspecialchars($admin['email'] ?? '', ENT_QUOTES); ?></span>
+                                                                    </div>
+                                                                    <?php if ($canEditAdmin): ?>
+                                                                        <form class="owner-form owner-form-compact" method="post" action="">
+                                                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+                                                                            <input type="hidden" name="action" value="update_admin">
+                                                                            <input type="hidden" name="active_tab" value="users" data-active-tab>
+                                                                            <input type="hidden" name="user_update[original_email]" value="<?php echo htmlspecialchars($admin['email'] ?? '', ENT_QUOTES); ?>">
+                                                                            <label class="owner-field">
+                                                                                <span class="owner-label">Name</span>
+                                                                                <input class="owner-input" type="text" name="user_update[name]" value="<?php echo htmlspecialchars($admin['name'] ?? '', ENT_QUOTES); ?>">
+                                                                            </label>
+                                                                            <label class="owner-field">
+                                                                                <span class="owner-label">Email</span>
+                                                                                <input class="owner-input" type="email" name="user_update[email]" value="<?php echo htmlspecialchars($admin['email'] ?? '', ENT_QUOTES); ?>">
+                                                                            </label>
+                                                                            <button class="btn btn-primary owner-button-inline" type="submit">Save Changes</button>
+                                                                        </form>
+                                                                        <form class="owner-form" method="post" action="">
+                                                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+                                                                            <input type="hidden" name="action" value="reset_admin_password">
+                                                                            <input type="hidden" name="active_tab" value="users" data-active-tab>
+                                                                            <input type="hidden" name="user_reset[email]" value="<?php echo htmlspecialchars($admin['email'] ?? '', ENT_QUOTES); ?>">
+                                                                            <div class="owner-password-panel" data-password-group>
+                                                                                <label class="owner-field">
+                                                                                    <span class="owner-label">New password</span>
+                                                                                    <input class="owner-input" type="password" name="user_reset[password]" autocomplete="new-password" placeholder="At least 12 characters" data-password-input="primary">
+                                                                                </label>
+                                                                                <label class="owner-field">
+                                                                                    <span class="owner-label">Confirm password</span>
+                                                                                    <input class="owner-input" type="password" name="user_reset[password_confirm]" autocomplete="new-password" placeholder="Repeat password" data-password-input="confirm">
+                                                                                </label>
+                                                                                <div class="owner-password-actions">
+                                                                                    <button class="owner-link-button" type="button" data-password-generate>Generate strong password</button>
+                                                                                    <button class="owner-link-button" type="button" data-password-toggle>Show</button>
+                                                                                    <button class="owner-link-button" type="button" data-password-copy>Copy</button>
+                                                                                </div>
+                                                                                <span class="owner-help owner-password-status" data-password-status aria-live="polite"></span>
+                                                                            </div>
+                                                                            <button class="btn btn-primary owner-button-inline" type="submit">Reset Password</button>
+                                                                        </form>
+                                                                        <?php if (!$isBaseAdmin): ?>
+                                                                            <form class="owner-form owner-form-inline" method="post" action="">
+                                                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+                                                                                <input type="hidden" name="action" value="remove_admin">
+                                                                                <input type="hidden" name="active_tab" value="users" data-active-tab>
+                                                                                <input type="hidden" name="user_remove[email]" value="<?php echo htmlspecialchars($admin['email'] ?? '', ENT_QUOTES); ?>">
+                                                                                <button class="owner-link-button owner-link-danger" type="submit" data-confirm="Remove access for this admin?">Remove access</button>
+                                                                            </form>
+                                                                        <?php else: ?>
+                                                                            <p class="owner-help">Base admin accounts cannot be removed here.</p>
+                                                                        <?php endif; ?>
+                                                                    <?php else: ?>
+                                                                        <p class="owner-help">This admin is managed in configuration and cannot be edited here.</p>
+                                                                    <?php endif; ?>
+                                                                </div>
+                                                            <?php endforeach; ?>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <?php if ($isDeveloper): ?>
+                                <?php $specialAccountsOpen = false; ?>
+                                <div class="owner-accordion" data-accordion="users_special_accounts">
+                                    <div class="owner-accordion-header">
+                                        <button class="owner-accordion-toggle" type="button" aria-expanded="<?php echo $specialAccountsOpen ? 'true' : 'false'; ?>" aria-controls="users-special-panel" id="users-special-toggle">
+                                            <span class="owner-accordion-title">Owner &amp; Developer Accounts</span>
+                                            <span class="owner-accordion-indicator"><?php echo $specialAccountsOpen ? 'Collapse' : 'Expand'; ?></span>
+                                        </button>
+                                    </div>
+                                    <div class="owner-accordion-panel" id="users-special-panel" role="region" aria-labelledby="users-special-toggle"<?php echo $specialAccountsOpen ? '' : ' hidden'; ?>>
+                                        <div class="owner-section owner-section-compact">
+                                            <p class="owner-subtitle owner-subtitle-tight">Developers can edit all accounts.</p>
+                                            <?php $specialAccounts = array_merge($accountsByRole['owner'] ?? [], $accountsByRole['developer'] ?? []); ?>
+                                            <?php if (empty($specialAccounts)): ?>
+                                                <p class="owner-help">No owner or developer accounts found.</p>
+                                            <?php else: ?>
+                                                <div class="owner-admin-list">
+                                                    <?php foreach ($specialAccounts as $account): ?>
+                                                        <div class="owner-admin-card">
+                                                            <div class="owner-admin-meta">
+                                                                <span class="owner-user-entry-name"><?php echo htmlspecialchars($account['name'] ?? 'User', ENT_QUOTES); ?></span>
+                                                                <span class="owner-user-entry-email"><?php echo htmlspecialchars($account['email'] ?? '', ENT_QUOTES); ?></span>
+                                                            </div>
+                                                            <p class="owner-help"><?php echo htmlspecialchars($roleLabels[$account['role'] ?? 'admin'] ?? 'User', ENT_QUOTES); ?> account</p>
+                                                            <form class="owner-form owner-form-compact" method="post" action="">
+                                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+                                                                <input type="hidden" name="action" value="update_account">
+                                                                <input type="hidden" name="active_tab" value="users" data-active-tab>
+                                                                <input type="hidden" name="user_update_all[original_email]" value="<?php echo htmlspecialchars($account['email'] ?? '', ENT_QUOTES); ?>">
+                                                                <label class="owner-field">
+                                                                    <span class="owner-label">Name</span>
+                                                                    <input class="owner-input" type="text" name="user_update_all[name]" value="<?php echo htmlspecialchars($account['name'] ?? '', ENT_QUOTES); ?>">
+                                                                </label>
+                                                                <label class="owner-field">
+                                                                    <span class="owner-label">Email</span>
+                                                                    <input class="owner-input" type="email" name="user_update_all[email]" value="<?php echo htmlspecialchars($account['email'] ?? '', ENT_QUOTES); ?>">
+                                                                </label>
+                                                                <button class="btn btn-primary owner-button-inline" type="submit">Save Changes</button>
+                                                            </form>
+                                                            <form class="owner-form" method="post" action="">
+                                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+                                                                <input type="hidden" name="action" value="reset_account_password">
+                                                                <input type="hidden" name="active_tab" value="users" data-active-tab>
+                                                                <input type="hidden" name="user_reset[email]" value="<?php echo htmlspecialchars($account['email'] ?? '', ENT_QUOTES); ?>">
+                                                                <div class="owner-password-panel" data-password-group>
+                                                                    <label class="owner-field">
+                                                                        <span class="owner-label">New password</span>
+                                                                        <input class="owner-input" type="password" name="user_reset[password]" autocomplete="new-password" placeholder="At least 12 characters" data-password-input="primary">
+                                                                    </label>
+                                                                    <label class="owner-field">
+                                                                        <span class="owner-label">Confirm password</span>
+                                                                        <input class="owner-input" type="password" name="user_reset[password_confirm]" autocomplete="new-password" placeholder="Repeat password" data-password-input="confirm">
+                                                                    </label>
+                                                                    <div class="owner-password-actions">
+                                                                        <button class="owner-link-button" type="button" data-password-generate>Generate strong password</button>
+                                                                        <button class="owner-link-button" type="button" data-password-toggle>Show</button>
+                                                                        <button class="owner-link-button" type="button" data-password-copy>Copy</button>
+                                                                    </div>
+                                                                    <span class="owner-help owner-password-status" data-password-status aria-live="polite"></span>
+                                                                </div>
+                                                                <button class="btn btn-primary owner-button-inline" type="submit">Reset Password</button>
+                                                            </form>
                                                         </div>
                                                     <?php endforeach; ?>
-                                                <?php endif; ?>
-                                            </div>
-                                        <?php endforeach; ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
-                                    <?php if (!$isAuthor): ?>
-                                        <p class="owner-help">Need to update users? Contact the development team.</p>
-                                    <?php endif; ?>
                                 </div>
-                            </section>
-                        </div>
+                            <?php endif; ?>
 
-                        <div class="owner-actions">
-                            <button class="btn btn-primary owner-button" type="submit">Save Settings</button>
-                        </div>
-                    </form>
+                            <?php $loginEmailOpen = false; ?>
+                            <div class="owner-accordion" data-accordion="users_login_email">
+                                <div class="owner-accordion-header">
+                                    <button class="owner-accordion-toggle" type="button" aria-expanded="<?php echo $loginEmailOpen ? 'true' : 'false'; ?>" aria-controls="users-email-panel" id="users-email-toggle">
+                                        <span class="owner-accordion-title">Login Email</span>
+                                        <span class="owner-accordion-indicator"><?php echo $loginEmailOpen ? 'Collapse' : 'Expand'; ?></span>
+                                    </button>
+                                </div>
+                                <div class="owner-accordion-panel" id="users-email-panel" role="region" aria-labelledby="users-email-toggle"<?php echo $loginEmailOpen ? '' : ' hidden'; ?>>
+                                    <div class="owner-section owner-section-compact">
+                                        <p class="owner-subtitle owner-subtitle-tight">Update the email used to sign in. This does not change contact form recipients.</p>
+                                        <form class="owner-form" method="post" action="">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+                                            <input type="hidden" name="action" value="change_email">
+                                            <input type="hidden" name="active_tab" value="users" data-active-tab>
+                                            <p class="owner-help">Current login: <?php echo htmlspecialchars($user['email'] ?? '', ENT_QUOTES); ?></p>
+                                            <label class="owner-field">
+                                                <span class="owner-label">Current password</span>
+                                                <input class="owner-input" type="password" name="user_email[current]" autocomplete="current-password" placeholder="••••••••">
+                                            </label>
+                                            <label class="owner-field">
+                                                <span class="owner-label">New login email</span>
+                                                <input class="owner-input" type="email" name="user_email[new]" placeholder="name@email.com">
+                                            </label>
+                                            <label class="owner-field">
+                                                <span class="owner-label">Confirm login email</span>
+                                                <input class="owner-input" type="email" name="user_email[confirm]" placeholder="name@email.com">
+                                            </label>
+                                            <button class="btn btn-primary owner-button-inline" type="submit">Update Login Email</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <?php $passwordOpen = false; ?>
+                            <div class="owner-accordion" data-accordion="users_password">
+                                <div class="owner-accordion-header">
+                                    <button class="owner-accordion-toggle" type="button" aria-expanded="<?php echo $passwordOpen ? 'true' : 'false'; ?>" aria-controls="users-password-panel" id="users-password-toggle">
+                                        <span class="owner-accordion-title">Change Your Password</span>
+                                        <span class="owner-accordion-indicator"><?php echo $passwordOpen ? 'Collapse' : 'Expand'; ?></span>
+                                    </button>
+                                </div>
+                                <div class="owner-accordion-panel" id="users-password-panel" role="region" aria-labelledby="users-password-toggle"<?php echo $passwordOpen ? '' : ' hidden'; ?>>
+                                    <div class="owner-section owner-section-compact">
+                                        <p class="owner-subtitle owner-subtitle-tight">Update the password for your account.</p>
+                                        <form class="owner-form" method="post" action="">
+                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES); ?>">
+                                            <input type="hidden" name="action" value="change_password">
+                                            <input type="hidden" name="active_tab" value="users" data-active-tab>
+                                            <label class="owner-field">
+                                                <span class="owner-label">Current password</span>
+                                                <input class="owner-input" type="password" name="user_password[current]" autocomplete="current-password" placeholder="••••••••">
+                                            </label>
+                                            <div class="owner-password-panel" data-password-group>
+                                                <label class="owner-field">
+                                                    <span class="owner-label">New password</span>
+                                                    <input class="owner-input" type="password" name="user_password[new]" autocomplete="new-password" placeholder="At least 12 characters" data-password-input="primary">
+                                                </label>
+                                                <label class="owner-field">
+                                                    <span class="owner-label">Confirm new password</span>
+                                                    <input class="owner-input" type="password" name="user_password[confirm]" autocomplete="new-password" placeholder="Repeat new password" data-password-input="confirm">
+                                                </label>
+                                                <div class="owner-password-actions">
+                                                    <button class="owner-link-button" type="button" data-password-generate>Generate strong password</button>
+                                                    <button class="owner-link-button" type="button" data-password-toggle>Show</button>
+                                                    <button class="owner-link-button" type="button" data-password-copy>Copy</button>
+                                                </div>
+                                                <span class="owner-help owner-password-status" data-password-status aria-live="polite"></span>
+                                            </div>
+                                            <p class="owner-help">Passwords must be at least 12 characters and include three of: uppercase, lowercase, number, symbol.</p>
+                                            <button class="btn btn-primary owner-button-inline" type="submit">Update Password</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
                 </section>
             </main>
         </div>
@@ -311,7 +1210,7 @@ function owner_checked(bool $value): string
                 const panels = Array.from(document.querySelectorAll('[data-tab-panel]'));
                 const actions = document.querySelector('.owner-actions');
                 const accordions = Array.from(document.querySelectorAll('[data-accordion]'));
-                const activeInput = document.querySelector('[data-active-tab]');
+                const activeInputs = Array.from(document.querySelectorAll('[data-active-tab]'));
                 const tabList = document.querySelector('.owner-tabs');
                 let storedAccordionStates = {};
 
@@ -341,8 +1240,10 @@ function owner_checked(bool $value): string
                         actions.hidden = tab === 'users';
                     }
 
-                    if (activeInput) {
-                        activeInput.value = tab;
+                    if (activeInputs.length) {
+                        activeInputs.forEach((input) => {
+                            input.value = tab;
+                        });
                     }
 
                     try {
@@ -421,6 +1322,143 @@ function owner_checked(bool $value): string
                     toggle.addEventListener('click', () => {
                         setOpen(panel.hidden);
                     });
+                });
+
+                const confirmButtons = Array.from(document.querySelectorAll('[data-confirm]'));
+                confirmButtons.forEach((button) => {
+                    button.addEventListener('click', (event) => {
+                        const message = button.getAttribute('data-confirm');
+                        if (message && !window.confirm(message)) {
+                            event.preventDefault();
+                        }
+                    });
+                });
+
+                const passwordGroups = Array.from(document.querySelectorAll('[data-password-group]'));
+                const randomInt = (max) => {
+                    if (window.crypto && window.crypto.getRandomValues) {
+                        const buffer = new Uint32Array(1);
+                        window.crypto.getRandomValues(buffer);
+                        return buffer[0] % max;
+                    }
+                    return Math.floor(Math.random() * max);
+                };
+                const shuffle = (items) => {
+                    for (let i = items.length - 1; i > 0; i -= 1) {
+                        const j = randomInt(i + 1);
+                        [items[i], items[j]] = [items[j], items[i]];
+                    }
+                    return items;
+                };
+                const generatePassword = () => {
+                    const length = 16;
+                    const sets = [
+                        'ABCDEFGHJKLMNPQRSTUVWXYZ',
+                        'abcdefghijkmnopqrstuvwxyz',
+                        '23456789',
+                        '!@#$%&*?+-=_',
+                    ];
+                    const selected = [];
+                    while (selected.length < 3) {
+                        const index = randomInt(sets.length);
+                        if (!selected.includes(index)) {
+                            selected.push(index);
+                        }
+                    }
+                    if (selected.length < sets.length && randomInt(2) === 1) {
+                        const remaining = sets.map((_, index) => index).filter((index) => !selected.includes(index));
+                        if (remaining.length) {
+                            selected.push(remaining[randomInt(remaining.length)]);
+                        }
+                    }
+                    const pool = selected.map((index) => sets[index]).join('');
+                    const chars = selected.map((index) => {
+                        const set = sets[index];
+                        return set[randomInt(set.length)];
+                    });
+                    while (chars.length < length) {
+                        chars.push(pool[randomInt(pool.length)]);
+                    }
+                    return shuffle(chars).join('');
+                };
+
+                passwordGroups.forEach((group) => {
+                    const inputs = Array.from(group.querySelectorAll('[data-password-input]'));
+                    if (!inputs.length) {
+                        return;
+                    }
+                    const primaryInput = group.querySelector('[data-password-input="primary"]') || inputs[0];
+                    const confirmInput = group.querySelector('[data-password-input="confirm"]');
+                    const toggleButton = group.querySelector('[data-password-toggle]');
+                    const copyButton = group.querySelector('[data-password-copy]');
+                    const generateButton = group.querySelector('[data-password-generate]');
+                    const status = group.querySelector('[data-password-status]');
+                    let isVisible = false;
+
+                    const setStatus = (message) => {
+                        if (status) {
+                            status.textContent = message;
+                        }
+                    };
+
+                    const setVisibility = (visible) => {
+                        inputs.forEach((input) => {
+                            input.type = visible ? 'text' : 'password';
+                        });
+                        if (toggleButton) {
+                            toggleButton.textContent = visible ? 'Hide' : 'Show';
+                        }
+                        isVisible = visible;
+                    };
+
+                    const copyPassword = () => {
+                        const value = primaryInput ? primaryInput.value : '';
+                        if (!value) {
+                            setStatus('Nothing to copy yet.');
+                            return;
+                        }
+                        const fallback = () => {
+                            if (primaryInput && primaryInput.select) {
+                                primaryInput.focus();
+                                primaryInput.select();
+                                document.execCommand('copy');
+                                setStatus('Password copied.');
+                            }
+                        };
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            navigator.clipboard.writeText(value).then(() => {
+                                setStatus('Password copied.');
+                            }).catch(() => {
+                                fallback();
+                            });
+                        } else {
+                            fallback();
+                        }
+                    };
+
+                    if (toggleButton) {
+                        toggleButton.addEventListener('click', () => {
+                            setVisibility(!isVisible);
+                        });
+                    }
+
+                    if (copyButton) {
+                        copyButton.addEventListener('click', copyPassword);
+                    }
+
+                    if (generateButton) {
+                        generateButton.addEventListener('click', () => {
+                            const password = generatePassword();
+                            if (primaryInput) {
+                                primaryInput.value = password;
+                            }
+                            if (confirmInput) {
+                                confirmInput.value = password;
+                            }
+                            setVisibility(true);
+                            setStatus('Generated a strong password.');
+                        });
+                    }
                 });
             })();
         </script>

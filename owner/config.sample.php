@@ -44,14 +44,15 @@ $OWNER_CONFIG = [
             'enabled' => false,
         ],
         [
-            'email' => 'author@example.com',
-            'name' => 'Author',
-            'role' => 'author',
+            'email' => 'developer@example.com',
+            'name' => 'Developer',
+            'role' => 'developer',
             'password_hash' => 'REPLACE_WITH_HASH',
             'enabled' => true,
             'hidden' => true,
         ],
     ],
+    'accounts_file' => __DIR__ . '/data/accounts.json',
     'otp' => [
         'enabled' => false,
         'ttl_minutes' => 10,
