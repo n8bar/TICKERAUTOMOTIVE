@@ -39,9 +39,20 @@ $fieldLabels = [
     'name' => 'Full name',
     'phone' => 'Phone number',
     'email' => 'Email address',
+    'service' => 'Service requested',
+    'year' => 'Vehicle year',
+    'make' => 'Vehicle make',
+    'model' => 'Vehicle model',
+    'license_plate' => 'License plate',
+    'vin' => 'VIN',
     'vehicle' => 'Vehicle',
     'preferred_time' => 'Preferred time',
     'message' => 'Message',
+];
+
+$formFieldOrder = [
+    'appointments' => ['name', 'phone', 'email', 'service', 'year', 'make', 'model', 'license_plate', 'vin', 'preferred_time', 'message'],
+    'contact_us' => ['name', 'phone', 'email', 'vehicle', 'preferred_time', 'message'],
 ];
 
 $addAdminValues = [
@@ -801,6 +812,25 @@ function owner_checked(bool $value): string
                             </section>
 
                             <section class="owner-tab-panel" data-tab-panel="forms" role="tabpanel" aria-labelledby="tab-forms-button" id="tab-forms" hidden>
+                                <?php if ($isDeveloper): ?>
+                                    <?php
+                                        $deliveryOverride = $settings['contact_forms']['delivery_override'] ?? [];
+                                        $overrideEnabled = !empty($deliveryOverride['enabled']);
+                                        $overrideEmail = $deliveryOverride['email'] ?? '';
+                                    ?>
+                                    <div class="owner-panel">
+                                        <h2 class="owner-panel-title">Developer Delivery Override</h2>
+                                        <p class="owner-help">Route all form submissions to the developer inbox for testing. This does not change the public recipients.</p>
+                                        <label class="owner-toggle">
+                                            <input type="checkbox" name="settings[contact_forms][delivery_override][enabled]" value="1"<?php echo owner_checked($overrideEnabled); ?>>
+                                            <span>Send form submissions to developer email</span>
+                                        </label>
+                                        <label class="owner-field">
+                                            <span class="owner-label">Developer email</span>
+                                            <input class="owner-input" type="email" name="settings[contact_forms][delivery_override][email]" value="<?php echo htmlspecialchars($overrideEmail, ENT_QUOTES); ?>">
+                                        </label>
+                                    </div>
+                                <?php endif; ?>
                                 <?php foreach ($formLabels as $formKey => $formLabel): ?>
                                     <?php
                                         $formSettings = $settings['contact_forms'][$formKey] ?? [];
@@ -833,18 +863,22 @@ function owner_checked(bool $value): string
                                                     </label>
                                                 </div>
                                                 <div class="owner-fields-grid">
-                                                    <?php foreach ($fieldLabels as $fieldKey => $fieldLabel): ?>
-                                                        <?php $fieldState = $fields[$fieldKey] ?? ['enabled' => true, 'required' => false]; ?>
-                                                        <div class="owner-field-row">
+                                                    <?php $allowedFields = $formFieldOrder[$formKey] ?? array_keys($fieldLabels); ?>
+                                                    <?php foreach ($allowedFields as $fieldKey): ?>
+                                                        <?php
+                                                            $fieldLabel = $fieldLabels[$fieldKey] ?? ucfirst(str_replace('_', ' ', $fieldKey));
+                                                            $fieldState = $fields[$fieldKey] ?? ['enabled' => false, 'required' => false];
+                                                        ?>
+                                                        <div class="owner-field-row<?php echo !empty($fieldState['enabled']) ? '' : ' is-required-disabled'; ?>" data-field-row>
                                                             <div class="owner-field-meta">
                                                                 <span class="owner-field-name"><?php echo htmlspecialchars($fieldLabel, ENT_QUOTES); ?></span>
                                                             </div>
                                                             <label class="owner-toggle">
-                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][enabled]" value="1"<?php echo owner_checked(!empty($fieldState['enabled'])); ?>>
+                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][enabled]" value="1" data-field-toggle="show"<?php echo owner_checked(!empty($fieldState['enabled'])); ?>>
                                                                 <span>Show</span>
                                                             </label>
                                                             <label class="owner-toggle">
-                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][required]" value="1"<?php echo owner_checked(!empty($fieldState['required'])); ?>>
+                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][required]" value="1" data-field-toggle="required"<?php echo owner_checked(!empty($fieldState['required'])); ?><?php echo !empty($fieldState['enabled']) ? '' : ' disabled'; ?>>
                                                                 <span>Required</span>
                                                             </label>
                                                         </div>
@@ -1321,6 +1355,34 @@ function owner_checked(bool $value): string
 
                     toggle.addEventListener('click', () => {
                         setOpen(panel.hidden);
+                    });
+                });
+
+                const fieldRows = Array.from(document.querySelectorAll('[data-field-row]'));
+                const syncFieldRow = (row) => {
+                    const showToggle = row.querySelector('[data-field-toggle="show"]');
+                    const requiredToggle = row.querySelector('[data-field-toggle="required"]');
+                    if (!showToggle || !requiredToggle) {
+                        return;
+                    }
+                    const shouldDisable = !showToggle.checked;
+                    requiredToggle.disabled = shouldDisable;
+                    if (shouldDisable) {
+                        requiredToggle.setAttribute('aria-disabled', 'true');
+                    } else {
+                        requiredToggle.removeAttribute('aria-disabled');
+                    }
+                    row.classList.toggle('is-required-disabled', shouldDisable);
+                };
+
+                fieldRows.forEach((row) => {
+                    const showToggle = row.querySelector('[data-field-toggle="show"]');
+                    if (!showToggle) {
+                        return;
+                    }
+                    syncFieldRow(row);
+                    showToggle.addEventListener('change', () => {
+                        syncFieldRow(row);
                     });
                 });
 

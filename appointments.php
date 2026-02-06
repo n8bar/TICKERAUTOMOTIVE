@@ -1,3 +1,24 @@
+<?php
+$serviceOptions = [];
+$servicesDir = __DIR__ . '/services';
+if (is_dir($servicesDir)) {
+    $files = glob($servicesDir . '/*.html') ?: [];
+    $labels = [];
+    foreach ($files as $file) {
+        $label = basename($file, '.html');
+        $label = str_replace('_', ' ', $label);
+        $label = preg_replace('/\s+/', ' ', $label);
+        $label = trim((string) $label);
+        if ($label !== '') {
+            $labels[] = $label;
+        }
+    }
+    if (!empty($labels)) {
+        natcasesort($labels);
+        $serviceOptions = array_values(array_unique($labels));
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -30,8 +51,76 @@
                 <div class="container appointments-hero-inner">
                     <h1 class="appointments-title">Schedule an Appointment</h1>
                     <p class="appointments-subtitle">
-                        Online scheduling is coming soon. For now, please call or visit us to book your service.
+                        Online scheduling is coming soon. In the meantime, send us a request and we will confirm your appointment.
                     </p>
+                </div>
+            </section>
+            <section class="appointments-form">
+                <div class="container appointments-form-inner">
+                    <div class="appointments-form-card">
+                        <div class="appointments-form-header">
+                            <h2>Request an Appointment</h2>
+                            <p>
+                                Share a few details and we will follow up during business hours to lock in the best time.
+                            </p>
+                        </div>
+                        <form class="appointments-form-grid" method="post" action="" data-form="appointments" novalidate>
+                            <label class="appointments-field">
+                                <span class="appointments-label">Full name <span class="appointments-required">*</span></span>
+                                <input class="appointments-input" type="text" name="name" autocomplete="name" data-field="name" required>
+                            </label>
+                            <label class="appointments-field">
+                                <span class="appointments-label">Phone number <span class="appointments-required">*</span></span>
+                                <input class="appointments-input" type="tel" name="phone" autocomplete="tel" data-field="phone" required>
+                            </label>
+                            <label class="appointments-field">
+                                <span class="appointments-label">Email address</span>
+                                <input class="appointments-input" type="email" name="email" autocomplete="email" data-field="email">
+                            </label>
+                            <label class="appointments-field">
+                                <span class="appointments-label">Service requested</span>
+                                <select class="appointments-input" name="service" data-field="service">
+                                    <option value="">Select a service</option>
+                                    <?php foreach ($serviceOptions as $option): ?>
+                                        <option value="<?php echo htmlspecialchars($option, ENT_QUOTES); ?>"><?php echo htmlspecialchars($option, ENT_QUOTES); ?></option>
+                                    <?php endforeach; ?>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </label>
+                            <label class="appointments-field">
+                                <span class="appointments-label">Year</span>
+                                <input class="appointments-input" type="text" name="year" autocomplete="off" data-field="year" placeholder="2020">
+                            </label>
+                            <label class="appointments-field">
+                                <span class="appointments-label">Make</span>
+                                <input class="appointments-input" type="text" name="make" autocomplete="off" data-field="make" placeholder="Toyota">
+                            </label>
+                            <label class="appointments-field">
+                                <span class="appointments-label">Model</span>
+                                <input class="appointments-input" type="text" name="model" autocomplete="off" data-field="model" placeholder="Camry">
+                            </label>
+                            <label class="appointments-field">
+                                <span class="appointments-label">License plate</span>
+                                <input class="appointments-input" type="text" name="license_plate" autocomplete="off" data-field="license_plate" placeholder="ABC123">
+                            </label>
+                            <label class="appointments-field">
+                                <span class="appointments-label">VIN</span>
+                                <input class="appointments-input" type="text" name="vin" autocomplete="off" data-field="vin" placeholder="17-digit VIN">
+                            </label>
+                            <label class="appointments-field appointments-field-full">
+                                <span class="appointments-label">Preferred time</span>
+                                <input class="appointments-input" type="text" name="preferred_time" autocomplete="off" data-field="preferred_time" placeholder="Weekday mornings, next Tuesday, etc.">
+                            </label>
+                            <label class="appointments-field appointments-field-full">
+                                <span class="appointments-label">Message <span class="appointments-required">*</span></span>
+                                <textarea class="appointments-input appointments-textarea" name="message" rows="4" data-field="message" required></textarea>
+                            </label>
+                            <div class="appointments-form-actions appointments-field-full">
+                                <button class="btn btn-primary" type="submit">Send request</button>
+                                <p class="appointments-form-note">We respond during business hours.</p>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </section>
             <section class="appointments-info">
