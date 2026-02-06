@@ -30,14 +30,14 @@
 
 ## TODO
 ### 6) Contact Forms
-- [ ] Build new contact forms in `appointments.html` and `contact-us.html` (no existing forms to inventory).
-    - [ ] Add base form markup with labels, inputs, and submit actions for each page.
-    - [ ] Match field order to settings schema (name, phone, email, vehicle, preferred time, message).
-    - [ ] Add inline helper text where needed (privacy note, required indicator).
+- [ ] Build new contact forms in `appointments.php` and `contact-us.php` (no existing forms to inventory).
+    - [x] Add base form markup with labels, inputs, and submit actions for each page.
+    - [x] Match field order to settings schema (name, phone, email, vehicle, preferred time, message).
+    - [x] Add inline helper text where needed (privacy note, required indicator).
 - [ ] Forms settings UI
     - [x] Add form sections and field toggles in owner settings (per-form recipients + optional auto-reply).
     - [x] Align settings fields with page schema and ensure hidden fields are not required.
-    - [ ] Add a dev-only delivery override toggle in the Forms tab to route submissions to a developer email for debugging (visible only to developer role).
+    - [x] Add a dev-only delivery override toggle in the Forms tab to route submissions to a developer email for debugging (visible only to developer role).
 - [ ] Submission handling (SMTP)
     - [ ] Implement SMTP delivery for form submissions (prefer GoDaddy SMTP if available).
     - [ ] Add SMTP configuration fields in the settings file but keep them hidden in the UI for now (edit settings directly until client requests UI exposure).

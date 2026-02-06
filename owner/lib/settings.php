@@ -38,6 +38,10 @@ function owner_default_settings(): array
                 ],
                 'fields' => owner_default_form_fields(),
             ],
+            'delivery_override' => [
+                'enabled' => false,
+                'email' => '',
+            ],
         ],
     ];
 }
@@ -171,6 +175,15 @@ function owner_build_settings_from_post(array $input, array $current): array
     }
 
     $forms = ['appointments', 'contact_us'];
+    $overrideInput = $input['contact_forms']['delivery_override'] ?? null;
+    if (is_array($overrideInput)) {
+        $settings['contact_forms']['delivery_override']['enabled'] = !empty($overrideInput['enabled']);
+        $overrideEmail = owner_normalize_email((string) ($overrideInput['email'] ?? ''));
+        if ($overrideEmail !== '' && !filter_var($overrideEmail, FILTER_VALIDATE_EMAIL)) {
+            $overrideEmail = '';
+        }
+        $settings['contact_forms']['delivery_override']['email'] = $overrideEmail;
+    }
     foreach ($forms as $formKey) {
         $formInput = $input['contact_forms'][$formKey] ?? [];
         $settings['contact_forms'][$formKey]['enabled'] = !empty($formInput['enabled']);

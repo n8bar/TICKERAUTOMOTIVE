@@ -62,6 +62,48 @@
                     </div>
                 </div>
             </section>
+            <section class="contact-us-form">
+                <div class="container contact-us-form-inner">
+                    <div class="contact-us-form-card">
+                        <div class="contact-us-form-header">
+                            <h2>Send a Message</h2>
+                            <p>
+                                Let us know how we can help and we will respond as soon as we can.
+                            </p>
+                        </div>
+                        <form class="contact-us-form-grid" method="post" action="" data-form="contact_us" novalidate>
+                            <label class="contact-us-field">
+                                <span class="contact-us-label">Full name <span class="contact-us-required">*</span></span>
+                                <input class="contact-us-input" type="text" name="name" autocomplete="name" data-field="name" required>
+                            </label>
+                            <label class="contact-us-field">
+                                <span class="contact-us-label">Phone number <span class="contact-us-required">*</span></span>
+                                <input class="contact-us-input" type="tel" name="phone" autocomplete="tel" data-field="phone" required>
+                            </label>
+                            <label class="contact-us-field">
+                                <span class="contact-us-label">Email address</span>
+                                <input class="contact-us-input" type="email" name="email" autocomplete="email" data-field="email">
+                            </label>
+                            <label class="contact-us-field">
+                                <span class="contact-us-label">Vehicle</span>
+                                <input class="contact-us-input" type="text" name="vehicle" autocomplete="off" data-field="vehicle" placeholder="Year, make, model">
+                            </label>
+                            <label class="contact-us-field contact-us-field-full">
+                                <span class="contact-us-label">Preferred time</span>
+                                <input class="contact-us-input" type="text" name="preferred_time" autocomplete="off" data-field="preferred_time" placeholder="Best time to reach you">
+                            </label>
+                            <label class="contact-us-field contact-us-field-full">
+                                <span class="contact-us-label">Message <span class="contact-us-required">*</span></span>
+                                <textarea class="contact-us-input contact-us-textarea" name="message" rows="4" data-field="message" required></textarea>
+                            </label>
+                            <div class="contact-us-form-actions contact-us-field-full">
+                                <button class="btn btn-primary" type="submit">Send message</button>
+                                <p class="contact-us-form-note">We respond during business hours.</p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
         </main>
         <?php include __DIR__ . '/includes/site-footer.php'; ?>
         <script src="contact-us.js" defer></script>

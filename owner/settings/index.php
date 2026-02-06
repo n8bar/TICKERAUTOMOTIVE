@@ -801,6 +801,25 @@ function owner_checked(bool $value): string
                             </section>
 
                             <section class="owner-tab-panel" data-tab-panel="forms" role="tabpanel" aria-labelledby="tab-forms-button" id="tab-forms" hidden>
+                                <?php if ($isDeveloper): ?>
+                                    <?php
+                                        $deliveryOverride = $settings['contact_forms']['delivery_override'] ?? [];
+                                        $overrideEnabled = !empty($deliveryOverride['enabled']);
+                                        $overrideEmail = $deliveryOverride['email'] ?? '';
+                                    ?>
+                                    <div class="owner-panel">
+                                        <h2 class="owner-panel-title">Developer Delivery Override</h2>
+                                        <p class="owner-help">Route all form submissions to the developer inbox for testing. This does not change the public recipients.</p>
+                                        <label class="owner-toggle">
+                                            <input type="checkbox" name="settings[contact_forms][delivery_override][enabled]" value="1"<?php echo owner_checked($overrideEnabled); ?>>
+                                            <span>Send form submissions to developer email</span>
+                                        </label>
+                                        <label class="owner-field">
+                                            <span class="owner-label">Developer email</span>
+                                            <input class="owner-input" type="email" name="settings[contact_forms][delivery_override][email]" value="<?php echo htmlspecialchars($overrideEmail, ENT_QUOTES); ?>">
+                                        </label>
+                                    </div>
+                                <?php endif; ?>
                                 <?php foreach ($formLabels as $formKey => $formLabel): ?>
                                     <?php
                                         $formSettings = $settings['contact_forms'][$formKey] ?? [];
