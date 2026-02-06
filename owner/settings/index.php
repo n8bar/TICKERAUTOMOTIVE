@@ -39,9 +39,20 @@ $fieldLabels = [
     'name' => 'Full name',
     'phone' => 'Phone number',
     'email' => 'Email address',
+    'service' => 'Service requested',
+    'year' => 'Vehicle year',
+    'make' => 'Vehicle make',
+    'model' => 'Vehicle model',
+    'license_plate' => 'License plate',
+    'vin' => 'VIN',
     'vehicle' => 'Vehicle',
     'preferred_time' => 'Preferred time',
     'message' => 'Message',
+];
+
+$formFieldOrder = [
+    'appointments' => ['name', 'phone', 'email', 'service', 'year', 'make', 'model', 'license_plate', 'vin', 'preferred_time', 'message'],
+    'contact_us' => ['name', 'phone', 'email', 'vehicle', 'preferred_time', 'message'],
 ];
 
 $addAdminValues = [
@@ -852,8 +863,12 @@ function owner_checked(bool $value): string
                                                     </label>
                                                 </div>
                                                 <div class="owner-fields-grid">
-                                                    <?php foreach ($fieldLabels as $fieldKey => $fieldLabel): ?>
-                                                        <?php $fieldState = $fields[$fieldKey] ?? ['enabled' => true, 'required' => false]; ?>
+                                                    <?php $allowedFields = $formFieldOrder[$formKey] ?? array_keys($fieldLabels); ?>
+                                                    <?php foreach ($allowedFields as $fieldKey): ?>
+                                                        <?php
+                                                            $fieldLabel = $fieldLabels[$fieldKey] ?? ucfirst(str_replace('_', ' ', $fieldKey));
+                                                            $fieldState = $fields[$fieldKey] ?? ['enabled' => false, 'required' => false];
+                                                        ?>
                                                         <div class="owner-field-row<?php echo !empty($fieldState['enabled']) ? '' : ' is-required-disabled'; ?>" data-field-row>
                                                             <div class="owner-field-meta">
                                                                 <span class="owner-field-name"><?php echo htmlspecialchars($fieldLabel, ENT_QUOTES); ?></span>

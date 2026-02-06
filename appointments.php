@@ -1,3 +1,24 @@
+<?php
+$serviceOptions = [];
+$servicesDir = __DIR__ . '/services';
+if (is_dir($servicesDir)) {
+    $files = glob($servicesDir . '/*.html') ?: [];
+    $labels = [];
+    foreach ($files as $file) {
+        $label = basename($file, '.html');
+        $label = str_replace('_', ' ', $label);
+        $label = preg_replace('/\s+/', ' ', $label);
+        $label = trim((string) $label);
+        if ($label !== '') {
+            $labels[] = $label;
+        }
+    }
+    if (!empty($labels)) {
+        natcasesort($labels);
+        $serviceOptions = array_values(array_unique($labels));
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -57,8 +78,34 @@
                                 <input class="appointments-input" type="email" name="email" autocomplete="email" data-field="email">
                             </label>
                             <label class="appointments-field">
-                                <span class="appointments-label">Vehicle</span>
-                                <input class="appointments-input" type="text" name="vehicle" autocomplete="off" data-field="vehicle" placeholder="Year, make, model">
+                                <span class="appointments-label">Service requested</span>
+                                <select class="appointments-input" name="service" data-field="service">
+                                    <option value="">Select a service</option>
+                                    <?php foreach ($serviceOptions as $option): ?>
+                                        <option value="<?php echo htmlspecialchars($option, ENT_QUOTES); ?>"><?php echo htmlspecialchars($option, ENT_QUOTES); ?></option>
+                                    <?php endforeach; ?>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </label>
+                            <label class="appointments-field">
+                                <span class="appointments-label">Year</span>
+                                <input class="appointments-input" type="text" name="year" autocomplete="off" data-field="year" placeholder="2020">
+                            </label>
+                            <label class="appointments-field">
+                                <span class="appointments-label">Make</span>
+                                <input class="appointments-input" type="text" name="make" autocomplete="off" data-field="make" placeholder="Toyota">
+                            </label>
+                            <label class="appointments-field">
+                                <span class="appointments-label">Model</span>
+                                <input class="appointments-input" type="text" name="model" autocomplete="off" data-field="model" placeholder="Camry">
+                            </label>
+                            <label class="appointments-field">
+                                <span class="appointments-label">License plate</span>
+                                <input class="appointments-input" type="text" name="license_plate" autocomplete="off" data-field="license_plate" placeholder="ABC123">
+                            </label>
+                            <label class="appointments-field">
+                                <span class="appointments-label">VIN</span>
+                                <input class="appointments-input" type="text" name="vin" autocomplete="off" data-field="vin" placeholder="17-digit VIN">
                             </label>
                             <label class="appointments-field appointments-field-full">
                                 <span class="appointments-label">Preferred time</span>

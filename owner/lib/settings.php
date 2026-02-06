@@ -25,7 +25,18 @@ function owner_default_settings(): array
                     'subject' => 'We received your appointment request',
                     'body' => "Thanks for contacting Ticker Automotive. We'll follow up soon to confirm your appointment.",
                 ],
-                'fields' => owner_default_form_fields(),
+                'fields' => (function (): array {
+                    $fields = owner_default_form_fields();
+                    foreach (['service', 'year', 'make', 'model', 'license_plate', 'vin'] as $fieldKey) {
+                        if (isset($fields[$fieldKey])) {
+                            $fields[$fieldKey]['enabled'] = true;
+                        }
+                    }
+                    if (isset($fields['vehicle'])) {
+                        $fields['vehicle']['enabled'] = false;
+                    }
+                    return $fields;
+                })(),
             ],
             'contact_us' => [
                 'enabled' => true,
@@ -52,6 +63,12 @@ function owner_default_form_fields(): array
         'name' => ['enabled' => true, 'required' => true],
         'phone' => ['enabled' => true, 'required' => true],
         'email' => ['enabled' => true, 'required' => false],
+        'service' => ['enabled' => false, 'required' => false],
+        'year' => ['enabled' => false, 'required' => false],
+        'make' => ['enabled' => false, 'required' => false],
+        'model' => ['enabled' => false, 'required' => false],
+        'license_plate' => ['enabled' => false, 'required' => false],
+        'vin' => ['enabled' => false, 'required' => false],
         'vehicle' => ['enabled' => true, 'required' => false],
         'preferred_time' => ['enabled' => true, 'required' => false],
         'message' => ['enabled' => true, 'required' => false],

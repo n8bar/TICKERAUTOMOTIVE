@@ -89,6 +89,7 @@
     padding: 12px 14px;
     font-size: 16px;
     font-family: Inter, 'Inter Fallback', sans-serif;
+    background: #ffffff;
 }
 
 .appointments-textarea {
