@@ -728,6 +728,7 @@ function owner_checked(bool $value): string
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover">
         <meta name="robots" content="noindex, nofollow">
+        <link rel="icon" type="image/svg+xml" href="/owner/favicons/14-sliders.svg" sizes="any">
         <link rel="preconnect" href="https://lirp.cdn-website.com/">
         <link rel="stylesheet" href="https://irp.cdn-website.com/fonts/css2?family=Inter:ital,wght@0,100..900;1,100..900&amp;family=Alfa+Slab+One:ital,wght@0,400&amp;display=swap">
         <link rel="stylesheet" href="/site-shell.css">
@@ -908,7 +909,6 @@ function owner_checked(bool $value): string
                                                         <?php endforeach; ?>
                                                     <?php endif; ?>
                                                     <?php if ($role === 'owner' && !$isDeveloper): ?>
-                                                        <p class="owner-help">Owner accounts are read-only here.</p>
                                                     <?php endif; ?>
                                                 </div>
                                             <?php endforeach; ?>
