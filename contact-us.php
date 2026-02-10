@@ -1,3 +1,30 @@
+<?php
+$contactFields = [
+    'name' => ['enabled' => true, 'required' => true],
+    'phone' => ['enabled' => true, 'required' => true],
+    'email' => ['enabled' => true, 'required' => false],
+    'vehicle' => ['enabled' => true, 'required' => false],
+    'preferred_time' => ['enabled' => true, 'required' => false],
+    'message' => ['enabled' => true, 'required' => false],
+];
+
+$ownerConfig = __DIR__ . '/owner/config.php';
+if (is_file($ownerConfig)) {
+    require_once __DIR__ . '/owner/lib/settings.php';
+    $ownerSettings = owner_load_settings();
+    $storedFields = $ownerSettings['contact_forms']['contact_us']['fields'] ?? [];
+    if (is_array($storedFields)) {
+        foreach ($contactFields as $fieldKey => $fieldState) {
+            $override = $storedFields[$fieldKey] ?? null;
+            if (!is_array($override)) {
+                continue;
+            }
+            $contactFields[$fieldKey]['enabled'] = !empty($override['enabled']);
+            $contactFields[$fieldKey]['required'] = !empty($override['required']);
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -72,30 +99,42 @@
                             </p>
                         </div>
                         <form class="contact-us-form-grid" method="post" action="" data-form="contact_us" novalidate>
-                            <label class="contact-us-field">
-                                <span class="contact-us-label">Full name <span class="contact-us-required">*</span></span>
-                                <input class="contact-us-input" type="text" name="name" autocomplete="name" data-field="name" required>
-                            </label>
-                            <label class="contact-us-field">
-                                <span class="contact-us-label">Phone number <span class="contact-us-required">*</span></span>
-                                <input class="contact-us-input" type="tel" name="phone" autocomplete="tel" data-field="phone" required>
-                            </label>
-                            <label class="contact-us-field">
-                                <span class="contact-us-label">Email address</span>
-                                <input class="contact-us-input" type="email" name="email" autocomplete="email" data-field="email">
-                            </label>
-                            <label class="contact-us-field">
-                                <span class="contact-us-label">Vehicle</span>
-                                <input class="contact-us-input" type="text" name="vehicle" autocomplete="off" data-field="vehicle" placeholder="Year, make, model">
-                            </label>
-                            <label class="contact-us-field contact-us-field-full">
-                                <span class="contact-us-label">Preferred time</span>
-                                <input class="contact-us-input" type="text" name="preferred_time" autocomplete="off" data-field="preferred_time" placeholder="Best time to reach you">
-                            </label>
-                            <label class="contact-us-field contact-us-field-full">
-                                <span class="contact-us-label">Message <span class="contact-us-required">*</span></span>
-                                <textarea class="contact-us-input contact-us-textarea" name="message" rows="4" data-field="message" required></textarea>
-                            </label>
+                            <?php if (!empty($contactFields['name']['enabled'])): ?>
+                                <label class="contact-us-field">
+                                    <span class="contact-us-label">Full name<?php if (!empty($contactFields['name']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
+                                    <input class="contact-us-input" type="text" name="name" autocomplete="name" data-field="name"<?php echo !empty($contactFields['name']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($contactFields['phone']['enabled'])): ?>
+                                <label class="contact-us-field">
+                                    <span class="contact-us-label">Phone number<?php if (!empty($contactFields['phone']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
+                                    <input class="contact-us-input" type="tel" name="phone" autocomplete="tel" data-field="phone"<?php echo !empty($contactFields['phone']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($contactFields['email']['enabled'])): ?>
+                                <label class="contact-us-field">
+                                    <span class="contact-us-label">Email address<?php if (!empty($contactFields['email']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
+                                    <input class="contact-us-input" type="email" name="email" autocomplete="email" data-field="email"<?php echo !empty($contactFields['email']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($contactFields['vehicle']['enabled'])): ?>
+                                <label class="contact-us-field">
+                                    <span class="contact-us-label">Vehicle<?php if (!empty($contactFields['vehicle']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
+                                    <input class="contact-us-input" type="text" name="vehicle" autocomplete="off" data-field="vehicle" placeholder="Year, make, model"<?php echo !empty($contactFields['vehicle']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($contactFields['preferred_time']['enabled'])): ?>
+                                <label class="contact-us-field contact-us-field-full">
+                                    <span class="contact-us-label">Preferred time<?php if (!empty($contactFields['preferred_time']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
+                                    <input class="contact-us-input" type="text" name="preferred_time" autocomplete="off" data-field="preferred_time" placeholder="Best time to reach you"<?php echo !empty($contactFields['preferred_time']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($contactFields['message']['enabled'])): ?>
+                                <label class="contact-us-field contact-us-field-full">
+                                    <span class="contact-us-label">Message<?php if (!empty($contactFields['message']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
+                                    <textarea class="contact-us-input contact-us-textarea" name="message" rows="4" data-field="message"<?php echo !empty($contactFields['message']['required']) ? ' required' : ''; ?>></textarea>
+                                </label>
+                            <?php endif; ?>
                             <div class="contact-us-form-actions contact-us-field-full">
                                 <button class="btn btn-primary" type="submit">Send message</button>
                                 <p class="contact-us-form-note">We respond during business hours.</p>

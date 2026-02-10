@@ -18,6 +18,37 @@ if (is_dir($servicesDir)) {
         $serviceOptions = array_values(array_unique($labels));
     }
 }
+
+$appointmentsFields = [
+    'name' => ['enabled' => true, 'required' => true],
+    'phone' => ['enabled' => true, 'required' => true],
+    'email' => ['enabled' => true, 'required' => false],
+    'service' => ['enabled' => true, 'required' => false],
+    'year' => ['enabled' => true, 'required' => false],
+    'make' => ['enabled' => true, 'required' => false],
+    'model' => ['enabled' => true, 'required' => false],
+    'license_plate' => ['enabled' => true, 'required' => false],
+    'vin' => ['enabled' => true, 'required' => false],
+    'preferred_time' => ['enabled' => true, 'required' => false],
+    'message' => ['enabled' => true, 'required' => false],
+];
+
+$ownerConfig = __DIR__ . '/owner/config.php';
+if (is_file($ownerConfig)) {
+    require_once __DIR__ . '/owner/lib/settings.php';
+    $ownerSettings = owner_load_settings();
+    $storedFields = $ownerSettings['contact_forms']['appointments']['fields'] ?? [];
+    if (is_array($storedFields)) {
+        foreach ($appointmentsFields as $fieldKey => $fieldState) {
+            $override = $storedFields[$fieldKey] ?? null;
+            if (!is_array($override)) {
+                continue;
+            }
+            $appointmentsFields[$fieldKey]['enabled'] = !empty($override['enabled']);
+            $appointmentsFields[$fieldKey]['required'] = !empty($override['required']);
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,56 +96,78 @@ if (is_dir($servicesDir)) {
                             </p>
                         </div>
                         <form class="appointments-form-grid" method="post" action="" data-form="appointments" novalidate>
-                            <label class="appointments-field">
-                                <span class="appointments-label">Full name <span class="appointments-required">*</span></span>
-                                <input class="appointments-input" type="text" name="name" autocomplete="name" data-field="name" required>
-                            </label>
-                            <label class="appointments-field">
-                                <span class="appointments-label">Phone number <span class="appointments-required">*</span></span>
-                                <input class="appointments-input" type="tel" name="phone" autocomplete="tel" data-field="phone" required>
-                            </label>
-                            <label class="appointments-field">
-                                <span class="appointments-label">Email address</span>
-                                <input class="appointments-input" type="email" name="email" autocomplete="email" data-field="email">
-                            </label>
-                            <label class="appointments-field">
-                                <span class="appointments-label">Service requested</span>
-                                <select class="appointments-input" name="service" data-field="service">
-                                    <option value="">Select a service</option>
-                                    <?php foreach ($serviceOptions as $option): ?>
-                                        <option value="<?php echo htmlspecialchars($option, ENT_QUOTES); ?>"><?php echo htmlspecialchars($option, ENT_QUOTES); ?></option>
-                                    <?php endforeach; ?>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </label>
-                            <label class="appointments-field">
-                                <span class="appointments-label">Year</span>
-                                <input class="appointments-input" type="text" name="year" autocomplete="off" data-field="year" placeholder="2020">
-                            </label>
-                            <label class="appointments-field">
-                                <span class="appointments-label">Make</span>
-                                <input class="appointments-input" type="text" name="make" autocomplete="off" data-field="make" placeholder="Toyota">
-                            </label>
-                            <label class="appointments-field">
-                                <span class="appointments-label">Model</span>
-                                <input class="appointments-input" type="text" name="model" autocomplete="off" data-field="model" placeholder="Camry">
-                            </label>
-                            <label class="appointments-field">
-                                <span class="appointments-label">License plate</span>
-                                <input class="appointments-input" type="text" name="license_plate" autocomplete="off" data-field="license_plate" placeholder="ABC123">
-                            </label>
-                            <label class="appointments-field">
-                                <span class="appointments-label">VIN</span>
-                                <input class="appointments-input" type="text" name="vin" autocomplete="off" data-field="vin" placeholder="17-digit VIN">
-                            </label>
-                            <label class="appointments-field appointments-field-full">
-                                <span class="appointments-label">Preferred time</span>
-                                <input class="appointments-input" type="text" name="preferred_time" autocomplete="off" data-field="preferred_time" placeholder="Weekday mornings, next Tuesday, etc.">
-                            </label>
-                            <label class="appointments-field appointments-field-full">
-                                <span class="appointments-label">Message <span class="appointments-required">*</span></span>
-                                <textarea class="appointments-input appointments-textarea" name="message" rows="4" data-field="message" required></textarea>
-                            </label>
+                            <?php if (!empty($appointmentsFields['name']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">Full name<?php if (!empty($appointmentsFields['name']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="name" autocomplete="name" data-field="name"<?php echo !empty($appointmentsFields['name']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['phone']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">Phone number<?php if (!empty($appointmentsFields['phone']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="tel" name="phone" autocomplete="tel" data-field="phone"<?php echo !empty($appointmentsFields['phone']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['email']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">Email address<?php if (!empty($appointmentsFields['email']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="email" name="email" autocomplete="email" data-field="email"<?php echo !empty($appointmentsFields['email']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['service']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">Service requested<?php if (!empty($appointmentsFields['service']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <select class="appointments-input" name="service" data-field="service"<?php echo !empty($appointmentsFields['service']['required']) ? ' required' : ''; ?>>
+                                        <option value="">Select a service</option>
+                                        <?php foreach ($serviceOptions as $option): ?>
+                                            <option value="<?php echo htmlspecialchars($option, ENT_QUOTES); ?>"><?php echo htmlspecialchars($option, ENT_QUOTES); ?></option>
+                                        <?php endforeach; ?>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['year']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">Year<?php if (!empty($appointmentsFields['year']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="year" autocomplete="off" data-field="year" placeholder="2020"<?php echo !empty($appointmentsFields['year']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['make']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">Make<?php if (!empty($appointmentsFields['make']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="make" autocomplete="off" data-field="make" placeholder="Toyota"<?php echo !empty($appointmentsFields['make']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['model']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">Model<?php if (!empty($appointmentsFields['model']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="model" autocomplete="off" data-field="model" placeholder="Camry"<?php echo !empty($appointmentsFields['model']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['license_plate']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">License plate<?php if (!empty($appointmentsFields['license_plate']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="license_plate" autocomplete="off" data-field="license_plate" placeholder="ABC123"<?php echo !empty($appointmentsFields['license_plate']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['vin']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">VIN<?php if (!empty($appointmentsFields['vin']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="vin" autocomplete="off" data-field="vin" placeholder="17-digit VIN"<?php echo !empty($appointmentsFields['vin']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['preferred_time']['enabled'])): ?>
+                                <label class="appointments-field appointments-field-full">
+                                    <span class="appointments-label">Preferred time<?php if (!empty($appointmentsFields['preferred_time']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="preferred_time" autocomplete="off" data-field="preferred_time" placeholder="Weekday mornings, next Tuesday, etc."<?php echo !empty($appointmentsFields['preferred_time']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['message']['enabled'])): ?>
+                                <label class="appointments-field appointments-field-full">
+                                    <span class="appointments-label">Message<?php if (!empty($appointmentsFields['message']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <textarea class="appointments-input appointments-textarea" name="message" rows="4" data-field="message"<?php echo !empty($appointmentsFields['message']['required']) ? ' required' : ''; ?>></textarea>
+                                </label>
+                            <?php endif; ?>
                             <div class="appointments-form-actions appointments-field-full">
                                 <button class="btn btn-primary" type="submit">Send request</button>
                                 <p class="appointments-form-note">We respond during business hours.</p>
