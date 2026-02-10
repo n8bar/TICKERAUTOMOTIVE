@@ -51,12 +51,17 @@
         - [x] Manual regression: desktop + mobile emulation and a mock submission for each form.
 
 ## TODO
-### 7) Reviews & Ratings (Homepage + Reviews Pages)
+### 7) Form Feedback
+- Capture client feedback on contact + appointment forms.
+- Implement requested adjustments and retest submissions.
+- Confirm delivery override behavior during client review.
+
+### 8) Reviews & Ratings (Homepage + Reviews Pages)
 - Replace static home page reviews with the latest 5-star Google and Yelp reviews.
 - Rework the `reviews` page to reflect the same reviews/sources.
 - [x] Update `leave-a-review` flow to point to the correct review destinations.
 
-### 8) Appointment Scheduling (TBD)
+### 9) Appointment Scheduling (TBD)
 - [x] Keep appointment placeholders for now while owner decides on the scheduling system.
 - Revisit scheduling integration after settings and admin decisions are finalized.
 - Add calendar provider selection and credential entry in `settings.html` once the provider is chosen.
