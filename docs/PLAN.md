@@ -32,22 +32,22 @@
 ### 6) Contact Forms
 - [x] Build new contact forms in `appointments.php` and `contact-us.php` (no existing forms to inventory).
     - [x] Add base form markup with labels, inputs, and submit actions for each page.
-    - [x] Match field order to settings schema (name, phone, email, vehicle, preferred time, message).
+    - [x] Match field order to settings schema (contact: name, phone, email, vehicle, message; appointment adds service/vehicle details/preferred time).
     - [x] Add inline helper text where needed (privacy note, required indicator).
 - [x] Forms settings UI
     - [x] Add form sections and field toggles in owner settings (per-form recipients + optional auto-reply).
     - [x] Align settings fields with page schema and ensure hidden fields are not required.
-    - [x] Add a dev-only delivery override toggle in the Forms tab to route submissions to a developer email for debugging (visible only to developer role).
-- [ ] Submission handling (SMTP)
-    - [ ] Choose SMTP service provider (prefer GoDaddy SMTP if available) and confirm credentials.
-    - [ ] Implement SMTP delivery for form submissions (prefer GoDaddy SMTP if available).
-    - [ ] Add SMTP configuration fields in the settings file but keep them hidden in the UI for now (edit settings directly until client requests UI exposure).
-    - [ ] Wire settings to frontend forms (field visibility + required flags).
-    - [ ] Add validation for required fields, email format, and phone normalization on submit.
-    - [ ] Add success + error states (inline, accessible, and non-blocking).
-    - [ ] Add spam controls (honeypot + time-to-submit guard) without breaking current UX.
-    - [ ] Ensure submissions include page/source metadata (page name, timestamp, user agent).
-    - [ ] Add lightweight email template for admin notifications (subject + body summary).
+    - [x] Add a delivery override toggle in the Forms tab to route submissions to a developer email for debugging (restricted access).
+- [x] Submission handling (SMTP)
+    - [x] Choose SMTP service provider (Mailgun US) and confirm credentials.
+    - [x] Implement SMTP delivery for form submissions.
+    - [x] Add SMTP configuration fields in the settings file but keep them hidden in the UI for now (edit settings directly until client requests UI exposure).
+    - [x] Wire settings to frontend forms (field visibility + required flags).
+    - [x] Add validation for required fields, email format, and phone normalization on submit.
+    - [x] Add success + error states (inline, accessible, and non-blocking).
+    - [x] Add spam controls (honeypot + time-to-submit guard) without breaking current UX.
+    - [x] Ensure submissions include page/source metadata (page name, timestamp, user agent).
+    - [x] Add lightweight email template for admin notifications (subject + body summary).
 - [ ] Verification
     - [ ] Verify service worker caching does not block form POSTs.
     - [ ] Manual regression: desktop + mobile emulation and a mock submission for each form.
