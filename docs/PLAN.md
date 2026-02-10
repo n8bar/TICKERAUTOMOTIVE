@@ -61,11 +61,5 @@
 - Revisit scheduling integration after settings and admin decisions are finalized.
 - Add calendar provider selection and credential entry in `settings.html` once the provider is chosen.
 
-### 9) Chat Integration
-- Evaluate static-friendly chat providers or embed strategies; confirm compatibility with service worker caching rules.
-- Implement a widget loader that respects owner settings; ensure required assets cache via `f30f4.txt` without breaking offline behavior.
-- Verify chat presence and basic function on homepage, services, and appointments pages.
-- Add chat provider selection (placeholder until integration is wired) in `settings.html`.
-
-### 10) Dev Environment
+### Dev Environment Notes
 - Keep a tracked `.env.example` in sync with local `.env` whenever Docker-related settings change.
