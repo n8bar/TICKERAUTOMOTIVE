@@ -15,6 +15,18 @@ function owner_default_settings(): array
             'address_line1' => '680 North State Street',
             'address_line2' => 'Hildale, UT 84784',
         ],
+        'smtp' => [
+            'enabled' => false,
+            'host' => '',
+            'port' => 587,
+            'encryption' => 'tls',
+            'username' => '',
+            'password' => '',
+            'from_email' => '',
+            'from_name' => 'Ticker Automotive',
+            'reply_to' => '',
+            'timeout' => 10,
+        ],
         'contact_forms' => [
             'appointments' => [
                 'enabled' => true,
@@ -25,7 +37,18 @@ function owner_default_settings(): array
                     'subject' => 'We received your appointment request',
                     'body' => "Thanks for contacting Ticker Automotive. We'll follow up soon to confirm your appointment.",
                 ],
-                'fields' => owner_default_form_fields(),
+                'fields' => (function (): array {
+                    $fields = owner_default_form_fields();
+                    foreach (['service', 'year', 'make', 'model', 'license_plate', 'vin'] as $fieldKey) {
+                        if (isset($fields[$fieldKey])) {
+                            $fields[$fieldKey]['enabled'] = true;
+                        }
+                    }
+                    if (isset($fields['vehicle'])) {
+                        $fields['vehicle']['enabled'] = false;
+                    }
+                    return $fields;
+                })(),
             ],
             'contact_us' => [
                 'enabled' => true,
@@ -36,7 +59,17 @@ function owner_default_settings(): array
                     'subject' => 'We received your message',
                     'body' => "Thanks for contacting Ticker Automotive. We'll be in touch shortly.",
                 ],
-                'fields' => owner_default_form_fields(),
+                'fields' => (function (): array {
+                    $fields = owner_default_form_fields();
+                    if (isset($fields['preferred_time'])) {
+                        $fields['preferred_time']['enabled'] = false;
+                    }
+                    return $fields;
+                })(),
+            ],
+            'delivery_override' => [
+                'enabled' => false,
+                'email' => '',
             ],
         ],
     ];
@@ -48,6 +81,12 @@ function owner_default_form_fields(): array
         'name' => ['enabled' => true, 'required' => true],
         'phone' => ['enabled' => true, 'required' => true],
         'email' => ['enabled' => true, 'required' => false],
+        'service' => ['enabled' => false, 'required' => false],
+        'year' => ['enabled' => false, 'required' => false],
+        'make' => ['enabled' => false, 'required' => false],
+        'model' => ['enabled' => false, 'required' => false],
+        'license_plate' => ['enabled' => false, 'required' => false],
+        'vin' => ['enabled' => false, 'required' => false],
         'vehicle' => ['enabled' => true, 'required' => false],
         'preferred_time' => ['enabled' => true, 'required' => false],
         'message' => ['enabled' => true, 'required' => false],
@@ -171,6 +210,15 @@ function owner_build_settings_from_post(array $input, array $current): array
     }
 
     $forms = ['appointments', 'contact_us'];
+    $overrideInput = $input['contact_forms']['delivery_override'] ?? null;
+    if (is_array($overrideInput)) {
+        $settings['contact_forms']['delivery_override']['enabled'] = !empty($overrideInput['enabled']);
+        $overrideEmail = owner_normalize_email((string) ($overrideInput['email'] ?? ''));
+        if ($overrideEmail !== '' && !filter_var($overrideEmail, FILTER_VALIDATE_EMAIL)) {
+            $overrideEmail = '';
+        }
+        $settings['contact_forms']['delivery_override']['email'] = $overrideEmail;
+    }
     foreach ($forms as $formKey) {
         $formInput = $input['contact_forms'][$formKey] ?? [];
         $settings['contact_forms'][$formKey]['enabled'] = !empty($formInput['enabled']);
@@ -185,10 +233,10 @@ function owner_build_settings_from_post(array $input, array $current): array
         foreach ($fields as $fieldKey => $defaultField) {
             $fieldInput = $formInput['fields'][$fieldKey] ?? [];
             $enabled = !empty($fieldInput['enabled']);
-            $required = !empty($fieldInput['required']);
-
-            if (!$enabled) {
-                $required = false;
+            $currentField = $settings['contact_forms'][$formKey]['fields'][$fieldKey] ?? $defaultField;
+            $required = !empty($currentField['required']);
+            if ($enabled) {
+                $required = !empty($fieldInput['required']);
             }
 
             $settings['contact_forms'][$formKey]['fields'][$fieldKey] = [

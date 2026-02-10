@@ -83,7 +83,6 @@
 
 .owner-title {
     margin: 0 0 12px;
-    font-size: 32px;
 }
 
 .owner-subtitle {
@@ -227,6 +226,7 @@
     padding: 8px 0;
     font-weight: normal;
     color: #1f2758;
+    font-size: 22px;
     cursor: pointer;
     transition: color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -265,7 +265,7 @@
 .owner-accordion-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 16px;
     padding: 14px 18px;
     background: #141b3a;
@@ -285,6 +285,7 @@
     cursor: pointer;
     flex: 1;
     text-align: left;
+    justify-content: flex-start;
 }
 
 .owner-accordion-title {
@@ -294,7 +295,7 @@
 }
 
 .owner-accordion-indicator {
-    margin-left: auto;
+    flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -316,6 +317,10 @@
 
 .owner-accordion-header .owner-toggle {
     color: rgba(255, 255, 255, 0.85);
+}
+
+.owner-accordion-header .owner-toggle-inline {
+    margin-left: auto;
 }
 
 .owner-accordion-panel {
@@ -359,6 +364,14 @@
     align-items: center;
     gap: 8px;
     font-size: 17.5px;
+}
+
+.owner-toggle input:disabled + span {
+    opacity: 0.55;
+}
+
+.owner-field-row.is-required-disabled .owner-toggle input:disabled {
+    cursor: not-allowed;
 }
 
 .owner-help {

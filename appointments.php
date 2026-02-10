@@ -1,3 +1,45 @@
+<?php
+$serviceOptions = [];
+$servicesDir = __DIR__ . '/services';
+if (is_dir($servicesDir)) {
+    $files = glob($servicesDir . '/*.html') ?: [];
+    $labels = [];
+    foreach ($files as $file) {
+        $label = basename($file, '.html');
+        $label = str_replace('_', ' ', $label);
+        $label = preg_replace('/\s+/', ' ', $label);
+        $label = trim((string) $label);
+        if ($label !== '') {
+            $labels[] = $label;
+        }
+    }
+    if (!empty($labels)) {
+        natcasesort($labels);
+        $serviceOptions = array_values(array_unique($labels));
+    }
+}
+
+require_once __DIR__ . '/includes/form-handler.php';
+
+$appointmentsDefaults = [
+    'name' => ['enabled' => true, 'required' => true],
+    'phone' => ['enabled' => true, 'required' => true],
+    'email' => ['enabled' => true, 'required' => false],
+    'service' => ['enabled' => true, 'required' => false],
+    'year' => ['enabled' => true, 'required' => false],
+    'make' => ['enabled' => true, 'required' => false],
+    'model' => ['enabled' => true, 'required' => false],
+    'license_plate' => ['enabled' => true, 'required' => false],
+    'vin' => ['enabled' => true, 'required' => false],
+    'preferred_time' => ['enabled' => true, 'required' => false],
+    'message' => ['enabled' => true, 'required' => false],
+];
+
+$appointmentsConfig = site_form_get_contact_form('appointments');
+$appointmentsFields = site_form_merge_fields($appointmentsDefaults, $appointmentsConfig['fields'] ?? []);
+$appointmentsState = site_form_handle_submission('appointments', 'Appointment Request', $appointmentsFields, $appointmentsConfig);
+$appointmentsEnabled = !empty($appointmentsConfig['enabled']);
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -30,8 +72,127 @@
                 <div class="container appointments-hero-inner">
                     <h1 class="appointments-title">Schedule an Appointment</h1>
                     <p class="appointments-subtitle">
-                        Online scheduling is coming soon. For now, please call or visit us to book your service.
+                        Online scheduling is coming soon. In the meantime, send us a request and we will confirm your appointment.
                     </p>
+                </div>
+            </section>
+            <section class="appointments-form">
+                <div class="container appointments-form-inner">
+                    <div class="appointments-form-card">
+                        <div class="appointments-form-header">
+                            <h2>Request an Appointment</h2>
+                            <p>
+                                Share a few details and we will follow up during business hours to lock in the best time.
+                            </p>
+                        </div>
+                        <?php if ($appointmentsState['success']): ?>
+                            <div class="appointments-alert appointments-alert-success" role="status">
+                                <?php echo htmlspecialchars($appointmentsState['message'], ENT_QUOTES); ?>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (!empty($appointmentsState['errors'])): ?>
+                            <div class="appointments-alert appointments-alert-error" role="alert">
+                                <p>Please review the following:</p>
+                                <ul>
+                                    <?php foreach ($appointmentsState['errors'] as $error): ?>
+                                        <li><?php echo htmlspecialchars($error, ENT_QUOTES); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (!$appointmentsEnabled): ?>
+                            <div class="appointments-alert appointments-alert-error" role="status">
+                                Online requests are currently paused. Please call us to schedule.
+                            </div>
+                        <?php endif; ?>
+                        <?php if ($appointmentsEnabled): ?>
+                            <form class="appointments-form-grid" method="post" action="" data-form="appointments" novalidate>
+                                <input type="hidden" name="form_key" value="appointments">
+                                <input type="hidden" name="form_started" value="<?php echo time(); ?>">
+                                <div class="appointments-honeypot" aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">
+                                    <input type="text" name="website" tabindex="-1" autocomplete="off" aria-label="Leave this field blank">
+                                </div>
+                                <?php if (!empty($appointmentsFields['name']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">Full name<?php if (!empty($appointmentsFields['name']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="name" autocomplete="name" data-field="name" value="<?php echo htmlspecialchars($appointmentsState['values']['name'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['name']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['phone']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">Phone number<?php if (!empty($appointmentsFields['phone']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="tel" name="phone" autocomplete="tel" data-field="phone" value="<?php echo htmlspecialchars($appointmentsState['values']['phone'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['phone']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['email']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">Email address<?php if (!empty($appointmentsFields['email']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="email" name="email" autocomplete="email" data-field="email" value="<?php echo htmlspecialchars($appointmentsState['values']['email'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['email']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['service']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">Service requested<?php if (!empty($appointmentsFields['service']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <select class="appointments-input" name="service" data-field="service"<?php echo !empty($appointmentsFields['service']['required']) ? ' required' : ''; ?>>
+                                        <option value="">Select a service</option>
+                                        <?php foreach ($serviceOptions as $option): ?>
+                                            <?php $selected = ($appointmentsState['values']['service'] ?? '') === $option ? ' selected' : ''; ?>
+                                            <option value="<?php echo htmlspecialchars($option, ENT_QUOTES); ?>"<?php echo $selected; ?>><?php echo htmlspecialchars($option, ENT_QUOTES); ?></option>
+                                        <?php endforeach; ?>
+                                        <?php $selected = ($appointmentsState['values']['service'] ?? '') === 'Other' ? ' selected' : ''; ?>
+                                        <option value="Other"<?php echo $selected; ?>>Other</option>
+                                    </select>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['year']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">Year<?php if (!empty($appointmentsFields['year']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="year" autocomplete="off" data-field="year" placeholder="2020" value="<?php echo htmlspecialchars($appointmentsState['values']['year'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['year']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['make']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">Make<?php if (!empty($appointmentsFields['make']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="make" autocomplete="off" data-field="make" placeholder="Toyota" value="<?php echo htmlspecialchars($appointmentsState['values']['make'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['make']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['model']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">Model<?php if (!empty($appointmentsFields['model']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="model" autocomplete="off" data-field="model" placeholder="Camry" value="<?php echo htmlspecialchars($appointmentsState['values']['model'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['model']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['license_plate']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">License plate<?php if (!empty($appointmentsFields['license_plate']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="license_plate" autocomplete="off" data-field="license_plate" placeholder="ABC123" value="<?php echo htmlspecialchars($appointmentsState['values']['license_plate'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['license_plate']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['vin']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">VIN<?php if (!empty($appointmentsFields['vin']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="vin" autocomplete="off" data-field="vin" placeholder="17-digit VIN" value="<?php echo htmlspecialchars($appointmentsState['values']['vin'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['vin']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['preferred_time']['enabled'])): ?>
+                                <label class="appointments-field appointments-field-full">
+                                    <span class="appointments-label">Preferred time<?php if (!empty($appointmentsFields['preferred_time']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="preferred_time" autocomplete="off" data-field="preferred_time" placeholder="Weekday mornings, next Tuesday, etc." value="<?php echo htmlspecialchars($appointmentsState['values']['preferred_time'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['preferred_time']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['message']['enabled'])): ?>
+                                <label class="appointments-field appointments-field-full">
+                                    <span class="appointments-label">Message<?php if (!empty($appointmentsFields['message']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <textarea class="appointments-input appointments-textarea" name="message" rows="4" data-field="message"<?php echo !empty($appointmentsFields['message']['required']) ? ' required' : ''; ?>><?php echo htmlspecialchars($appointmentsState['values']['message'] ?? '', ENT_QUOTES); ?></textarea>
+                                </label>
+                            <?php endif; ?>
+                            <div class="appointments-form-actions appointments-field-full">
+                                <button class="btn btn-primary" type="submit">Send request</button>
+                                <p class="appointments-form-note">We respond during business hours.</p>
+                            </div>
+                            </form>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </section>
             <section class="appointments-info">

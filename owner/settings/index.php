@@ -39,9 +39,20 @@ $fieldLabels = [
     'name' => 'Full name',
     'phone' => 'Phone number',
     'email' => 'Email address',
+    'service' => 'Service requested',
+    'year' => 'Vehicle year',
+    'make' => 'Vehicle make',
+    'model' => 'Vehicle model',
+    'license_plate' => 'License plate',
+    'vin' => 'VIN',
     'vehicle' => 'Vehicle',
     'preferred_time' => 'Preferred time',
     'message' => 'Message',
+];
+
+$formFieldOrder = [
+    'appointments' => ['name', 'phone', 'email', 'service', 'year', 'make', 'model', 'license_plate', 'vin', 'preferred_time', 'message'],
+    'contact_us' => ['name', 'phone', 'email', 'vehicle', 'preferred_time', 'message'],
 ];
 
 $addAdminValues = [
@@ -801,6 +812,25 @@ function owner_checked(bool $value): string
                             </section>
 
                             <section class="owner-tab-panel" data-tab-panel="forms" role="tabpanel" aria-labelledby="tab-forms-button" id="tab-forms" hidden>
+                                <?php if ($isDeveloper): ?>
+                                    <?php
+                                        $deliveryOverride = $settings['contact_forms']['delivery_override'] ?? [];
+                                        $overrideEnabled = !empty($deliveryOverride['enabled']);
+                                        $overrideEmail = $deliveryOverride['email'] ?? '';
+                                    ?>
+                                    <div class="owner-panel">
+                                        <h2 class="owner-panel-title">Developer Delivery Override</h2>
+                                        <p class="owner-help">Route all form submissions to the developer inbox for testing. This does not change the public recipients.</p>
+                                        <label class="owner-toggle">
+                                            <input type="checkbox" name="settings[contact_forms][delivery_override][enabled]" value="1"<?php echo owner_checked($overrideEnabled); ?>>
+                                            <span>Send form submissions to developer email</span>
+                                        </label>
+                                        <label class="owner-field">
+                                            <span class="owner-label">Developer email</span>
+                                            <input class="owner-input" type="email" name="settings[contact_forms][delivery_override][email]" value="<?php echo htmlspecialchars($overrideEmail, ENT_QUOTES); ?>">
+                                        </label>
+                                    </div>
+                                <?php endif; ?>
                                 <?php foreach ($formLabels as $formKey => $formLabel): ?>
                                     <?php
                                         $formSettings = $settings['contact_forms'][$formKey] ?? [];
@@ -814,8 +844,8 @@ function owner_checked(bool $value): string
                                     <div class="owner-accordion" data-accordion="<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>">
                                         <div class="owner-accordion-header">
                                             <button class="owner-accordion-toggle" type="button" aria-expanded="<?php echo $isOpen ? 'true' : 'false'; ?>" aria-controls="form-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>" id="form-toggle-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>">
+                                                <span class="owner-accordion-indicator" title="<?php echo $isOpen ? 'Collapse' : 'Expand'; ?>" aria-hidden="true"></span>
                                                 <span class="owner-accordion-title"><?php echo htmlspecialchars($formLabel, ENT_QUOTES); ?> Form</span>
-                                                <span class="owner-accordion-indicator"><?php echo $isOpen ? 'Collapse' : 'Expand'; ?></span>
                                             </button>
                                             <input type="hidden" name="accordion_state[<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>]" value="<?php echo $isOpen ? '1' : '0'; ?>" data-accordion-state="<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>">
                                             <label class="owner-toggle owner-toggle-inline">
@@ -833,18 +863,22 @@ function owner_checked(bool $value): string
                                                     </label>
                                                 </div>
                                                 <div class="owner-fields-grid">
-                                                    <?php foreach ($fieldLabels as $fieldKey => $fieldLabel): ?>
-                                                        <?php $fieldState = $fields[$fieldKey] ?? ['enabled' => true, 'required' => false]; ?>
-                                                        <div class="owner-field-row">
+                                                    <?php $allowedFields = $formFieldOrder[$formKey] ?? array_keys($fieldLabels); ?>
+                                                    <?php foreach ($allowedFields as $fieldKey): ?>
+                                                        <?php
+                                                            $fieldLabel = $fieldLabels[$fieldKey] ?? ucfirst(str_replace('_', ' ', $fieldKey));
+                                                            $fieldState = $fields[$fieldKey] ?? ['enabled' => false, 'required' => false];
+                                                        ?>
+                                                        <div class="owner-field-row<?php echo !empty($fieldState['enabled']) ? '' : ' is-required-disabled'; ?>" data-field-row>
                                                             <div class="owner-field-meta">
                                                                 <span class="owner-field-name"><?php echo htmlspecialchars($fieldLabel, ENT_QUOTES); ?></span>
                                                             </div>
                                                             <label class="owner-toggle">
-                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][enabled]" value="1"<?php echo owner_checked(!empty($fieldState['enabled'])); ?>>
+                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][enabled]" value="1" data-field-toggle="show"<?php echo owner_checked(!empty($fieldState['enabled'])); ?>>
                                                                 <span>Show</span>
                                                             </label>
                                                             <label class="owner-toggle">
-                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][required]" value="1"<?php echo owner_checked(!empty($fieldState['required'])); ?>>
+                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][required]" value="1" data-field-toggle="required"<?php echo owner_checked(!empty($fieldState['required'])); ?><?php echo !empty($fieldState['enabled']) ? '' : ' disabled'; ?>>
                                                                 <span>Required</span>
                                                             </label>
                                                         </div>
@@ -887,8 +921,8 @@ function owner_checked(bool $value): string
                             <div class="owner-accordion" data-accordion="users_overview">
                                 <div class="owner-accordion-header">
                                     <button class="owner-accordion-toggle" type="button" aria-expanded="<?php echo $usersOverviewOpen ? 'true' : 'false'; ?>" aria-controls="users-overview-panel" id="users-overview-toggle">
+                                        <span class="owner-accordion-indicator" title="<?php echo $usersOverviewOpen ? 'Collapse' : 'Expand'; ?>" aria-hidden="true"></span>
                                         <span class="owner-accordion-title">Users Overview</span>
-                                        <span class="owner-accordion-indicator"><?php echo $usersOverviewOpen ? 'Collapse' : 'Expand'; ?></span>
                                     </button>
                                 </div>
                                 <div class="owner-accordion-panel" id="users-overview-panel" role="region" aria-labelledby="users-overview-toggle"<?php echo $usersOverviewOpen ? '' : ' hidden'; ?>>
@@ -924,8 +958,8 @@ function owner_checked(bool $value): string
                             <div class="owner-accordion" data-accordion="users_admin_access">
                                 <div class="owner-accordion-header">
                                     <button class="owner-accordion-toggle" type="button" aria-expanded="<?php echo $adminAccessOpen ? 'true' : 'false'; ?>" aria-controls="users-admin-panel" id="users-admin-toggle">
+                                        <span class="owner-accordion-indicator" title="<?php echo $adminAccessOpen ? 'Collapse' : 'Expand'; ?>" aria-hidden="true"></span>
                                         <span class="owner-accordion-title">Admin Access</span>
-                                        <span class="owner-accordion-indicator"><?php echo $adminAccessOpen ? 'Collapse' : 'Expand'; ?></span>
                                     </button>
                                 </div>
                                 <div class="owner-accordion-panel" id="users-admin-panel" role="region" aria-labelledby="users-admin-toggle"<?php echo $adminAccessOpen ? '' : ' hidden'; ?>>
@@ -1058,8 +1092,8 @@ function owner_checked(bool $value): string
                                 <div class="owner-accordion" data-accordion="users_special_accounts">
                                     <div class="owner-accordion-header">
                                         <button class="owner-accordion-toggle" type="button" aria-expanded="<?php echo $specialAccountsOpen ? 'true' : 'false'; ?>" aria-controls="users-special-panel" id="users-special-toggle">
+                                            <span class="owner-accordion-indicator" title="<?php echo $specialAccountsOpen ? 'Collapse' : 'Expand'; ?>" aria-hidden="true"></span>
                                             <span class="owner-accordion-title">Owner &amp; Developer Accounts</span>
-                                            <span class="owner-accordion-indicator"><?php echo $specialAccountsOpen ? 'Collapse' : 'Expand'; ?></span>
                                         </button>
                                     </div>
                                     <div class="owner-accordion-panel" id="users-special-panel" role="region" aria-labelledby="users-special-toggle"<?php echo $specialAccountsOpen ? '' : ' hidden'; ?>>
@@ -1128,8 +1162,8 @@ function owner_checked(bool $value): string
                             <div class="owner-accordion" data-accordion="users_login_email">
                                 <div class="owner-accordion-header">
                                     <button class="owner-accordion-toggle" type="button" aria-expanded="<?php echo $loginEmailOpen ? 'true' : 'false'; ?>" aria-controls="users-email-panel" id="users-email-toggle">
+                                        <span class="owner-accordion-indicator" title="<?php echo $loginEmailOpen ? 'Collapse' : 'Expand'; ?>" aria-hidden="true"></span>
                                         <span class="owner-accordion-title">Login Email</span>
-                                        <span class="owner-accordion-indicator"><?php echo $loginEmailOpen ? 'Collapse' : 'Expand'; ?></span>
                                     </button>
                                 </div>
                                 <div class="owner-accordion-panel" id="users-email-panel" role="region" aria-labelledby="users-email-toggle"<?php echo $loginEmailOpen ? '' : ' hidden'; ?>>
@@ -1162,8 +1196,8 @@ function owner_checked(bool $value): string
                             <div class="owner-accordion" data-accordion="users_password">
                                 <div class="owner-accordion-header">
                                     <button class="owner-accordion-toggle" type="button" aria-expanded="<?php echo $passwordOpen ? 'true' : 'false'; ?>" aria-controls="users-password-panel" id="users-password-toggle">
+                                        <span class="owner-accordion-indicator" title="<?php echo $passwordOpen ? 'Collapse' : 'Expand'; ?>" aria-hidden="true"></span>
                                         <span class="owner-accordion-title">Change Your Password</span>
-                                        <span class="owner-accordion-indicator"><?php echo $passwordOpen ? 'Collapse' : 'Expand'; ?></span>
                                     </button>
                                 </div>
                                 <div class="owner-accordion-panel" id="users-password-panel" role="region" aria-labelledby="users-password-toggle"<?php echo $passwordOpen ? '' : ' hidden'; ?>>
@@ -1297,7 +1331,7 @@ function owner_checked(bool $value): string
                         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
                         panel.hidden = !open;
                         if (indicator) {
-                            indicator.textContent = open ? 'Collapse' : 'Expand';
+                            indicator.setAttribute('title', open ? 'Collapse' : 'Expand');
                         }
                         if (stateInput) {
                             stateInput.value = open ? '1' : '0';
@@ -1321,6 +1355,34 @@ function owner_checked(bool $value): string
 
                     toggle.addEventListener('click', () => {
                         setOpen(panel.hidden);
+                    });
+                });
+
+                const fieldRows = Array.from(document.querySelectorAll('[data-field-row]'));
+                const syncFieldRow = (row) => {
+                    const showToggle = row.querySelector('[data-field-toggle="show"]');
+                    const requiredToggle = row.querySelector('[data-field-toggle="required"]');
+                    if (!showToggle || !requiredToggle) {
+                        return;
+                    }
+                    const shouldDisable = !showToggle.checked;
+                    requiredToggle.disabled = shouldDisable;
+                    if (shouldDisable) {
+                        requiredToggle.setAttribute('aria-disabled', 'true');
+                    } else {
+                        requiredToggle.removeAttribute('aria-disabled');
+                    }
+                    row.classList.toggle('is-required-disabled', shouldDisable);
+                };
+
+                fieldRows.forEach((row) => {
+                    const showToggle = row.querySelector('[data-field-toggle="show"]');
+                    if (!showToggle) {
+                        return;
+                    }
+                    syncFieldRow(row);
+                    showToggle.addEventListener('change', () => {
+                        syncFieldRow(row);
                     });
                 });
 
