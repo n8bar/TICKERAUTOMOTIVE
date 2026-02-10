@@ -51,7 +51,6 @@
 - [ ] Verification
     - [ ] Verify service worker caching does not block form POSTs.
     - [ ] Manual regression: desktop + mobile emulation and a mock submission for each form.
-    - [ ] Hold a placeholder note for any additional form location if needed later.
 
 ### 7) Reviews & Ratings (Homepage + Reviews Pages)
 - Replace static home page reviews with the latest 5-star Google and Yelp reviews.
