@@ -6,7 +6,6 @@ $contactDefaults = [
     'phone' => ['enabled' => true, 'required' => true],
     'email' => ['enabled' => true, 'required' => false],
     'vehicle' => ['enabled' => true, 'required' => false],
-    'preferred_time' => ['enabled' => true, 'required' => false],
     'message' => ['enabled' => true, 'required' => false],
 ];
 
@@ -49,34 +48,6 @@ $contactEnabled = !empty($contactConfig['enabled']);
                     <p class="contact-us-subtitle">
                         Call, visit, or stop by the shop. We are happy to answer questions and schedule service.
                     </p>
-                </div>
-            </section>
-            <section class="contact-us-info">
-                <div class="container contact-us-info-inner">
-                    <div class="contact-us-card">
-                        <h2>Call Us</h2>
-                        <p>
-                            Talk with our team about repairs, tires, towing, or scheduling. We will help you find
-                            the right next step.
-                        </p>
-                        <a class="btn btn-primary" href="<?php echo htmlspecialchars($sitePrimaryPhoneHref, ENT_QUOTES); ?>">Call <?php echo htmlspecialchars($sitePrimaryPhone, ENT_QUOTES); ?></a>
-                    </div>
-                    <div class="contact-us-card">
-                        <h2>Visit the Shop</h2>
-                        <p data-business-hours><?php echo htmlspecialchars($siteBusinessHours, ENT_QUOTES); ?></p>
-                        <p data-nap-lines>
-                            Ticker Automotive<br>
-                            <?php echo htmlspecialchars($siteAddressInline, ENT_QUOTES); ?><br>
-                            <?php echo htmlspecialchars($sitePrimaryPhone, ENT_QUOTES); ?>
-                        </p>
-                        <p>
-                            After-hours: <a href="<?php echo htmlspecialchars($siteAfterHoursPhoneHref, ENT_QUOTES); ?>"><?php echo htmlspecialchars($siteAfterHoursPhone, ENT_QUOTES); ?></a> (call or text, voicemail if no answer)
-                        </p>
-                        <p>
-                            Email: <a href="<?php echo htmlspecialchars($sitePrimaryEmailHref, ENT_QUOTES); ?>"><?php echo htmlspecialchars($sitePrimaryEmail, ENT_QUOTES); ?></a>
-                        </p>
-                        <a class="btn btn-primary" href="directions.php">Get Directions</a>
-                    </div>
                 </div>
             </section>
             <section class="contact-us-form">
@@ -139,12 +110,6 @@ $contactEnabled = !empty($contactConfig['enabled']);
                                     <input class="contact-us-input" type="text" name="vehicle" autocomplete="off" data-field="vehicle" placeholder="Year, make, model" value="<?php echo htmlspecialchars($contactState['values']['vehicle'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($contactFields['vehicle']['required']) ? ' required' : ''; ?>>
                                 </label>
                             <?php endif; ?>
-                            <?php if (!empty($contactFields['preferred_time']['enabled'])): ?>
-                                <label class="contact-us-field contact-us-field-full">
-                                    <span class="contact-us-label">Preferred time<?php if (!empty($contactFields['preferred_time']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
-                                    <input class="contact-us-input" type="text" name="preferred_time" autocomplete="off" data-field="preferred_time" placeholder="Best time to reach you" value="<?php echo htmlspecialchars($contactState['values']['preferred_time'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($contactFields['preferred_time']['required']) ? ' required' : ''; ?>>
-                                </label>
-                            <?php endif; ?>
                             <?php if (!empty($contactFields['message']['enabled'])): ?>
                                 <label class="contact-us-field contact-us-field-full">
                                     <span class="contact-us-label">Message<?php if (!empty($contactFields['message']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
@@ -157,6 +122,34 @@ $contactEnabled = !empty($contactConfig['enabled']);
                             </div>
                             </form>
                         <?php endif; ?>
+                    </div>
+                </div>
+            </section>
+            <section class="contact-us-info">
+                <div class="container contact-us-info-inner">
+                    <div class="contact-us-card">
+                        <h2>Call Us</h2>
+                        <p>
+                            Talk with our team about repairs, tires, towing, or scheduling. We will help you find
+                            the right next step.
+                        </p>
+                        <a class="btn btn-primary" href="<?php echo htmlspecialchars($sitePrimaryPhoneHref, ENT_QUOTES); ?>">Call <?php echo htmlspecialchars($sitePrimaryPhone, ENT_QUOTES); ?></a>
+                    </div>
+                    <div class="contact-us-card">
+                        <h2>Visit the Shop</h2>
+                        <p data-business-hours><?php echo htmlspecialchars($siteBusinessHours, ENT_QUOTES); ?></p>
+                        <p data-nap-lines>
+                            Ticker Automotive<br>
+                            <?php echo htmlspecialchars($siteAddressInline, ENT_QUOTES); ?><br>
+                            <?php echo htmlspecialchars($sitePrimaryPhone, ENT_QUOTES); ?>
+                        </p>
+                        <p>
+                            After-hours: <a href="<?php echo htmlspecialchars($siteAfterHoursPhoneHref, ENT_QUOTES); ?>"><?php echo htmlspecialchars($siteAfterHoursPhone, ENT_QUOTES); ?></a> (call or text, voicemail if no answer)
+                        </p>
+                        <p>
+                            Email: <a href="<?php echo htmlspecialchars($sitePrimaryEmailHref, ENT_QUOTES); ?>"><?php echo htmlspecialchars($sitePrimaryEmail, ENT_QUOTES); ?></a>
+                        </p>
+                        <a class="btn btn-primary" href="directions.php">Get Directions</a>
                     </div>
                 </div>
             </section>

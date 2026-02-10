@@ -59,7 +59,13 @@ function owner_default_settings(): array
                     'subject' => 'We received your message',
                     'body' => "Thanks for contacting Ticker Automotive. We'll be in touch shortly.",
                 ],
-                'fields' => owner_default_form_fields(),
+                'fields' => (function (): array {
+                    $fields = owner_default_form_fields();
+                    if (isset($fields['preferred_time'])) {
+                        $fields['preferred_time']['enabled'] = false;
+                    }
+                    return $fields;
+                })(),
             ],
             'delivery_override' => [
                 'enabled' => false,
