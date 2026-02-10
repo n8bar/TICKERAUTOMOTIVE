@@ -50,7 +50,7 @@
     - [x] Add lightweight email template for admin notifications (subject + body summary).
 - [ ] Verification
     - [ ] Verify service worker caching does not block form POSTs.
-    - [ ] Manual regression: desktop + mobile emulation and a mock submission for each form.
+    - [x] Manual regression: desktop + mobile emulation and a mock submission for each form.
 
 ### 7) Reviews & Ratings (Homepage + Reviews Pages)
 - Replace static home page reviews with the latest 5-star Google and Yelp reviews.
