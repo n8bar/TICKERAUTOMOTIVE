@@ -265,7 +265,7 @@
 .owner-accordion-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 16px;
     padding: 14px 18px;
     background: #141b3a;
@@ -285,6 +285,7 @@
     cursor: pointer;
     flex: 1;
     text-align: left;
+    justify-content: flex-start;
 }
 
 .owner-accordion-title {
@@ -316,6 +317,10 @@
 
 .owner-accordion-header .owner-toggle {
     color: rgba(255, 255, 255, 0.85);
+}
+
+.owner-accordion-header .owner-toggle-inline {
+    margin-left: auto;
 }
 
 .owner-accordion-panel {

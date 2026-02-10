@@ -1,5 +1,7 @@
 <?php
-$contactFields = [
+require_once __DIR__ . '/includes/form-handler.php';
+
+$contactDefaults = [
     'name' => ['enabled' => true, 'required' => true],
     'phone' => ['enabled' => true, 'required' => true],
     'email' => ['enabled' => true, 'required' => false],
@@ -8,22 +10,10 @@ $contactFields = [
     'message' => ['enabled' => true, 'required' => false],
 ];
 
-$ownerConfig = __DIR__ . '/owner/config.php';
-if (is_file($ownerConfig)) {
-    require_once __DIR__ . '/owner/lib/settings.php';
-    $ownerSettings = owner_load_settings();
-    $storedFields = $ownerSettings['contact_forms']['contact_us']['fields'] ?? [];
-    if (is_array($storedFields)) {
-        foreach ($contactFields as $fieldKey => $fieldState) {
-            $override = $storedFields[$fieldKey] ?? null;
-            if (!is_array($override)) {
-                continue;
-            }
-            $contactFields[$fieldKey]['enabled'] = !empty($override['enabled']);
-            $contactFields[$fieldKey]['required'] = !empty($override['required']);
-        }
-    }
-}
+$contactConfig = site_form_get_contact_form('contact_us');
+$contactFields = site_form_merge_fields($contactDefaults, $contactConfig['fields'] ?? []);
+$contactState = site_form_handle_submission('contact_us', 'Contact Message', $contactFields, $contactConfig);
+$contactEnabled = !empty($contactConfig['enabled']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -98,48 +88,78 @@ if (is_file($ownerConfig)) {
                                 Let us know how we can help and we will respond as soon as we can.
                             </p>
                         </div>
-                        <form class="contact-us-form-grid" method="post" action="" data-form="contact_us" novalidate>
-                            <?php if (!empty($contactFields['name']['enabled'])): ?>
+                        <?php if ($contactState['success']): ?>
+                            <div class="contact-us-alert contact-us-alert-success" role="status">
+                                <?php echo htmlspecialchars($contactState['message'], ENT_QUOTES); ?>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (!empty($contactState['errors'])): ?>
+                            <div class="contact-us-alert contact-us-alert-error" role="alert">
+                                <p>Please review the following:</p>
+                                <ul>
+                                    <?php foreach ($contactState['errors'] as $error): ?>
+                                        <li><?php echo htmlspecialchars($error, ENT_QUOTES); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (!$contactEnabled): ?>
+                            <div class="contact-us-alert contact-us-alert-error" role="status">
+                                Online messages are currently paused. Please call us instead.
+                            </div>
+                        <?php endif; ?>
+                        <?php if ($contactEnabled): ?>
+                            <form class="contact-us-form-grid" method="post" action="" data-form="contact_us" novalidate>
+                                <input type="hidden" name="form_key" value="contact_us">
+                                <input type="hidden" name="form_started" value="<?php echo time(); ?>">
+                                <div class="contact-us-honeypot" aria-hidden="true">
+                                    <label>
+                                        Leave this field blank
+                                        <input type="text" name="website" tabindex="-1" autocomplete="off">
+                                    </label>
+                                </div>
+                                <?php if (!empty($contactFields['name']['enabled'])): ?>
                                 <label class="contact-us-field">
                                     <span class="contact-us-label">Full name<?php if (!empty($contactFields['name']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
-                                    <input class="contact-us-input" type="text" name="name" autocomplete="name" data-field="name"<?php echo !empty($contactFields['name']['required']) ? ' required' : ''; ?>>
+                                    <input class="contact-us-input" type="text" name="name" autocomplete="name" data-field="name" value="<?php echo htmlspecialchars($contactState['values']['name'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($contactFields['name']['required']) ? ' required' : ''; ?>>
                                 </label>
                             <?php endif; ?>
                             <?php if (!empty($contactFields['phone']['enabled'])): ?>
                                 <label class="contact-us-field">
                                     <span class="contact-us-label">Phone number<?php if (!empty($contactFields['phone']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
-                                    <input class="contact-us-input" type="tel" name="phone" autocomplete="tel" data-field="phone"<?php echo !empty($contactFields['phone']['required']) ? ' required' : ''; ?>>
+                                    <input class="contact-us-input" type="tel" name="phone" autocomplete="tel" data-field="phone" value="<?php echo htmlspecialchars($contactState['values']['phone'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($contactFields['phone']['required']) ? ' required' : ''; ?>>
                                 </label>
                             <?php endif; ?>
                             <?php if (!empty($contactFields['email']['enabled'])): ?>
                                 <label class="contact-us-field">
                                     <span class="contact-us-label">Email address<?php if (!empty($contactFields['email']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
-                                    <input class="contact-us-input" type="email" name="email" autocomplete="email" data-field="email"<?php echo !empty($contactFields['email']['required']) ? ' required' : ''; ?>>
+                                    <input class="contact-us-input" type="email" name="email" autocomplete="email" data-field="email" value="<?php echo htmlspecialchars($contactState['values']['email'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($contactFields['email']['required']) ? ' required' : ''; ?>>
                                 </label>
                             <?php endif; ?>
                             <?php if (!empty($contactFields['vehicle']['enabled'])): ?>
                                 <label class="contact-us-field">
                                     <span class="contact-us-label">Vehicle<?php if (!empty($contactFields['vehicle']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
-                                    <input class="contact-us-input" type="text" name="vehicle" autocomplete="off" data-field="vehicle" placeholder="Year, make, model"<?php echo !empty($contactFields['vehicle']['required']) ? ' required' : ''; ?>>
+                                    <input class="contact-us-input" type="text" name="vehicle" autocomplete="off" data-field="vehicle" placeholder="Year, make, model" value="<?php echo htmlspecialchars($contactState['values']['vehicle'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($contactFields['vehicle']['required']) ? ' required' : ''; ?>>
                                 </label>
                             <?php endif; ?>
                             <?php if (!empty($contactFields['preferred_time']['enabled'])): ?>
                                 <label class="contact-us-field contact-us-field-full">
                                     <span class="contact-us-label">Preferred time<?php if (!empty($contactFields['preferred_time']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
-                                    <input class="contact-us-input" type="text" name="preferred_time" autocomplete="off" data-field="preferred_time" placeholder="Best time to reach you"<?php echo !empty($contactFields['preferred_time']['required']) ? ' required' : ''; ?>>
+                                    <input class="contact-us-input" type="text" name="preferred_time" autocomplete="off" data-field="preferred_time" placeholder="Best time to reach you" value="<?php echo htmlspecialchars($contactState['values']['preferred_time'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($contactFields['preferred_time']['required']) ? ' required' : ''; ?>>
                                 </label>
                             <?php endif; ?>
                             <?php if (!empty($contactFields['message']['enabled'])): ?>
                                 <label class="contact-us-field contact-us-field-full">
                                     <span class="contact-us-label">Message<?php if (!empty($contactFields['message']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
-                                    <textarea class="contact-us-input contact-us-textarea" name="message" rows="4" data-field="message"<?php echo !empty($contactFields['message']['required']) ? ' required' : ''; ?>></textarea>
+                                    <textarea class="contact-us-input contact-us-textarea" name="message" rows="4" data-field="message"<?php echo !empty($contactFields['message']['required']) ? ' required' : ''; ?>><?php echo htmlspecialchars($contactState['values']['message'] ?? '', ENT_QUOTES); ?></textarea>
                                 </label>
                             <?php endif; ?>
                             <div class="contact-us-form-actions contact-us-field-full">
                                 <button class="btn btn-primary" type="submit">Send message</button>
                                 <p class="contact-us-form-note">We respond during business hours.</p>
                             </div>
-                        </form>
+                            </form>
+                        <?php endif; ?>
                     </div>
                 </div>
             </section>

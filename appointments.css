@@ -110,6 +110,37 @@
     font-size: 14px;
 }
 
+.appointments-alert {
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.appointments-alert ul {
+    margin: 8px 0 0;
+    padding-left: 18px;
+}
+
+.appointments-alert-success {
+    background: rgba(46, 125, 50, 0.12);
+    color: #1e5127;
+}
+
+.appointments-alert-error {
+    background: rgba(179, 57, 81, 0.12);
+    color: #8d2d3f;
+}
+
+.appointments-honeypot {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
 .appointments-info-inner {
     display: grid;
     gap: 24px;

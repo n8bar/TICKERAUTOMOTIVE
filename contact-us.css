@@ -108,6 +108,37 @@
     font-size: 14px;
 }
 
+.contact-us-alert {
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.contact-us-alert ul {
+    margin: 8px 0 0;
+    padding-left: 18px;
+}
+
+.contact-us-alert-success {
+    background: rgba(46, 125, 50, 0.12);
+    color: #1e5127;
+}
+
+.contact-us-alert-error {
+    background: rgba(179, 57, 81, 0.12);
+    color: #8d2d3f;
+}
+
+.contact-us-honeypot {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
 .contact-us-info-inner {
     display: grid;
     gap: 24px;

@@ -15,6 +15,18 @@ function owner_default_settings(): array
             'address_line1' => '680 North State Street',
             'address_line2' => 'Hildale, UT 84784',
         ],
+        'smtp' => [
+            'enabled' => false,
+            'host' => '',
+            'port' => 587,
+            'encryption' => 'tls',
+            'username' => '',
+            'password' => '',
+            'from_email' => '',
+            'from_name' => 'Ticker Automotive',
+            'reply_to' => '',
+            'timeout' => 10,
+        ],
         'contact_forms' => [
             'appointments' => [
                 'enabled' => true,

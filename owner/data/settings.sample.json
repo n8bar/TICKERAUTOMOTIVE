@@ -7,6 +7,18 @@
         "address_line1": "680 North State Street",
         "address_line2": "Hildale, UT 84784"
     },
+    "smtp": {
+        "enabled": false,
+        "host": "",
+        "port": 587,
+        "encryption": "tls",
+        "username": "",
+        "password": "",
+        "from_email": "",
+        "from_name": "Ticker Automotive",
+        "reply_to": "",
+        "timeout": 10
+    },
     "contact_forms": {
         "appointments": {
             "enabled": true,
@@ -32,8 +44,32 @@
                     "enabled": true,
                     "required": false
                 },
-                "vehicle": {
+                "service": {
                     "enabled": true,
+                    "required": false
+                },
+                "year": {
+                    "enabled": true,
+                    "required": false
+                },
+                "make": {
+                    "enabled": true,
+                    "required": false
+                },
+                "model": {
+                    "enabled": true,
+                    "required": false
+                },
+                "license_plate": {
+                    "enabled": true,
+                    "required": false
+                },
+                "vin": {
+                    "enabled": true,
+                    "required": false
+                },
+                "vehicle": {
+                    "enabled": false,
                     "required": false
                 },
                 "preferred_time": {
@@ -68,6 +104,30 @@
                 },
                 "email": {
                     "enabled": true,
+                    "required": false
+                },
+                "service": {
+                    "enabled": false,
+                    "required": false
+                },
+                "year": {
+                    "enabled": false,
+                    "required": false
+                },
+                "make": {
+                    "enabled": false,
+                    "required": false
+                },
+                "model": {
+                    "enabled": false,
+                    "required": false
+                },
+                "license_plate": {
+                    "enabled": false,
+                    "required": false
+                },
+                "vin": {
+                    "enabled": false,
                     "required": false
                 },
                 "vehicle": {
