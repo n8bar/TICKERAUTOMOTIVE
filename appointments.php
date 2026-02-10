@@ -109,11 +109,8 @@ $appointmentsEnabled = !empty($appointmentsConfig['enabled']);
                             <form class="appointments-form-grid" method="post" action="" data-form="appointments" novalidate>
                                 <input type="hidden" name="form_key" value="appointments">
                                 <input type="hidden" name="form_started" value="<?php echo time(); ?>">
-                                <div class="appointments-honeypot" aria-hidden="true">
-                                    <label>
-                                        Leave this field blank
-                                        <input type="text" name="website" tabindex="-1" autocomplete="off">
-                                    </label>
+                                <div class="appointments-honeypot" aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">
+                                    <input type="text" name="website" tabindex="-1" autocomplete="off" aria-label="Leave this field blank">
                                 </div>
                                 <?php if (!empty($appointmentsFields['name']['enabled'])): ?>
                                 <label class="appointments-field">

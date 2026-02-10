@@ -112,11 +112,8 @@ $contactEnabled = !empty($contactConfig['enabled']);
                             <form class="contact-us-form-grid" method="post" action="" data-form="contact_us" novalidate>
                                 <input type="hidden" name="form_key" value="contact_us">
                                 <input type="hidden" name="form_started" value="<?php echo time(); ?>">
-                                <div class="contact-us-honeypot" aria-hidden="true">
-                                    <label>
-                                        Leave this field blank
-                                        <input type="text" name="website" tabindex="-1" autocomplete="off">
-                                    </label>
+                                <div class="contact-us-honeypot" aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">
+                                    <input type="text" name="website" tabindex="-1" autocomplete="off" aria-label="Leave this field blank">
                                 </div>
                                 <?php if (!empty($contactFields['name']['enabled'])): ?>
                                 <label class="contact-us-field">

@@ -109,7 +109,7 @@ function site_form_is_spam(array $data): bool
     }
 
     $started = (int) ($data['form_started'] ?? 0);
-    if ($started > 0 && (time() - $started) < 3) {
+    if ($started > 0 && (time() - $started) < 1) {
         return true;
     }
 
@@ -213,7 +213,12 @@ function site_form_handle_submission(string $formKey, string $formLabel, array $
         'message' => '',
     ];
 
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || ($formKey !== (string) ($_POST['form_key'] ?? ''))) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        return $state;
+    }
+
+    $postedKey = (string) ($_POST['form_key'] ?? '');
+    if ($postedKey !== '' && $postedKey !== $formKey) {
         return $state;
     }
 
@@ -225,7 +230,7 @@ function site_form_handle_submission(string $formKey, string $formLabel, array $
     }
 
     if (site_form_is_spam($_POST)) {
-        $state['errors'][] = 'Unable to send your request right now. Please try again.';
+        $state['errors'][] = 'Please wait a moment and try again.';
         return $state;
     }
 
@@ -263,8 +268,8 @@ function site_form_handle_submission(string $formKey, string $formLabel, array $
 
     $userEmail = site_form_sanitize_text((string) ($state['values']['email'] ?? ''));
     $replyTo = site_form_sanitize_text((string) ($smtp['reply_to'] ?? ''));
-    if ($replyTo === '' && $userEmail !== '' && filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
-        $replyTo = $userEmail;
+    if ($replyTo === '' && !empty($recipients)) {
+        $replyTo = $recipients[0];
     }
 
     $meta = [
@@ -274,7 +279,7 @@ function site_form_handle_submission(string $formKey, string $formLabel, array $
         'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
     ];
 
-    $subject = site_form_header_safe('New ' . $formLabel . ' - Ticker Automotive');
+    $subject = site_form_header_safe('Form: ' . $formLabel . ' - Ticker Automotive');
     $body = site_form_build_email_body($formLabel, $state['values'], $meta);
 
     $sent = site_form_send_smtp($smtp, $recipients, $subject, $body, $fromEmail, $fromName, $replyTo);
@@ -409,15 +414,31 @@ function site_form_send_smtp(array $smtp, array $recipients, string $subject, st
         return false;
     }
 
+    $toHeaderParts = [];
+    foreach ($recipients as $recipient) {
+        $recipient = site_form_header_safe((string) $recipient);
+        if ($recipient !== '') {
+            $toHeaderParts[] = $recipient;
+        }
+    }
+    $toHeader = implode(', ', $toHeaderParts);
+
     $headers = [
         'From: ' . $fromName . ' <' . $fromEmail . '>',
+        'To: ' . ($toHeader !== '' ? $toHeader : $fromEmail),
+        'Subject: ' . $subject,
         'Reply-To: ' . ($replyTo !== '' ? $replyTo : $fromEmail),
+        'Date: ' . date('r'),
         'MIME-Version: 1.0',
         'Content-Type: text/plain; charset=UTF-8',
     ];
 
-    $message = implode("\r\n", $headers) . "\r\n\r\n" . $body;
-    $message = str_replace("\r\n.", "\r\n..", str_replace("\n", "\r\n", $message));
+    $normalizedBody = preg_replace("/\r\n|\r|\n/", "\r\n", $body);
+    $message = implode("\r\n", $headers) . "\r\n\r\n" . $normalizedBody;
+    if (str_starts_with($message, '.')) {
+        $message = '.' . $message;
+    }
+    $message = str_replace("\r\n.", "\r\n..", $message);
 
     fwrite($socket, $message . "\r\n.\r\n");
     if (!$expect($socket, [250])) {
