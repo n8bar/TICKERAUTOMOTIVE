@@ -54,7 +54,7 @@
 ### 7) Form Feedback
 - Capture client feedback on contact + appointment forms.
 - Implement requested adjustments and retest submissions.
-- Confirm delivery override behavior during client review.
+- Confirm delivery override behavior soon after and follow up.
 
 ### 8) Reviews & Ratings (Homepage + Reviews Pages)
 - Replace static home page reviews with the latest 5-star Google and Yelp reviews.
