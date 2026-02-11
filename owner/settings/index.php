@@ -35,6 +35,26 @@ $formLabels = [
     'contact_us' => 'Contact Us',
 ];
 
+$previewDir = __DIR__ . '/../preview/pages';
+$previewPages = [];
+if (is_dir($previewDir)) {
+    $previewFiles = glob($previewDir . '/*.php') ?: [];
+    foreach ($previewFiles as $file) {
+        $basename = basename($file);
+        $name = pathinfo($basename, PATHINFO_FILENAME);
+        $label = ucwords(str_replace(['-', '_'], ' ', $name));
+        $key = 'preview_' . preg_replace('/[^a-z0-9]+/i', '_', $name);
+        $previewPages[] = [
+            'key' => $key,
+            'label' => $label,
+            'url' => '/owner/preview/pages/' . rawurlencode($basename) . '?skip_sw_cache=1',
+        ];
+    }
+    usort($previewPages, function (array $left, array $right): int {
+        return strcasecmp($left['label'], $right['label']);
+    });
+}
+
 $fieldLabels = [
     'name' => 'Full name',
     'phone' => 'Phone number',
@@ -917,27 +937,28 @@ function owner_checked(bool $value): string
                                 <br />
                                 <div class="owner-section">
                                     <h2 class="owner-section-title">Feature Previews</h2>
-                                    <p class="owner-subtitle">Open the live forms below to review layout, copy, and submission flow.</p>
-                                    <div class="owner-preview-grid">
-                                        <div class="owner-preview-card">
-                                            <div class="owner-preview-header">
-                                                <h3 class="owner-preview-title">Appointment Request</h3>
-                                                <p class="owner-help">Use this to test the appointment form and service list.</p>
-                                            </div>
-                                            <div class="owner-preview-actions">
-                                                <a class="btn btn-primary" href="/appointments.php?skip_sw_cache=1" target="_blank" rel="noopener">Open Appointment Form</a>
-                                            </div>
+                                    <p class="owner-subtitle">Review in-progress pages before they go live.</p>
+                                    <?php if (empty($previewPages)): ?>
+                                        <p class="owner-help">No preview pages found in <code>/owner/preview/pages</code>.</p>
+                                    <?php else: ?>
+                                        <div class="owner-preview-accordions">
+                                            <?php foreach ($previewPages as $preview): ?>
+                                                <div class="owner-accordion owner-preview-accordion" data-accordion="<?php echo htmlspecialchars($preview['key'], ENT_QUOTES); ?>">
+                                                    <div class="owner-accordion-header">
+                                                        <button class="owner-accordion-toggle" type="button" aria-expanded="false" aria-controls="preview-<?php echo htmlspecialchars($preview['key'], ENT_QUOTES); ?>" id="preview-toggle-<?php echo htmlspecialchars($preview['key'], ENT_QUOTES); ?>">
+                                                            <span class="owner-accordion-indicator" title="Expand" aria-hidden="true"></span>
+                                                            <span class="owner-accordion-title"><?php echo htmlspecialchars($preview['label'], ENT_QUOTES); ?></span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="owner-accordion-panel" id="preview-<?php echo htmlspecialchars($preview['key'], ENT_QUOTES); ?>" role="region" aria-labelledby="preview-toggle-<?php echo htmlspecialchars($preview['key'], ENT_QUOTES); ?>" hidden>
+                                                        <div class="owner-preview-frame">
+                                                            <iframe class="owner-preview-iframe" src="<?php echo htmlspecialchars($preview['url'], ENT_QUOTES); ?>" title="<?php echo htmlspecialchars($preview['label'], ENT_QUOTES); ?> preview" loading="lazy"></iframe>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
                                         </div>
-                                        <div class="owner-preview-card">
-                                            <div class="owner-preview-header">
-                                                <h3 class="owner-preview-title">Contact Us</h3>
-                                                <p class="owner-help">Use this to test the contact form flow.</p>
-                                            </div>
-                                            <div class="owner-preview-actions">
-                                                <a class="btn btn-primary" href="/contact-us.php?skip_sw_cache=1" target="_blank" rel="noopener">Open Contact Form</a>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <?php endif; ?>
                                 </div>
                             </section>
 
@@ -947,6 +968,7 @@ function owner_checked(bool $value): string
                         </form>
 
                         <section class="owner-tab-panel" data-tab-panel="users" role="tabpanel" aria-labelledby="tab-users-button" id="tab-users" hidden>
+                            <div class="owner-accordion-grid">
                             <?php $usersOverviewOpen = true; ?>
                             <div class="owner-accordion" data-accordion="users_overview">
                                 <div class="owner-accordion-header">
@@ -1262,6 +1284,7 @@ function owner_checked(bool $value): string
                                         </form>
                                     </div>
                                 </div>
+                            </div>
                             </div>
                         </section>
                     </div>

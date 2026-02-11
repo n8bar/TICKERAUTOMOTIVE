@@ -2,6 +2,7 @@
     min-height: 100vh;
     background: linear-gradient(160deg, #f4f5f9 0%, #eef0f6 45%, #f9fafc 100%);
     font-size: 20px;
+    --owner-card-max: 980px;
 }
 
 .owner-shell {
@@ -415,6 +416,9 @@
     border: 1px solid rgba(20, 27, 58, 0.12);
     display: grid;
     gap: 12px;
+    width: 100%;
+    max-width: var(--owner-card-max);
+    justify-self: center;
 }
 
 .owner-user-role {
@@ -444,6 +448,9 @@
     border: 1px solid rgba(20, 27, 58, 0.12);
     display: grid;
     gap: 16px;
+    width: 100%;
+    max-width: var(--owner-card-max);
+    justify-self: center;
 }
 
 .owner-panel-title {
@@ -452,31 +459,21 @@
     color: #1f2758;
 }
 
-.owner-preview-grid {
+.owner-preview-accordions {
     display: grid;
-    gap: 16px;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
 }
 
-.owner-preview-card {
-    border-radius: 14px;
-    padding: 16px;
+.owner-preview-frame {
+    width: 100%;
+}
+
+.owner-preview-iframe {
+    width: 100%;
+    min-height: 900px;
+    border-radius: 12px;
+    border: 1px solid rgba(20, 27, 58, 0.18);
     background: #ffffff;
-    border: 1px solid rgba(20, 27, 58, 0.12);
-    display: grid;
-    gap: 12px;
-}
-
-.owner-preview-title {
-    margin: 0;
-    font-size: 18px;
-    color: #1f2758;
-}
-
-.owner-preview-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
 }
 
 .owner-admin-list {
@@ -491,6 +488,9 @@
     border: 1px solid rgba(20, 27, 58, 0.12);
     display: grid;
     gap: 14px;
+    width: 100%;
+    max-width: var(--owner-card-max);
+    justify-self: center;
 }
 
 .owner-admin-meta {
@@ -525,6 +525,11 @@
 
 .owner-actions {
     margin-top: 12px;
+    width: 100%;
+    max-width: var(--owner-card-max);
+    justify-self: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 @media (max-width: 720px) {
