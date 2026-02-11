@@ -832,84 +832,85 @@ function owner_checked(bool $value): string
                                         </label>
                                     </div>
                                 <?php endif; ?>
-                                <?php foreach ($formLabels as $formKey => $formLabel): ?>
-                                    <?php
-                                        $formSettings = $settings['contact_forms'][$formKey] ?? [];
-                                        $recipients = $formSettings['recipients'] ?? [];
-                                        $recipientValue = implode(', ', $recipients);
-                                        $fields = $formSettings['fields'] ?? [];
-                                        $autoReply = $formSettings['auto_reply'] ?? [];
-                                        $isOpen = !empty($accordionState[$formKey]);
-                                    ?>
-                                    <br />
-                                    <div class="owner-accordion" data-accordion="<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>">
-                                        <div class="owner-accordion-header">
-                                            <button class="owner-accordion-toggle" type="button" aria-expanded="<?php echo $isOpen ? 'true' : 'false'; ?>" aria-controls="form-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>" id="form-toggle-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>">
-                                                <span class="owner-accordion-indicator" title="<?php echo $isOpen ? 'Collapse' : 'Expand'; ?>" aria-hidden="true"></span>
-                                                <span class="owner-accordion-title"><?php echo htmlspecialchars($formLabel, ENT_QUOTES); ?> Form</span>
-                                            </button>
-                                            <input type="hidden" name="accordion_state[<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>]" value="<?php echo $isOpen ? '1' : '0'; ?>" data-accordion-state="<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>">
-                                            <label class="owner-toggle owner-toggle-inline">
-                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][enabled]" value="1"<?php echo owner_checked(!empty($formSettings['enabled'])); ?>>
-                                                <span>Enabled</span>
-                                            </label>
-                                        </div>
-                                        <div class="owner-accordion-panel" id="form-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>" role="region" aria-labelledby="form-toggle-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>"<?php echo $isOpen ? '' : ' hidden'; ?>>
-                                            <div class="owner-section owner-section-compact">
-                                                <div class="owner-grid">
-                                                    <label class="owner-field owner-field-full">
-                                                        <span class="owner-label">Recipient email(s)</span>
-                                                        <input class="owner-input" type="text" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][recipients]" value="<?php echo htmlspecialchars($recipientValue, ENT_QUOTES); ?>" placeholder="email1@domain.com, email2@domain.com">
-                                                        <span class="owner-help">Separate multiple emails with commas.</span>
-                                                    </label>
-                                                </div>
-                                                <div class="owner-fields-grid">
-                                                    <?php $allowedFields = $formFieldOrder[$formKey] ?? array_keys($fieldLabels); ?>
-                                                    <?php foreach ($allowedFields as $fieldKey): ?>
-                                                        <?php
-                                                            $fieldLabel = $fieldLabels[$fieldKey] ?? ucfirst(str_replace('_', ' ', $fieldKey));
-                                                            $fieldState = $fields[$fieldKey] ?? ['enabled' => false, 'required' => false];
-                                                        ?>
-                                                        <div class="owner-field-row<?php echo !empty($fieldState['enabled']) ? '' : ' is-required-disabled'; ?>" data-field-row>
-                                                            <div class="owner-field-meta">
-                                                                <span class="owner-field-name"><?php echo htmlspecialchars($fieldLabel, ENT_QUOTES); ?></span>
-                                                            </div>
-                                                            <label class="owner-toggle">
-                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][enabled]" value="1" data-field-toggle="show"<?php echo owner_checked(!empty($fieldState['enabled'])); ?>>
-                                                                <span>Show</span>
-                                                            </label>
-                                                            <label class="owner-toggle">
-                                                                <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][required]" value="1" data-field-toggle="required"<?php echo owner_checked(!empty($fieldState['required'])); ?><?php echo !empty($fieldState['enabled']) ? '' : ' disabled'; ?>>
-                                                                <span>Required</span>
-                                                            </label>
-                                                        </div>
-                                                    <?php endforeach; ?>
-                                                </div>
-                                                <label class="owner-field owner-field-full">
-                                                    <span class="owner-label">Thank you message</span>
-                                                    <textarea class="owner-input owner-textarea" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][thank_you_message]" rows="3"><?php echo htmlspecialchars($formSettings['thank_you_message'] ?? '', ENT_QUOTES); ?></textarea>
+                                <div class="owner-accordion-grid">
+                                    <?php foreach ($formLabels as $formKey => $formLabel): ?>
+                                        <?php
+                                            $formSettings = $settings['contact_forms'][$formKey] ?? [];
+                                            $recipients = $formSettings['recipients'] ?? [];
+                                            $recipientValue = implode(', ', $recipients);
+                                            $fields = $formSettings['fields'] ?? [];
+                                            $autoReply = $formSettings['auto_reply'] ?? [];
+                                            $isOpen = !empty($accordionState[$formKey]);
+                                        ?>
+                                        <div class="owner-accordion" data-accordion="<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>">
+                                            <div class="owner-accordion-header">
+                                                <button class="owner-accordion-toggle" type="button" aria-expanded="<?php echo $isOpen ? 'true' : 'false'; ?>" aria-controls="form-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>" id="form-toggle-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>">
+                                                    <span class="owner-accordion-indicator" title="<?php echo $isOpen ? 'Collapse' : 'Expand'; ?>" aria-hidden="true"></span>
+                                                    <span class="owner-accordion-title"><?php echo htmlspecialchars($formLabel, ENT_QUOTES); ?> Form</span>
+                                                </button>
+                                                <input type="hidden" name="accordion_state[<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>]" value="<?php echo $isOpen ? '1' : '0'; ?>" data-accordion-state="<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>">
+                                                <label class="owner-toggle owner-toggle-inline">
+                                                    <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][enabled]" value="1"<?php echo owner_checked(!empty($formSettings['enabled'])); ?>>
+                                                    <span>Enabled</span>
                                                 </label>
-                                                <div class="owner-section-sub">
-                                                    <h3 class="owner-section-subtitle">Auto-reply</h3>
-                                                    <label class="owner-toggle">
-                                                        <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][enabled]" value="1"<?php echo owner_checked(!empty($autoReply['enabled'])); ?>>
-                                                        <span>Send auto-reply</span>
-                                                    </label>
+                                            </div>
+                                            <div class="owner-accordion-panel" id="form-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>" role="region" aria-labelledby="form-toggle-<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>"<?php echo $isOpen ? '' : ' hidden'; ?>>
+                                                <div class="owner-section owner-section-compact">
                                                     <div class="owner-grid">
                                                         <label class="owner-field owner-field-full">
-                                                            <span class="owner-label">Auto-reply subject</span>
-                                                            <input class="owner-input" type="text" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][subject]" value="<?php echo htmlspecialchars($autoReply['subject'] ?? '', ENT_QUOTES); ?>">
+                                                            <span class="owner-label">Recipient email(s)</span>
+                                                            <input class="owner-input" type="text" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][recipients]" value="<?php echo htmlspecialchars($recipientValue, ENT_QUOTES); ?>" placeholder="email1@domain.com, email2@domain.com">
+                                                            <span class="owner-help">Separate multiple emails with commas.</span>
                                                         </label>
-                                                        <label class="owner-field owner-field-full">
-                                                            <span class="owner-label">Auto-reply message</span>
-                                                            <textarea class="owner-input owner-textarea" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][body]" rows="4"><?php echo htmlspecialchars($autoReply['body'] ?? '', ENT_QUOTES); ?></textarea>
+                                                    </div>
+                                                    <div class="owner-fields-grid">
+                                                        <?php $allowedFields = $formFieldOrder[$formKey] ?? array_keys($fieldLabels); ?>
+                                                        <?php foreach ($allowedFields as $fieldKey): ?>
+                                                            <?php
+                                                                $fieldLabel = $fieldLabels[$fieldKey] ?? ucfirst(str_replace('_', ' ', $fieldKey));
+                                                                $fieldState = $fields[$fieldKey] ?? ['enabled' => false, 'required' => false];
+                                                            ?>
+                                                            <div class="owner-field-row<?php echo !empty($fieldState['enabled']) ? '' : ' is-required-disabled'; ?>" data-field-row>
+                                                                <div class="owner-field-meta">
+                                                                    <span class="owner-field-name"><?php echo htmlspecialchars($fieldLabel, ENT_QUOTES); ?></span>
+                                                                </div>
+                                                                <label class="owner-toggle">
+                                                                    <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][enabled]" value="1" data-field-toggle="show"<?php echo owner_checked(!empty($fieldState['enabled'])); ?>>
+                                                                    <span>Show</span>
+                                                                </label>
+                                                                <label class="owner-toggle">
+                                                                    <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][fields][<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>][required]" value="1" data-field-toggle="required"<?php echo owner_checked(!empty($fieldState['required'])); ?><?php echo !empty($fieldState['enabled']) ? '' : ' disabled'; ?>>
+                                                                    <span>Required</span>
+                                                                </label>
+                                                            </div>
+                                                        <?php endforeach; ?>
+                                                    </div>
+                                                    <label class="owner-field owner-field-full">
+                                                        <span class="owner-label">Thank you message</span>
+                                                        <textarea class="owner-input owner-textarea" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][thank_you_message]" rows="3"><?php echo htmlspecialchars($formSettings['thank_you_message'] ?? '', ENT_QUOTES); ?></textarea>
+                                                    </label>
+                                                    <div class="owner-section-sub">
+                                                        <h3 class="owner-section-subtitle">Auto-reply</h3>
+                                                        <label class="owner-toggle">
+                                                            <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][enabled]" value="1"<?php echo owner_checked(!empty($autoReply['enabled'])); ?>>
+                                                            <span>Send auto-reply</span>
                                                         </label>
+                                                        <div class="owner-grid">
+                                                            <label class="owner-field owner-field-full">
+                                                                <span class="owner-label">Auto-reply subject</span>
+                                                                <input class="owner-input" type="text" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][subject]" value="<?php echo htmlspecialchars($autoReply['subject'] ?? '', ENT_QUOTES); ?>">
+                                                            </label>
+                                                            <label class="owner-field owner-field-full">
+                                                                <span class="owner-label">Auto-reply message</span>
+                                                                <textarea class="owner-input owner-textarea" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][body]" rows="4"><?php echo htmlspecialchars($autoReply['body'] ?? '', ENT_QUOTES); ?></textarea>
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                <?php endforeach; ?>
+                                    <?php endforeach; ?>
+                                </div>
                             </section>
 
                             <section class="owner-tab-panel" data-tab-panel="preview" role="tabpanel" aria-labelledby="tab-preview-button" id="tab-preview" hidden>
