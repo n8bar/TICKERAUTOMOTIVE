@@ -76,5 +76,5 @@
 - Revisit scheduling integration after settings and admin decisions are finalized.
 - Add calendar provider selection and credential entry in `settings.html` once the provider is chosen.
 
-### Dev Environment Notes
+## Dev Environment Notes
 - Keep a tracked `.env.example` in sync with local `.env` whenever Docker-related settings change.
