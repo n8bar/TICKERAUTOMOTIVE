@@ -20,6 +20,7 @@
 
 .owner-header .container {
     max-width: 2100px;
+    padding: 0 48px;
 }
 
 .owner-header-inner {
@@ -520,7 +521,8 @@
 }
 
 .owner-button-inline {
-    width: auto;
+    width: 100%;
+    max-width: var(--owner-action-max);
     height: 44px;
     padding: 0 18px;
 }
