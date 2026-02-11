@@ -260,6 +260,9 @@
     overflow: hidden;
     border: 2px solid #2d3a86;
     background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
 }
 
 .owner-accordion + .owner-accordion {
@@ -269,6 +272,7 @@
 .owner-accordion-grid {
     display: grid;
     gap: 18px;
+    align-items: start;
 }
 
 .owner-accordion-grid .owner-accordion + .owner-accordion {
