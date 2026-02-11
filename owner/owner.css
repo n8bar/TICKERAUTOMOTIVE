@@ -17,7 +17,7 @@
 }
 
 .owner-header .container {
-    max-width: 1400px;
+    max-width: 2100px;
 }
 
 .owner-header-inner {
@@ -82,7 +82,7 @@
 }
 
 .owner-card-wide {
-    width: min(1400px, 100%);
+    width: min(2100px, 100%);
 }
 
 .owner-title {
