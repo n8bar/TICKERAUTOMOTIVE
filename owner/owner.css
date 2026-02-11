@@ -16,6 +16,7 @@
     background: #141b3a;
     color: #ffffff;
     border-bottom: 4px solid rgba(179, 57, 81, 0.7);
+    padding: 24px 0;
 }
 
 .owner-header .container {
@@ -28,7 +29,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 16px;
-    padding: 24px 0;
+    padding: 0;
 }
 
 .owner-brand {
@@ -479,7 +480,7 @@
     width: 100%;
     min-height: 900px;
     border-radius: 14px;
-    border: 4px solid #141b3a;
+    border: 6px solid #000000;
     background: #ffffff;
 }
 

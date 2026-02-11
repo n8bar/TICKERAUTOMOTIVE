@@ -237,5 +237,18 @@ $appointmentsEnabled = !empty($appointmentsConfig['enabled']);
         </main>
         <?php include $siteRoot . '/includes/site-footer.php'; ?>
         <script src="/appointments.js" defer></script>
+        <script>
+            document.addEventListener('click', (event) => {
+                const link = event.target.closest('a');
+                if (!link) {
+                    return;
+                }
+                const href = link.getAttribute('href') || '';
+                if (href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+                    return;
+                }
+                event.preventDefault();
+            });
+        </script>
     </body>
 </html>
