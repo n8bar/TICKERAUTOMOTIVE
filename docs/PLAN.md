@@ -53,7 +53,10 @@
 ## TODO
 ### 7) Form Feedback
 - [x] Add an owner preview tab for live form review.
-- Capture client feedback on contact + appointment forms.
+- Push the owner section live.
+- Disable SMTP delivery override on production (keep dev override enabled on dev).
+- Enable SMTP delivery to client on production only.
+- Capture owner feedback on contact + appointment forms.
 - Implement requested adjustments and retest submissions.
 - Confirm delivery override behavior soon after client review and follow up.
 
