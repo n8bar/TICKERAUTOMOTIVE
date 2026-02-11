@@ -4,10 +4,13 @@
     font-size: 20px;
     --owner-card-max: 980px;
     --owner-action-max: 520px;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .owner-shell {
     min-height: 100vh;
+    height: 100vh;
     display: flex;
     flex-direction: column;
 }
@@ -74,6 +77,8 @@
     align-items: flex-start;
     justify-content: center;
     padding: 48px 16px 72px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .owner-card {

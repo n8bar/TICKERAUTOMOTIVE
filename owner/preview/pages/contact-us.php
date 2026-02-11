@@ -27,6 +27,7 @@ $contactEnabled = !empty($contactConfig['enabled']);
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover">
         <meta name="apple-mobile-web-app-capable" content="yes">
+        <base href="/">
         <link rel="canonical" href="/contact-us.php">
         <meta name="robots" content="noindex, nofollow">
         <link rel="icon" type="image/x-icon" href="https://irp.cdn-website.com/fd5deb14/site_favicon_16_1717534387535.ico">
