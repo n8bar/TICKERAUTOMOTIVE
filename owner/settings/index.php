@@ -17,7 +17,7 @@ $settings = owner_load_settings();
 $errors = [];
 $notices = [];
 $flash = owner_get_flash();
-$allowedTabs = ['general', 'forms', 'users'];
+$allowedTabs = ['general', 'forms', 'preview', 'users'];
 $requestedTab = $_GET['tab'] ?? '';
 if (!in_array($requestedTab, $allowedTabs, true)) {
     $requestedTab = $_SESSION['owner_active_tab'] ?? 'general';
@@ -786,6 +786,7 @@ function owner_checked(bool $value): string
                     <div class="owner-tabs" role="tablist" aria-label="Settings sections" data-default-tab="<?php echo htmlspecialchars($requestedTab, ENT_QUOTES); ?>">
                         <button class="owner-tab is-active" type="button" data-tab="general" role="tab" aria-selected="true" aria-controls="tab-general" id="tab-general-button">General</button>
                         <button class="owner-tab" type="button" data-tab="forms" role="tab" aria-selected="false" aria-controls="tab-forms" id="tab-forms-button">Forms</button>
+                        <button class="owner-tab" type="button" data-tab="preview" role="tab" aria-selected="false" aria-controls="tab-preview" id="tab-preview-button">Preview</button>
                         <button class="owner-tab" type="button" data-tab="users" role="tab" aria-selected="false" aria-controls="tab-users" id="tab-users-button">Users</button>
                     </div>
 
@@ -909,6 +910,34 @@ function owner_checked(bool $value): string
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
+                            </section>
+
+                            <section class="owner-tab-panel" data-tab-panel="preview" role="tabpanel" aria-labelledby="tab-preview-button" id="tab-preview" hidden>
+                                <br />
+                                <div class="owner-section">
+                                    <h2 class="owner-section-title">Forms Preview</h2>
+                                    <p class="owner-subtitle">Open the live forms below to review layout, copy, and submission flow.</p>
+                                    <div class="owner-preview-grid">
+                                        <div class="owner-preview-card">
+                                            <div class="owner-preview-header">
+                                                <h3 class="owner-preview-title">Appointment Request</h3>
+                                                <p class="owner-help">Use this to test the appointment form and service list.</p>
+                                            </div>
+                                            <div class="owner-preview-actions">
+                                                <a class="btn btn-primary" href="/appointments.php?skip_sw_cache=1" target="_blank" rel="noopener">Open Appointment Form</a>
+                                            </div>
+                                        </div>
+                                        <div class="owner-preview-card">
+                                            <div class="owner-preview-header">
+                                                <h3 class="owner-preview-title">Contact Us</h3>
+                                                <p class="owner-help">Use this to test the contact form flow.</p>
+                                            </div>
+                                            <div class="owner-preview-actions">
+                                                <a class="btn btn-primary" href="/contact-us.php?skip_sw_cache=1" target="_blank" rel="noopener">Open Contact Form</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </section>
 
                             <div class="owner-actions">

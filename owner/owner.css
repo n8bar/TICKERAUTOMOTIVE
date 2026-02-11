@@ -429,6 +429,33 @@
     color: #1f2758;
 }
 
+.owner-preview-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.owner-preview-card {
+    border-radius: 14px;
+    padding: 16px;
+    background: #ffffff;
+    border: 1px solid rgba(20, 27, 58, 0.12);
+    display: grid;
+    gap: 12px;
+}
+
+.owner-preview-title {
+    margin: 0;
+    font-size: 18px;
+    color: #1f2758;
+}
+
+.owner-preview-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
 .owner-admin-list {
     display: grid;
     gap: 16px;
