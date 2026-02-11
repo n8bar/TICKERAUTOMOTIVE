@@ -53,9 +53,10 @@
 ## TODO
 ### 7) Form Feedback
 - [x] Add an owner preview tab for live form review.
-- Push the owner section live.
-- Disable SMTP delivery override on production (keep dev override enabled on dev).
-- Enable SMTP delivery to client on production only.
+- Push the owner section live (includes preview pages).
+- Prep production email routing for feedback:
+    - Disable SMTP delivery override on production (keep dev override enabled on dev).
+    - Enable SMTP delivery to client on production only.
 - Capture owner feedback on contact + appointment forms.
 - Implement requested adjustments and retest submissions.
 - Confirm delivery override behavior soon after client review and follow up.
