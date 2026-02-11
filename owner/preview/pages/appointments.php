@@ -1,5 +1,5 @@
 <?php
-$siteRoot = dirname(__DIR__, 2);
+$siteRoot = dirname(__DIR__, 3);
 
 require_once $siteRoot . '/owner/lib/auth.php';
 
