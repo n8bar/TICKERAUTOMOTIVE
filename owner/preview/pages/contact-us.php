@@ -27,7 +27,7 @@ $contactEnabled = !empty($contactConfig['enabled']);
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <link rel="canonical" href="contact-us.php">
+        <link rel="canonical" href="/contact-us.php">
         <meta name="robots" content="noindex, nofollow">
         <link rel="icon" type="image/x-icon" href="https://irp.cdn-website.com/fd5deb14/site_favicon_16_1717534387535.ico">
         <link rel="preconnect" href="https://lirp.cdn-website.com/">
@@ -159,7 +159,7 @@ $contactEnabled = !empty($contactConfig['enabled']);
                         <p>
                             Email: <a href="<?php echo htmlspecialchars($sitePrimaryEmailHref, ENT_QUOTES); ?>"><?php echo htmlspecialchars($sitePrimaryEmail, ENT_QUOTES); ?></a>
                         </p>
-                        <a class="btn btn-primary" href="directions.php">Get Directions</a>
+                        <a class="btn btn-primary" href="/directions.php">Get Directions</a>
                     </div>
                 </div>
             </section>
