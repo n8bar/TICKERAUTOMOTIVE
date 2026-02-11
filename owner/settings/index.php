@@ -786,8 +786,8 @@ function owner_checked(bool $value): string
                     <div class="owner-tabs" role="tablist" aria-label="Settings sections" data-default-tab="<?php echo htmlspecialchars($requestedTab, ENT_QUOTES); ?>">
                         <button class="owner-tab is-active" type="button" data-tab="general" role="tab" aria-selected="true" aria-controls="tab-general" id="tab-general-button">General</button>
                         <button class="owner-tab" type="button" data-tab="forms" role="tab" aria-selected="false" aria-controls="tab-forms" id="tab-forms-button">Forms</button>
-                        <button class="owner-tab" type="button" data-tab="preview" role="tab" aria-selected="false" aria-controls="tab-preview" id="tab-preview-button">Preview</button>
                         <button class="owner-tab" type="button" data-tab="users" role="tab" aria-selected="false" aria-controls="tab-users" id="tab-users-button">Users</button>
+                        <button class="owner-tab" type="button" data-tab="preview" role="tab" aria-selected="false" aria-controls="tab-preview" id="tab-preview-button">Feature Previews</button>
                     </div>
 
                     <div class="owner-tab-panels">
@@ -915,7 +915,7 @@ function owner_checked(bool $value): string
                             <section class="owner-tab-panel" data-tab-panel="preview" role="tabpanel" aria-labelledby="tab-preview-button" id="tab-preview" hidden>
                                 <br />
                                 <div class="owner-section">
-                                    <h2 class="owner-section-title">Forms Preview</h2>
+                                    <h2 class="owner-section-title">Feature Previews</h2>
                                     <p class="owner-subtitle">Open the live forms below to review layout, copy, and submission flow.</p>
                                     <div class="owner-preview-grid">
                                         <div class="owner-preview-card">
