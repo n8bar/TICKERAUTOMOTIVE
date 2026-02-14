@@ -78,3 +78,4 @@
 
 ## Dev Environment Notes
 - Keep a tracked `.env.example` in sync with local `.env` whenever Docker-related settings change.
+- WebDAV deploy helper: `python3 tools/deploy_webdav_exclude_forms.py` (dry-run by default; add `--apply` to upload, skips unchanged files by size+mtime and excludes `contact-us*` + `appointments*` at repo root).
