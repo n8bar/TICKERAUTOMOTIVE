@@ -306,11 +306,39 @@ function site_form_handle_submission(string $formKey, string $formLabel, array $
 
 function site_form_send_smtp(array $smtp, array $recipients, string $subject, string $body, string $fromEmail, string $fromName, string $replyTo = ''): bool
 {
+    $debug = [
+        'enabled' => true,
+        'log' => __DIR__ . '/../owner/data/smtp-debug.log',
+        'stage' => '',
+        'detail' => '',
+    ];
+    $logFailure = static function (array $debug) use ($smtp): void {
+        if (empty($debug['enabled'])) {
+            return;
+        }
+        $line = sprintf(
+            "[%s] stage=%s detail=%s host=%s port=%s enc=%s\n",
+            date('Y-m-d H:i:s'),
+            $debug['stage'] ?: 'unknown',
+            $debug['detail'] ?: 'n/a',
+            (string) ($smtp['host'] ?? ''),
+            (string) ($smtp['port'] ?? ''),
+            (string) ($smtp['encryption'] ?? '')
+        );
+        @file_put_contents($debug['log'], $line, FILE_APPEND);
+    };
+
     if (empty($smtp['host']) || empty($smtp['port'])) {
+        $debug['stage'] = 'config';
+        $debug['detail'] = 'missing host or port';
+        $logFailure($debug);
         return false;
     }
 
     if (array_key_exists('enabled', $smtp) && !$smtp['enabled']) {
+        $debug['stage'] = 'config';
+        $debug['detail'] = 'smtp disabled';
+        $logFailure($debug);
         return false;
     }
 
@@ -327,12 +355,16 @@ function site_form_send_smtp(array $smtp, array $recipients, string $subject, st
     $remote = $encryption === 'ssl' ? 'ssl://' . $host : $host;
     $socket = fsockopen($remote, $port, $errno, $errstr, $timeout);
     if (!$socket) {
+        $debug['stage'] = 'connect';
+        $debug['detail'] = sprintf('errno=%s err=%s', (string) $errno, (string) $errstr);
+        $logFailure($debug);
         return false;
     }
 
     stream_set_timeout($socket, $timeout);
 
-    $expect = static function ($socket, array $codes): bool {
+    $lastReply = '';
+    $expect = static function ($socket, array $codes) use (&$lastReply): bool {
         $response = '';
         while (($line = fgets($socket, 515)) !== false) {
             $response .= $line;
@@ -340,36 +372,52 @@ function site_form_send_smtp(array $smtp, array $recipients, string $subject, st
                 break;
             }
         }
+        $lastReply = trim($response);
         $code = (int) substr($response, 0, 3);
         return in_array($code, $codes, true);
     };
 
-    $command = static function ($socket, string $command, array $codes) use ($expect): bool {
+    $command = static function ($socket, string $command, array $codes) use ($expect, &$lastReply): bool {
         fwrite($socket, $command . "\r\n");
         return $expect($socket, $codes);
     };
 
     if (!$expect($socket, [220])) {
+        $debug['stage'] = 'greeting';
+        $debug['detail'] = $lastReply ?: 'no response';
+        $logFailure($debug);
         fclose($socket);
         return false;
     }
 
     $hostname = gethostname() ?: 'localhost';
     if (!$command($socket, 'EHLO ' . $hostname, [250])) {
+        $debug['stage'] = 'ehlo';
+        $debug['detail'] = $lastReply ?: 'no response';
+        $logFailure($debug);
         fclose($socket);
         return false;
     }
 
     if ($encryption === 'tls') {
         if (!$command($socket, 'STARTTLS', [220])) {
+            $debug['stage'] = 'starttls';
+            $debug['detail'] = $lastReply ?: 'no response';
+            $logFailure($debug);
             fclose($socket);
             return false;
         }
         if (!stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+            $debug['stage'] = 'tls';
+            $debug['detail'] = 'crypto negotiation failed';
+            $logFailure($debug);
             fclose($socket);
             return false;
         }
         if (!$command($socket, 'EHLO ' . $hostname, [250])) {
+            $debug['stage'] = 'ehlo_tls';
+            $debug['detail'] = $lastReply ?: 'no response';
+            $logFailure($debug);
             fclose($socket);
             return false;
         }
@@ -379,14 +427,23 @@ function site_form_send_smtp(array $smtp, array $recipients, string $subject, st
     $password = (string) ($smtp['password'] ?? '');
     if ($username !== '') {
         if (!$command($socket, 'AUTH LOGIN', [334])) {
+            $debug['stage'] = 'auth_login';
+            $debug['detail'] = $lastReply ?: 'no response';
+            $logFailure($debug);
             fclose($socket);
             return false;
         }
         if (!$command($socket, base64_encode($username), [334])) {
+            $debug['stage'] = 'auth_user';
+            $debug['detail'] = $lastReply ?: 'no response';
+            $logFailure($debug);
             fclose($socket);
             return false;
         }
         if (!$command($socket, base64_encode($password), [235])) {
+            $debug['stage'] = 'auth_pass';
+            $debug['detail'] = $lastReply ?: 'no response';
+            $logFailure($debug);
             fclose($socket);
             return false;
         }
@@ -398,18 +455,27 @@ function site_form_send_smtp(array $smtp, array $recipients, string $subject, st
     $subject = site_form_header_safe($subject);
 
     if (!$command($socket, 'MAIL FROM:<' . $fromEmail . '>', [250])) {
+        $debug['stage'] = 'mail_from';
+        $debug['detail'] = $lastReply ?: 'no response';
+        $logFailure($debug);
         fclose($socket);
         return false;
     }
 
     foreach ($recipients as $recipient) {
         if (!$command($socket, 'RCPT TO:<' . $recipient . '>', [250, 251])) {
+            $debug['stage'] = 'rcpt_to';
+            $debug['detail'] = $lastReply ?: 'no response';
+            $logFailure($debug);
             fclose($socket);
             return false;
         }
     }
 
     if (!$command($socket, 'DATA', [354])) {
+        $debug['stage'] = 'data';
+        $debug['detail'] = $lastReply ?: 'no response';
+        $logFailure($debug);
         fclose($socket);
         return false;
     }
@@ -442,6 +508,9 @@ function site_form_send_smtp(array $smtp, array $recipients, string $subject, st
 
     fwrite($socket, $message . "\r\n.\r\n");
     if (!$expect($socket, [250])) {
+        $debug['stage'] = 'body';
+        $debug['detail'] = $lastReply ?: 'no response';
+        $logFailure($debug);
         fclose($socket);
         return false;
     }
