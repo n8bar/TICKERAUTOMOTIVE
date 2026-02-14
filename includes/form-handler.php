@@ -144,6 +144,88 @@ function site_form_is_spam(array $data): bool
     return false;
 }
 
+function site_form_start_session(): void
+{
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        return;
+    }
+    if (headers_sent()) {
+        return;
+    }
+    session_start();
+}
+
+function site_form_get_flash(string $formKey): ?array
+{
+    site_form_start_session();
+    if (empty($_SESSION['form_flash']) || !is_array($_SESSION['form_flash'])) {
+        return null;
+    }
+    $flash = $_SESSION['form_flash'][$formKey] ?? null;
+    if ($flash !== null) {
+        unset($_SESSION['form_flash'][$formKey]);
+    }
+    return is_array($flash) ? $flash : null;
+}
+
+function site_form_set_flash(string $formKey, string $message): void
+{
+    site_form_start_session();
+    if (empty($_SESSION['form_flash']) || !is_array($_SESSION['form_flash'])) {
+        $_SESSION['form_flash'] = [];
+    }
+    $_SESSION['form_flash'][$formKey] = [
+        'message' => $message,
+        'time' => time(),
+    ];
+}
+
+function site_form_is_duplicate(string $formKey, string $hash, int $windowSeconds): bool
+{
+    site_form_start_session();
+    if (empty($_SESSION['form_dedupe']) || !is_array($_SESSION['form_dedupe'])) {
+        return false;
+    }
+    $entry = $_SESSION['form_dedupe'][$formKey] ?? null;
+    if (!is_array($entry)) {
+        return false;
+    }
+    $previousHash = (string) ($entry['hash'] ?? '');
+    $previousTime = (int) ($entry['time'] ?? 0);
+    if ($previousHash === '' || $previousTime === 0) {
+        return false;
+    }
+    if ($previousHash !== $hash) {
+        return false;
+    }
+    return (time() - $previousTime) < $windowSeconds;
+}
+
+function site_form_mark_duplicate(string $formKey, string $hash): void
+{
+    site_form_start_session();
+    if (empty($_SESSION['form_dedupe']) || !is_array($_SESSION['form_dedupe'])) {
+        $_SESSION['form_dedupe'] = [];
+    }
+    $_SESSION['form_dedupe'][$formKey] = [
+        'hash' => $hash,
+        'time' => time(),
+    ];
+}
+
+function site_form_redirect_self(): void
+{
+    if (headers_sent()) {
+        return;
+    }
+    $uri = $_SERVER['REQUEST_URI'] ?? '';
+    if ($uri === '') {
+        $uri = '/';
+    }
+    header('Location: ' . $uri, true, 303);
+    exit;
+}
+
 function site_form_collect_values(array $fields, array $source): array
 {
     $values = [];
@@ -242,6 +324,11 @@ function site_form_handle_submission(string $formKey, string $formLabel, array $
     ];
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $flash = site_form_get_flash($formKey);
+        if (is_array($flash) && !empty($flash['message'])) {
+            $state['success'] = true;
+            $state['message'] = site_form_sanitize_text((string) $flash['message']);
+        }
         return $state;
     }
 
@@ -265,6 +352,12 @@ function site_form_handle_submission(string $formKey, string $formLabel, array $
     $errors = site_form_validate($fields, $state['values']);
     if (!empty($errors)) {
         $state['errors'] = $errors;
+        return $state;
+    }
+    $dedupeWindow = 120;
+    $dedupeHash = sha1(json_encode($state['values']));
+    if (site_form_is_duplicate($formKey, $dedupeHash, $dedupeWindow)) {
+        $state['errors'][] = 'We already received this request. Please wait a moment or update your message to resend.';
         return $state;
     }
 
@@ -336,10 +429,10 @@ function site_form_handle_submission(string $formKey, string $formLabel, array $
         }
     }
 
-    $state['success'] = true;
-    $state['message'] = site_form_sanitize_text((string) ($formConfig['thank_you_message'] ?? 'Thanks! We will be in touch soon.'));
-    $state['values'] = [];
-
+    $message = site_form_sanitize_text((string) ($formConfig['thank_you_message'] ?? 'Thanks! We will be in touch soon.'));
+    site_form_mark_duplicate($formKey, $dedupeHash);
+    site_form_set_flash($formKey, $message);
+    site_form_redirect_self();
     return $state;
 }
 
