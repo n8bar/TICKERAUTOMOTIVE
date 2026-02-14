@@ -27,6 +27,12 @@ function owner_default_settings(): array
             'reply_to' => '',
             'timeout' => 10,
         ],
+        'mailgun' => [
+            'api_key' => '',
+            'domain' => '',
+            'region' => 'us',
+            'timeout' => 10,
+        ],
         'contact_forms' => [
             'appointments' => [
                 'enabled' => true,
@@ -66,6 +72,9 @@ function owner_default_settings(): array
             'delivery_override' => [
                 'enabled' => false,
                 'email' => '',
+            ],
+            'http_delivery' => [
+                'enabled' => false,
             ],
         ],
     ];
@@ -263,6 +272,10 @@ function owner_build_settings_from_post(array $input, array $current): array
             $overrideEmail = '';
         }
         $settings['contact_forms']['delivery_override']['email'] = $overrideEmail;
+    }
+    $httpInput = $input['contact_forms']['http_delivery'] ?? null;
+    if (is_array($httpInput)) {
+        $settings['contact_forms']['http_delivery']['enabled'] = !empty($httpInput['enabled']);
     }
     foreach ($forms as $formKey) {
         $formInput = $input['contact_forms'][$formKey] ?? [];

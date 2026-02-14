@@ -19,6 +19,12 @@
     "reply_to": "",
     "timeout": 10
   },
+  "mailgun": {
+    "api_key": "",
+    "domain": "",
+    "region": "us",
+    "timeout": 10
+  },
   "contact_forms": {
     "appointments": {
       "enabled": true,
@@ -179,6 +185,13 @@
           "required": false
         }
       }
+    },
+    "delivery_override": {
+      "enabled": false,
+      "email": ""
+    },
+    "http_delivery": {
+      "enabled": false
     }
   }
 }

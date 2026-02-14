@@ -32,6 +32,15 @@ function site_form_get_delivery_override(): array
     return is_array($override) ? $override : [];
 }
 
+function site_form_get_http_delivery(): array
+{
+    $settings = site_form_get_settings();
+    $forms = $settings['contact_forms'] ?? [];
+    $http = $forms['http_delivery'] ?? [];
+
+    return is_array($http) ? $http : [];
+}
+
 function site_form_get_smtp_settings(): array
 {
     $settings = site_form_get_settings();
@@ -55,6 +64,25 @@ function site_form_get_smtp_settings(): array
     }
 
     return array_merge($defaults, $smtp);
+}
+
+function site_form_get_mailgun_settings(): array
+{
+    $settings = site_form_get_settings();
+    $mailgun = $settings['mailgun'] ?? [];
+
+    $defaults = [
+        'api_key' => '',
+        'domain' => '',
+        'region' => 'us',
+        'timeout' => 10,
+    ];
+
+    if (!is_array($mailgun)) {
+        return $defaults;
+    }
+
+    return array_merge($defaults, $mailgun);
 }
 
 function site_form_merge_fields(array $defaults, array $overrides): array
@@ -281,8 +309,14 @@ function site_form_handle_submission(string $formKey, string $formLabel, array $
 
     $subject = site_form_header_safe('Form: ' . $formLabel . ' - Ticker Automotive');
     $body = site_form_build_email_body($formLabel, $state['values'], $meta);
-
-    $sent = site_form_send_smtp($smtp, $recipients, $subject, $body, $fromEmail, $fromName, $replyTo);
+    $httpDelivery = site_form_get_http_delivery();
+    $useHttp = !empty($httpDelivery['enabled']);
+    if ($useHttp) {
+        $mailgun = site_form_get_mailgun_settings();
+        $sent = site_form_send_mailgun($mailgun, $recipients, $subject, $body, $fromEmail, $fromName, $replyTo);
+    } else {
+        $sent = site_form_send_smtp($smtp, $recipients, $subject, $body, $fromEmail, $fromName, $replyTo);
+    }
     if (!$sent) {
         $state['errors'][] = 'Unable to send your request right now. Please call us.';
         return $state;
@@ -293,7 +327,12 @@ function site_form_handle_submission(string $formKey, string $formLabel, array $
         $replySubject = site_form_header_safe(site_form_sanitize_text((string) ($autoReply['subject'] ?? '')));
         $replyBody = site_form_sanitize_text((string) ($autoReply['body'] ?? ''));
         if ($replySubject !== '' && $replyBody !== '') {
-            site_form_send_smtp($smtp, [$userEmail], $replySubject, $replyBody, $fromEmail, $fromName, $fromEmail);
+            if ($useHttp) {
+                $mailgun = site_form_get_mailgun_settings();
+                site_form_send_mailgun($mailgun, [$userEmail], $replySubject, $replyBody, $fromEmail, $fromName, $fromEmail);
+            } else {
+                site_form_send_smtp($smtp, [$userEmail], $replySubject, $replyBody, $fromEmail, $fromName, $fromEmail);
+            }
         }
     }
 
@@ -519,4 +558,94 @@ function site_form_send_smtp(array $smtp, array $recipients, string $subject, st
     fclose($socket);
 
     return true;
+}
+
+function site_form_send_mailgun(array $mailgun, array $recipients, string $subject, string $body, string $fromEmail, string $fromName, string $replyTo = ''): bool
+{
+    $logFailure = static function (string $stage, string $detail, array $mailgun): void {
+        $line = sprintf(
+            "[%s] stage=%s detail=%s host=%s region=%s\n",
+            date('Y-m-d H:i:s'),
+            $stage,
+            $detail,
+            (string) ($mailgun['domain'] ?? ''),
+            (string) ($mailgun['region'] ?? '')
+        );
+        @file_put_contents(__DIR__ . '/../owner/data/smtp-debug.log', $line, FILE_APPEND);
+    };
+
+    $apiKey = site_form_sanitize_text((string) ($mailgun['api_key'] ?? ''));
+    $domain = site_form_sanitize_text((string) ($mailgun['domain'] ?? ''));
+    $region = strtolower(site_form_sanitize_text((string) ($mailgun['region'] ?? 'us')));
+    $timeout = (int) ($mailgun['timeout'] ?? 10);
+
+    if ($apiKey === '' || $domain === '') {
+        $logFailure('mailgun_config', 'missing api_key or domain', $mailgun);
+        return false;
+    }
+
+    $fromEmail = site_form_header_safe($fromEmail);
+    $fromName = site_form_header_safe($fromName);
+    $replyTo = site_form_header_safe($replyTo);
+    $subject = site_form_header_safe($subject);
+
+    $toHeader = [];
+    foreach ($recipients as $recipient) {
+        $recipient = site_form_header_safe((string) $recipient);
+        if ($recipient !== '') {
+            $toHeader[] = $recipient;
+        }
+    }
+    if (!$toHeader) {
+        $logFailure('mailgun_config', 'missing recipients', $mailgun);
+        return false;
+    }
+
+    $from = $fromEmail;
+    if ($fromName !== '') {
+        $from = $fromName . ' <' . $fromEmail . '>';
+    }
+
+    $payload = [
+        'from' => $from,
+        'to' => implode(', ', $toHeader),
+        'subject' => $subject,
+        'text' => $body,
+    ];
+    if ($replyTo !== '') {
+        $payload['h:Reply-To'] = $replyTo;
+    }
+
+    $host = $region === 'eu' ? 'https://api.eu.mailgun.net' : 'https://api.mailgun.net';
+    $url = $host . '/v3/' . rawurlencode($domain) . '/messages';
+    $auth = base64_encode('api:' . $apiKey);
+
+    $headers = [
+        'Authorization: Basic ' . $auth,
+        'Content-Type: application/x-www-form-urlencoded',
+    ];
+
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'POST',
+            'header' => implode("\r\n", $headers),
+            'content' => http_build_query($payload, '', '&'),
+            'timeout' => $timeout,
+        ],
+    ]);
+
+    $result = @file_get_contents($url, false, $context);
+    $statusLine = $http_response_header[0] ?? '';
+    if (preg_match('/\\s(\\d{3})\\s/', $statusLine, $matches)) {
+        $status = (int) $matches[1];
+        if ($status >= 200 && $status < 300) {
+            return true;
+        }
+        $logFailure('mailgun_http', 'status=' . $status, $mailgun);
+        return false;
+    }
+
+    $detail = $result === false ? 'no response' : 'unknown response';
+    $logFailure('mailgun_http', $detail, $mailgun);
+    return false;
 }

@@ -840,6 +840,8 @@ function owner_checked(bool $value): string
                                         $deliveryOverride = $settings['contact_forms']['delivery_override'] ?? [];
                                         $overrideEnabled = !empty($deliveryOverride['enabled']);
                                         $overrideEmail = $deliveryOverride['email'] ?? '';
+                                        $httpDelivery = $settings['contact_forms']['http_delivery'] ?? [];
+                                        $httpEnabled = !empty($httpDelivery['enabled']);
                                     ?>
                                     <div class="owner-panel">
                                         <h2 class="owner-panel-title">Developer Delivery Override</h2>
@@ -851,6 +853,14 @@ function owner_checked(bool $value): string
                                         <label class="owner-field">
                                             <span class="owner-label">Developer email</span>
                                             <input class="owner-input" type="email" name="settings[contact_forms][delivery_override][email]" value="<?php echo htmlspecialchars($overrideEmail, ENT_QUOTES); ?>">
+                                        </label>
+                                    </div>
+                                    <div class="owner-panel">
+                                        <h2 class="owner-panel-title">Developer HTTP Delivery</h2>
+                                        <p class="owner-help">Send form emails via the Mailgun HTTP API instead of SMTP. Configure the Mailgun API key and domain directly in <code>owner/data/settings.json</code>.</p>
+                                        <label class="owner-toggle">
+                                            <input type="checkbox" name="settings[contact_forms][http_delivery][enabled]" value="1"<?php echo owner_checked($httpEnabled); ?>>
+                                            <span>Send via Mailgun HTTP API</span>
                                         </label>
                                     </div>
                                 <?php endif; ?>
