@@ -42,6 +42,8 @@ $appointmentsDefaults = [
     'vin' => ['enabled' => true, 'required' => false],
     'color' => ['enabled' => true, 'required' => false],
     'color_code' => ['enabled' => true, 'required' => false],
+    'unit_number' => ['enabled' => false, 'required' => false],
+    'production_date' => ['enabled' => false, 'required' => false],
     'preferred_time' => ['enabled' => true, 'required' => false],
     'message' => ['enabled' => true, 'required' => false],
 ];
@@ -61,7 +63,9 @@ $appointmentsGroupVehicle = !empty($appointmentsFields['year']['enabled'])
     || !empty($appointmentsFields['license_plate_state']['enabled'])
     || !empty($appointmentsFields['vin']['enabled'])
     || !empty($appointmentsFields['color']['enabled'])
-    || !empty($appointmentsFields['color_code']['enabled']);
+    || !empty($appointmentsFields['color_code']['enabled'])
+    || !empty($appointmentsFields['unit_number']['enabled'])
+    || !empty($appointmentsFields['production_date']['enabled']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -215,6 +219,18 @@ $appointmentsGroupVehicle = !empty($appointmentsFields['year']['enabled'])
                                             <label class="appointments-field">
                                                 <span class="appointments-label">Color code<?php if (!empty($appointmentsFields['color_code']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
                                                 <input class="appointments-input" type="text" name="color_code" autocomplete="off" data-field="color_code" placeholder="Paint code (if known)" value="<?php echo htmlspecialchars($appointmentsState['values']['color_code'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['color_code']['required']) ? ' required' : ''; ?>>
+                                            </label>
+                                        <?php endif; ?>
+                                        <?php if (!empty($appointmentsFields['unit_number']['enabled'])): ?>
+                                            <label class="appointments-field">
+                                                <span class="appointments-label">Unit #<?php if (!empty($appointmentsFields['unit_number']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                                <input class="appointments-input" type="text" name="unit_number" autocomplete="off" data-field="unit_number" placeholder="Unit 12" value="<?php echo htmlspecialchars($appointmentsState['values']['unit_number'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['unit_number']['required']) ? ' required' : ''; ?>>
+                                            </label>
+                                        <?php endif; ?>
+                                        <?php if (!empty($appointmentsFields['production_date']['enabled'])): ?>
+                                            <label class="appointments-field">
+                                                <span class="appointments-label">Production date<?php if (!empty($appointmentsFields['production_date']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                                <input class="appointments-input" type="text" name="production_date" autocomplete="off" data-field="production_date" placeholder="YYYY-MM" value="<?php echo htmlspecialchars($appointmentsState['values']['production_date'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['production_date']['required']) ? ' required' : ''; ?>>
                                             </label>
                                         <?php endif; ?>
                                     </div>

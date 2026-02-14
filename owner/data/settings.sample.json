@@ -95,6 +95,14 @@
         "color_code": {
           "enabled": true,
           "required": false
+        },
+        "unit_number": {
+          "enabled": false,
+          "required": false
+        },
+        "production_date": {
+          "enabled": false,
+          "required": false
         }
       }
     },
@@ -171,6 +179,14 @@
           "required": false
         },
         "color_code": {
+          "enabled": false,
+          "required": false
+        },
+        "unit_number": {
+          "enabled": false,
+          "required": false
+        },
+        "production_date": {
           "enabled": false,
           "required": false
         }

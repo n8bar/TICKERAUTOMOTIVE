@@ -91,6 +91,8 @@ function owner_default_form_fields(): array
         'vin' => ['enabled' => false, 'required' => false],
         'color' => ['enabled' => false, 'required' => false],
         'color_code' => ['enabled' => false, 'required' => false],
+        'unit_number' => ['enabled' => false, 'required' => false],
+        'production_date' => ['enabled' => false, 'required' => false],
         'vehicle' => ['enabled' => true, 'required' => false],
         'preferred_time' => ['enabled' => true, 'required' => false],
         'message' => ['enabled' => true, 'required' => false],

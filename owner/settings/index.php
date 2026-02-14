@@ -69,13 +69,15 @@ $fieldLabels = [
     'vin' => 'VIN',
     'color' => 'Color',
     'color_code' => 'Color code',
+    'unit_number' => 'Unit #',
+    'production_date' => 'Production date',
     'vehicle' => 'Vehicle',
     'preferred_time' => 'Preferred time',
     'message' => 'Message',
 ];
 
 $formFieldOrder = [
-    'appointments' => ['name', 'phone', 'email', 'year', 'make', 'model', 'engine', 'license_plate', 'license_plate_state', 'vin', 'color', 'color_code', 'service', 'preferred_time', 'message'],
+    'appointments' => ['name', 'phone', 'email', 'year', 'make', 'model', 'engine', 'license_plate', 'license_plate_state', 'vin', 'color', 'color_code', 'unit_number', 'production_date', 'service', 'preferred_time', 'message'],
     'contact_us' => ['name', 'phone', 'email', 'vehicle', 'preferred_time', 'message'],
 ];
 
@@ -887,8 +889,9 @@ function owner_checked(bool $value): string
                                                             <span class="owner-help">Separate multiple emails with commas.</span>
                                                         </label>
                                                     </div>
-                                                    <div class="owner-fields-grid">
-                                                        <?php $allowedFields = $formFieldOrder[$formKey] ?? array_keys($fieldLabels); ?>
+                                                <p class="owner-help">Tip: Require only the essentials (name/phone). Optional details like VIN or color code can frustrate customers if required.</p>
+                                                <div class="owner-fields-grid">
+                                                    <?php $allowedFields = $formFieldOrder[$formKey] ?? array_keys($fieldLabels); ?>
                                                         <?php foreach ($allowedFields as $fieldKey): ?>
                                                             <?php
                                                                 $fieldLabel = $fieldLabels[$fieldKey] ?? ucfirst(str_replace('_', ' ', $fieldKey));
