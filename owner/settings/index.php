@@ -67,13 +67,15 @@ $fieldLabels = [
     'license_plate' => 'License plate',
     'license_plate_state' => 'State/Province/Territory',
     'vin' => 'VIN',
+    'color' => 'Color',
+    'color_code' => 'Color code',
     'vehicle' => 'Vehicle',
     'preferred_time' => 'Preferred time',
     'message' => 'Message',
 ];
 
 $formFieldOrder = [
-    'appointments' => ['name', 'phone', 'email', 'service', 'year', 'make', 'model', 'engine', 'license_plate', 'license_plate_state', 'vin', 'preferred_time', 'message'],
+    'appointments' => ['name', 'phone', 'email', 'year', 'make', 'model', 'engine', 'license_plate', 'license_plate_state', 'vin', 'color', 'color_code', 'service', 'preferred_time', 'message'],
     'contact_us' => ['name', 'phone', 'email', 'vehicle', 'preferred_time', 'message'],
 ];
 

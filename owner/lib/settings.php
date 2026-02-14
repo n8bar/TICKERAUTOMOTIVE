@@ -39,7 +39,7 @@ function owner_default_settings(): array
                 ],
                 'fields' => (function (): array {
                     $fields = owner_default_form_fields();
-                    foreach (['service', 'year', 'make', 'model', 'engine', 'license_plate', 'license_plate_state', 'vin'] as $fieldKey) {
+                    foreach (['service', 'year', 'make', 'model', 'engine', 'license_plate', 'license_plate_state', 'vin', 'color', 'color_code'] as $fieldKey) {
                         if (isset($fields[$fieldKey])) {
                             $fields[$fieldKey]['enabled'] = true;
                         }
@@ -89,6 +89,8 @@ function owner_default_form_fields(): array
         'license_plate' => ['enabled' => false, 'required' => false],
         'license_plate_state' => ['enabled' => false, 'required' => false],
         'vin' => ['enabled' => false, 'required' => false],
+        'color' => ['enabled' => false, 'required' => false],
+        'color_code' => ['enabled' => false, 'required' => false],
         'vehicle' => ['enabled' => true, 'required' => false],
         'preferred_time' => ['enabled' => true, 'required' => false],
         'message' => ['enabled' => true, 'required' => false],

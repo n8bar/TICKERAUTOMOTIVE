@@ -63,6 +63,17 @@
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
+.appointments-group {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-column: 1 / -1;
+}
+
+.appointments-group + .appointments-group {
+    margin-top: 12px;
+}
+
 .appointments-field {
     display: grid;
     gap: 8px;

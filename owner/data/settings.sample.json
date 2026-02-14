@@ -87,6 +87,14 @@
         "license_plate_state": {
           "enabled": true,
           "required": false
+        },
+        "color": {
+          "enabled": true,
+          "required": false
+        },
+        "color_code": {
+          "enabled": true,
+          "required": false
         }
       }
     },
@@ -155,6 +163,14 @@
           "required": false
         },
         "license_plate_state": {
+          "enabled": false,
+          "required": false
+        },
+        "color": {
+          "enabled": false,
+          "required": false
+        },
+        "color_code": {
           "enabled": false,
           "required": false
         }
