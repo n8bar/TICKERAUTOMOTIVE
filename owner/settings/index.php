@@ -71,15 +71,11 @@ $fieldLabels = [
     'color_code' => 'Color code',
     'unit_number' => 'Unit #',
     'production_date' => 'Production date',
-    'vehicle' => 'Vehicle',
     'preferred_time' => 'Preferred time',
     'message' => 'Message',
 ];
 
-$formFieldOrder = [
-    'appointments' => ['name', 'phone', 'email', 'year', 'make', 'model', 'engine', 'license_plate', 'license_plate_state', 'vin', 'color', 'color_code', 'unit_number', 'production_date', 'service', 'preferred_time', 'message'],
-    'contact_us' => ['name', 'phone', 'email', 'vehicle', 'preferred_time', 'message'],
-];
+$formFieldOrder = owner_form_field_order();
 
 $addAdminValues = [
     'name' => '',
@@ -866,6 +862,10 @@ function owner_checked(bool $value): string
                                             $recipientValue = implode(', ', $recipients);
                                             $fields = $formSettings['fields'] ?? [];
                                             $autoReply = $formSettings['auto_reply'] ?? [];
+                                            $emailState = $fields['email'] ?? ['enabled' => false, 'required' => false];
+                                            $emailEnabled = !empty($emailState['enabled']);
+                                            $emailRequired = !empty($emailState['required']);
+                                            $autoReplyNeedsEmail = !empty($autoReply['enabled']) && (!$emailEnabled || !$emailRequired);
                                             $isOpen = !empty($accordionState[$formKey]);
                                         ?>
                                         <div class="owner-accordion" data-accordion="<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>">
@@ -897,7 +897,7 @@ function owner_checked(bool $value): string
                                                                 $fieldLabel = $fieldLabels[$fieldKey] ?? ucfirst(str_replace('_', ' ', $fieldKey));
                                                                 $fieldState = $fields[$fieldKey] ?? ['enabled' => false, 'required' => false];
                                                             ?>
-                                                            <div class="owner-field-row<?php echo !empty($fieldState['enabled']) ? '' : ' is-required-disabled'; ?>" data-field-row>
+                                                            <div class="owner-field-row<?php echo !empty($fieldState['enabled']) ? '' : ' is-required-disabled'; ?>" data-field-row data-field-key="<?php echo htmlspecialchars($fieldKey, ENT_QUOTES); ?>">
                                                                 <div class="owner-field-meta">
                                                                     <span class="owner-field-name"><?php echo htmlspecialchars($fieldLabel, ENT_QUOTES); ?></span>
                                                                 </div>
@@ -916,12 +916,15 @@ function owner_checked(bool $value): string
                                                         <span class="owner-label">Thank you message</span>
                                                         <textarea class="owner-input owner-textarea" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][thank_you_message]" rows="3"><?php echo htmlspecialchars($formSettings['thank_you_message'] ?? '', ENT_QUOTES); ?></textarea>
                                                     </label>
-                                                    <div class="owner-section-sub">
-                                                        <h3 class="owner-section-subtitle">Auto-reply</h3>
+                                                        <div class="owner-section-sub">
+                                                            <h3 class="owner-section-subtitle">Auto-reply</h3>
                                                         <label class="owner-toggle">
-                                                            <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][enabled]" value="1"<?php echo owner_checked(!empty($autoReply['enabled'])); ?>>
+                                                            <input type="checkbox" name="settings[contact_forms][<?php echo htmlspecialchars($formKey, ENT_QUOTES); ?>][auto_reply][enabled]" value="1" data-auto-reply-toggle<?php echo owner_checked(!empty($autoReply['enabled'])); ?>>
                                                             <span>Send auto-reply</span>
                                                         </label>
+                                                        <p class="owner-help owner-help-warning" data-auto-reply-note<?php echo $autoReplyNeedsEmail ? '' : ' hidden'; ?>>
+                                                            Auto-reply sends to the email provided on the form. Make sure Email is shown and consider making it required.
+                                                        </p>
                                                         <div class="owner-grid">
                                                             <label class="owner-field owner-field-full">
                                                                 <span class="owner-label">Auto-reply subject</span>
@@ -1444,6 +1447,47 @@ function owner_checked(bool $value): string
                     showToggle.addEventListener('change', () => {
                         syncFieldRow(row);
                     });
+                });
+
+                const syncAutoReplyNote = (accordion) => {
+                    const note = accordion.querySelector('[data-auto-reply-note]');
+                    if (!note) {
+                        return;
+                    }
+                    const autoReplyToggle = accordion.querySelector('[data-auto-reply-toggle]');
+                    const emailRow = accordion.querySelector('[data-field-row][data-field-key="email"]');
+                    if (!autoReplyToggle || !emailRow) {
+                        return;
+                    }
+                    const showToggle = emailRow.querySelector('[data-field-toggle="show"]');
+                    const requiredToggle = emailRow.querySelector('[data-field-toggle="required"]');
+                    const shouldShow = autoReplyToggle.checked && (!showToggle || !showToggle.checked || !requiredToggle || !requiredToggle.checked);
+                    note.hidden = !shouldShow;
+                };
+
+                accordions.forEach((accordion) => {
+                    const note = accordion.querySelector('[data-auto-reply-note]');
+                    if (!note) {
+                        return;
+                    }
+                    const autoReplyToggle = accordion.querySelector('[data-auto-reply-toggle]');
+                    const emailRow = accordion.querySelector('[data-field-row][data-field-key="email"]');
+                    if (!autoReplyToggle || !emailRow) {
+                        return;
+                    }
+                    const showToggle = emailRow.querySelector('[data-field-toggle="show"]');
+                    const requiredToggle = emailRow.querySelector('[data-field-toggle="required"]');
+                    const update = () => {
+                        syncAutoReplyNote(accordion);
+                    };
+                    update();
+                    autoReplyToggle.addEventListener('change', update);
+                    if (showToggle) {
+                        showToggle.addEventListener('change', update);
+                    }
+                    if (requiredToggle) {
+                        requiredToggle.addEventListener('change', update);
+                    }
                 });
 
                 const confirmButtons = Array.from(document.querySelectorAll('[data-confirm]'));

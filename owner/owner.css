@@ -415,6 +415,11 @@
     color: rgba(0, 0, 0, 0.5);
 }
 
+.owner-help-warning {
+    color: #8b3a00;
+    font-weight: 600;
+}
+
 .owner-users-grid {
     display: grid;
     gap: 16px;

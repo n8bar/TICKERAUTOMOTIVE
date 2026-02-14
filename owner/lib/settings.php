@@ -44,10 +44,8 @@ function owner_default_settings(): array
                             $fields[$fieldKey]['enabled'] = true;
                         }
                     }
-                    if (isset($fields['vehicle'])) {
-                        $fields['vehicle']['enabled'] = false;
-                    }
-                    return $fields;
+                    $order = owner_form_field_order();
+                    return owner_filter_form_fields($fields, $order['appointments'] ?? array_keys($fields));
                 })(),
             ],
             'contact_us' => [
@@ -61,10 +59,8 @@ function owner_default_settings(): array
                 ],
                 'fields' => (function (): array {
                     $fields = owner_default_form_fields();
-                    if (isset($fields['preferred_time'])) {
-                        $fields['preferred_time']['enabled'] = false;
-                    }
-                    return $fields;
+                    $order = owner_form_field_order();
+                    return owner_filter_form_fields($fields, $order['contact_us'] ?? array_keys($fields));
                 })(),
             ],
             'delivery_override' => [
@@ -93,10 +89,52 @@ function owner_default_form_fields(): array
         'color_code' => ['enabled' => false, 'required' => false],
         'unit_number' => ['enabled' => false, 'required' => false],
         'production_date' => ['enabled' => false, 'required' => false],
-        'vehicle' => ['enabled' => true, 'required' => false],
         'preferred_time' => ['enabled' => true, 'required' => false],
         'message' => ['enabled' => true, 'required' => false],
     ];
+}
+
+function owner_form_field_order(): array
+{
+    return [
+        'appointments' => [
+            'name',
+            'phone',
+            'email',
+            'year',
+            'make',
+            'model',
+            'engine',
+            'license_plate',
+            'license_plate_state',
+            'vin',
+            'color',
+            'color_code',
+            'unit_number',
+            'production_date',
+            'service',
+            'preferred_time',
+            'message',
+        ],
+        'contact_us' => [
+            'name',
+            'phone',
+            'email',
+            'message',
+        ],
+    ];
+}
+
+function owner_filter_form_fields(array $fields, array $allowed): array
+{
+    $filtered = [];
+    foreach ($allowed as $key) {
+        if (isset($fields[$key])) {
+            $filtered[$key] = $fields[$key];
+        }
+    }
+
+    return $filtered;
 }
 
 function owner_merge_settings(array $base, array $override): array
@@ -193,6 +231,7 @@ function owner_sanitize_email_list(?string $value): array
 function owner_build_settings_from_post(array $input, array $current): array
 {
     $settings = $current;
+    $formFieldOrder = owner_form_field_order();
 
     $siteInput = $input['site'] ?? [];
 
@@ -227,6 +266,7 @@ function owner_build_settings_from_post(array $input, array $current): array
     }
     foreach ($forms as $formKey) {
         $formInput = $input['contact_forms'][$formKey] ?? [];
+        $allowedFields = $formFieldOrder[$formKey] ?? [];
         $settings['contact_forms'][$formKey]['enabled'] = !empty($formInput['enabled']);
         $settings['contact_forms'][$formKey]['recipients'] = owner_sanitize_email_list($formInput['recipients'] ?? '');
         $settings['contact_forms'][$formKey]['thank_you_message'] = owner_sanitize_text($formInput['thank_you_message'] ?? '');
@@ -237,6 +277,12 @@ function owner_build_settings_from_post(array $input, array $current): array
 
         $fields = owner_default_form_fields();
         foreach ($fields as $fieldKey => $defaultField) {
+            if ($allowedFields && !in_array($fieldKey, $allowedFields, true)) {
+                if (isset($settings['contact_forms'][$formKey]['fields'][$fieldKey])) {
+                    unset($settings['contact_forms'][$formKey]['fields'][$fieldKey]);
+                }
+                continue;
+            }
             $fieldInput = $formInput['fields'][$fieldKey] ?? [];
             $enabled = !empty($fieldInput['enabled']);
             $currentField = $settings['contact_forms'][$formKey]['fields'][$fieldKey] ?? $defaultField;

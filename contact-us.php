@@ -5,7 +5,6 @@ $contactDefaults = [
     'name' => ['enabled' => true, 'required' => true],
     'phone' => ['enabled' => true, 'required' => true],
     'email' => ['enabled' => true, 'required' => false],
-    'vehicle' => ['enabled' => true, 'required' => false],
     'message' => ['enabled' => true, 'required' => false],
 ];
 
@@ -102,12 +101,6 @@ $contactEnabled = !empty($contactConfig['enabled']);
                                 <label class="contact-us-field">
                                     <span class="contact-us-label">Email address<?php if (!empty($contactFields['email']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
                                     <input class="contact-us-input" type="email" name="email" autocomplete="email" data-field="email" value="<?php echo htmlspecialchars($contactState['values']['email'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($contactFields['email']['required']) ? ' required' : ''; ?>>
-                                </label>
-                            <?php endif; ?>
-                            <?php if (!empty($contactFields['vehicle']['enabled'])): ?>
-                                <label class="contact-us-field">
-                                    <span class="contact-us-label">Vehicle<?php if (!empty($contactFields['vehicle']['required'])): ?> <span class="contact-us-required">*</span><?php endif; ?></span>
-                                    <input class="contact-us-input" type="text" name="vehicle" autocomplete="off" data-field="vehicle" placeholder="Year, make, model" value="<?php echo htmlspecialchars($contactState['values']['vehicle'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($contactFields['vehicle']['required']) ? ' required' : ''; ?>>
                                 </label>
                             <?php endif; ?>
                             <?php if (!empty($contactFields['message']['enabled'])): ?>

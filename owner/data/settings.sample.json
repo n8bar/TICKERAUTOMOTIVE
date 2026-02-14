@@ -68,10 +68,6 @@
           "enabled": true,
           "required": false
         },
-        "vehicle": {
-          "enabled": false,
-          "required": false
-        },
         "preferred_time": {
           "enabled": true,
           "required": false
@@ -151,14 +147,6 @@
           "required": false
         },
         "vin": {
-          "enabled": false,
-          "required": false
-        },
-        "vehicle": {
-          "enabled": true,
-          "required": false
-        },
-        "preferred_time": {
           "enabled": false,
           "required": false
         },
