@@ -79,6 +79,14 @@
         "message": {
           "enabled": true,
           "required": false
+        },
+        "engine": {
+          "enabled": true,
+          "required": false
+        },
+        "license_plate_state": {
+          "enabled": true,
+          "required": false
         }
       }
     },
@@ -140,6 +148,14 @@
         },
         "message": {
           "enabled": true,
+          "required": false
+        },
+        "engine": {
+          "enabled": false,
+          "required": false
+        },
+        "license_plate_state": {
+          "enabled": false,
           "required": false
         }
       }

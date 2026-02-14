@@ -29,7 +29,9 @@ $appointmentsDefaults = [
     'year' => ['enabled' => true, 'required' => false],
     'make' => ['enabled' => true, 'required' => false],
     'model' => ['enabled' => true, 'required' => false],
+    'engine' => ['enabled' => true, 'required' => false],
     'license_plate' => ['enabled' => true, 'required' => false],
+    'license_plate_state' => ['enabled' => true, 'required' => false],
     'vin' => ['enabled' => true, 'required' => false],
     'preferred_time' => ['enabled' => true, 'required' => false],
     'message' => ['enabled' => true, 'required' => false],
@@ -162,10 +164,22 @@ $appointmentsEnabled = !empty($appointmentsConfig['enabled']);
                                     <input class="appointments-input" type="text" name="model" autocomplete="off" data-field="model" placeholder="Camry" value="<?php echo htmlspecialchars($appointmentsState['values']['model'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['model']['required']) ? ' required' : ''; ?>>
                                 </label>
                             <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['engine']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">Engine<?php if (!empty($appointmentsFields['engine']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="engine" autocomplete="off" data-field="engine" placeholder="2.5L / V6" value="<?php echo htmlspecialchars($appointmentsState['values']['engine'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['engine']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
                             <?php if (!empty($appointmentsFields['license_plate']['enabled'])): ?>
                                 <label class="appointments-field">
                                     <span class="appointments-label">License plate<?php if (!empty($appointmentsFields['license_plate']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
                                     <input class="appointments-input" type="text" name="license_plate" autocomplete="off" data-field="license_plate" placeholder="ABC123" value="<?php echo htmlspecialchars($appointmentsState['values']['license_plate'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['license_plate']['required']) ? ' required' : ''; ?>>
+                                </label>
+                            <?php endif; ?>
+                            <?php if (!empty($appointmentsFields['license_plate_state']['enabled'])): ?>
+                                <label class="appointments-field">
+                                    <span class="appointments-label">State/Province/Territory<?php if (!empty($appointmentsFields['license_plate_state']['required'])): ?> <span class="appointments-required">*</span><?php endif; ?></span>
+                                    <input class="appointments-input" type="text" name="license_plate_state" autocomplete="off" data-field="license_plate_state" placeholder="UT" value="<?php echo htmlspecialchars($appointmentsState['values']['license_plate_state'] ?? '', ENT_QUOTES); ?>"<?php echo !empty($appointmentsFields['license_plate_state']['required']) ? ' required' : ''; ?>>
                                 </label>
                             <?php endif; ?>
                             <?php if (!empty($appointmentsFields['vin']['enabled'])): ?>

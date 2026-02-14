@@ -63,7 +63,9 @@ $fieldLabels = [
     'year' => 'Vehicle year',
     'make' => 'Vehicle make',
     'model' => 'Vehicle model',
+    'engine' => 'Engine',
     'license_plate' => 'License plate',
+    'license_plate_state' => 'State/Province/Territory',
     'vin' => 'VIN',
     'vehicle' => 'Vehicle',
     'preferred_time' => 'Preferred time',
@@ -71,7 +73,7 @@ $fieldLabels = [
 ];
 
 $formFieldOrder = [
-    'appointments' => ['name', 'phone', 'email', 'service', 'year', 'make', 'model', 'license_plate', 'vin', 'preferred_time', 'message'],
+    'appointments' => ['name', 'phone', 'email', 'service', 'year', 'make', 'model', 'engine', 'license_plate', 'license_plate_state', 'vin', 'preferred_time', 'message'],
     'contact_us' => ['name', 'phone', 'email', 'vehicle', 'preferred_time', 'message'],
 ];
 
