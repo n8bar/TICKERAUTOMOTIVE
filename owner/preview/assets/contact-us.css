@@ -1,0 +1,171 @@
+.contact-us-main {
+    padding: 48px 0 64px;
+}
+
+.contact-us-hero {
+    text-align: center;
+}
+
+.contact-us-hero-inner {
+    display: grid;
+    gap: 12px;
+    justify-items: center;
+}
+
+.contact-us-title {
+    margin: 0;
+    font-family: 'Alfa Slab One', 'Alfa Slab One Fallback', serif;
+    font-size: clamp(28px, 4vw, 40px);
+    color: var(--color_1);
+}
+
+.contact-us-subtitle {
+    margin: 0;
+    max-width: 640px;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.contact-us-info {
+    padding: 32px 0 72px;
+    background: #f5f6f9;
+}
+
+.contact-us-form {
+    padding: 40px 0 32px;
+}
+
+.contact-us-form-card {
+    background: #ffffff;
+    border: 1px solid #e4e7ec;
+    border-radius: 12px;
+    padding: 32px;
+    display: grid;
+    gap: 20px;
+}
+
+.contact-us-form-header h2 {
+    margin: 0 0 8px;
+    font-family: 'Alfa Slab One', 'Alfa Slab One Fallback', serif;
+    font-size: clamp(22px, 3vw, 30px);
+    color: #2d3a86;
+}
+
+.contact-us-form-header p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.contact-us-form-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.contact-us-field {
+    display: grid;
+    gap: 8px;
+}
+
+.contact-us-field-full {
+    grid-column: 1 / -1;
+}
+
+.contact-us-label {
+    font-weight: 600;
+    color: #1f2758;
+}
+
+.contact-us-required {
+    color: var(--color_2);
+    font-weight: 700;
+}
+
+.contact-us-input {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.16);
+    padding: 12px 14px;
+    font-size: 16px;
+    font-family: Inter, 'Inter Fallback', sans-serif;
+}
+
+.contact-us-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.contact-us-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+}
+
+.contact-us-form-note {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 14px;
+}
+
+.contact-us-alert {
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.contact-us-alert ul {
+    margin: 8px 0 0;
+    padding-left: 18px;
+}
+
+.contact-us-alert-success {
+    background: rgba(46, 125, 50, 0.12);
+    color: #1e5127;
+}
+
+.contact-us-alert-error {
+    background: rgba(179, 57, 81, 0.12);
+    color: #8d2d3f;
+}
+
+.contact-us-honeypot {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.contact-us-info-inner {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.contact-us-card {
+    background: var(--color_5);
+    border: 1px solid #e4e7ec;
+    border-radius: 10px;
+    padding: 24px 28px;
+    display: grid;
+    gap: 14px;
+}
+
+.contact-us-card h2 {
+    margin: 0;
+    font-family: 'Alfa Slab One', 'Alfa Slab One Fallback', serif;
+    font-size: clamp(22px, 3vw, 28px);
+    color: #2d3a86;
+}
+
+.contact-us-card p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.contact-us-card .btn {
+    width: 220px;
+}

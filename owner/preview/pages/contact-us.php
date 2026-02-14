@@ -1,5 +1,15 @@
 <?php
 $siteRoot = dirname(__DIR__, 3);
+$previewAssetBase = '/owner/preview/assets';
+$previewAssetRoot = $siteRoot . $previewAssetBase;
+$contactCss = $previewAssetBase . '/contact-us.css';
+$contactJs = $previewAssetBase . '/contact-us.js';
+if (!is_file($previewAssetRoot . '/contact-us.css')) {
+    $contactCss = '/contact-us.css';
+}
+if (!is_file($previewAssetRoot . '/contact-us.js')) {
+    $contactJs = '/contact-us.js';
+}
 
 require_once $siteRoot . '/owner/lib/auth.php';
 
@@ -35,7 +45,7 @@ $contactEnabled = !empty($contactConfig['enabled']);
         <?php require_once $siteRoot . "/includes/site-settings.php"; ?>
         <link rel="stylesheet" href="/site-shell.css">
         <script src="/site-shell.js" defer></script>
-        <link rel="stylesheet" href="/contact-us.css">
+        <link rel="stylesheet" href="<?php echo htmlspecialchars($contactCss, ENT_QUOTES); ?>">
         <meta property="og:type" content="website">
         <title>
             Contact Us - Ticker Automotive
@@ -159,7 +169,7 @@ $contactEnabled = !empty($contactConfig['enabled']);
             </section>
         </main>
         <?php include $siteRoot . '/includes/site-footer.php'; ?>
-        <script src="/contact-us.js" defer></script>
+        <script src="<?php echo htmlspecialchars($contactJs, ENT_QUOTES); ?>" defer></script>
         <script>
             document.addEventListener('click', (event) => {
                 const link = event.target.closest('a');

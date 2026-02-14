@@ -1,0 +1,184 @@
+
+.appointments-main {
+    padding: 48px 0 64px;
+}
+
+.appointments-hero {
+    text-align: center;
+}
+
+.appointments-hero-inner {
+    display: grid;
+    gap: 12px;
+    justify-items: center;
+}
+
+.appointments-title {
+    margin: 0;
+    font-family: 'Alfa Slab One', 'Alfa Slab One Fallback', serif;
+    font-size: clamp(28px, 4vw, 40px);
+    color: var(--color_1);
+}
+
+.appointments-subtitle {
+    margin: 0;
+    max-width: 640px;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.appointments-info {
+    padding: 32px 0 72px;
+    background: #f5f6f9;
+}
+
+.appointments-form {
+    padding: 40px 0 32px;
+}
+
+.appointments-form-card {
+    background: #ffffff;
+    border: 1px solid #e4e7ec;
+    border-radius: 12px;
+    padding: 32px;
+    display: grid;
+    gap: 20px;
+}
+
+.appointments-form-header h2 {
+    margin: 0 0 8px;
+    font-family: 'Alfa Slab One', 'Alfa Slab One Fallback', serif;
+    font-size: clamp(22px, 3vw, 30px);
+    color: #2d3a86;
+}
+
+.appointments-form-header p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.appointments-form-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.appointments-group {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-column: 1 / -1;
+}
+
+.appointments-group + .appointments-group {
+    margin-top: 12px;
+}
+
+.appointments-field {
+    display: grid;
+    gap: 8px;
+}
+
+.appointments-field-full {
+    grid-column: 1 / -1;
+}
+
+.appointments-label {
+    font-weight: 600;
+    color: #1f2758;
+}
+
+.appointments-required {
+    color: var(--color_2);
+    font-weight: 700;
+}
+
+.appointments-input {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.16);
+    padding: 12px 14px;
+    font-size: 16px;
+    font-family: Inter, 'Inter Fallback', sans-serif;
+    background: #ffffff;
+}
+
+.appointments-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.appointments-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+}
+
+.appointments-form-note {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 14px;
+}
+
+.appointments-alert {
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.appointments-alert ul {
+    margin: 8px 0 0;
+    padding-left: 18px;
+}
+
+.appointments-alert-success {
+    background: rgba(46, 125, 50, 0.12);
+    color: #1e5127;
+}
+
+.appointments-alert-error {
+    background: rgba(179, 57, 81, 0.12);
+    color: #8d2d3f;
+}
+
+.appointments-honeypot {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.appointments-info-inner {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.appointments-card {
+    background: var(--color_5);
+    border: 1px solid #e4e7ec;
+    border-radius: 10px;
+    padding: 24px 28px;
+    display: grid;
+    gap: 14px;
+}
+
+.appointments-card h2 {
+    margin: 0;
+    font-family: 'Alfa Slab One', 'Alfa Slab One Fallback', serif;
+    font-size: clamp(22px, 3vw, 28px);
+    color: #2d3a86;
+}
+
+.appointments-card p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.appointments-card .btn {
+    width: 220px;
+}

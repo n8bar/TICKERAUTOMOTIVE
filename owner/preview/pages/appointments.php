@@ -1,5 +1,15 @@
 <?php
 $siteRoot = dirname(__DIR__, 3);
+$previewAssetBase = '/owner/preview/assets';
+$previewAssetRoot = $siteRoot . $previewAssetBase;
+$appointmentsCss = $previewAssetBase . '/appointments.css';
+$appointmentsJs = $previewAssetBase . '/appointments.js';
+if (!is_file($previewAssetRoot . '/appointments.css')) {
+    $appointmentsCss = '/appointments.css';
+}
+if (!is_file($previewAssetRoot . '/appointments.js')) {
+    $appointmentsJs = '/appointments.js';
+}
 
 require_once $siteRoot . '/owner/lib/auth.php';
 
@@ -82,7 +92,7 @@ $appointmentsGroupVehicle = !empty($appointmentsFields['year']['enabled'])
         <?php require_once $siteRoot . "/includes/site-settings.php"; ?>
         <link rel="stylesheet" href="/site-shell.css">
         <script src="/site-shell.js" defer></script>
-        <link rel="stylesheet" href="/appointments.css">
+        <link rel="stylesheet" href="<?php echo htmlspecialchars($appointmentsCss, ENT_QUOTES); ?>">
         <meta property="og:type" content="website">
         <title>
             Schedule an Appointment - Ticker Automotive
@@ -303,7 +313,7 @@ $appointmentsGroupVehicle = !empty($appointmentsFields['year']['enabled'])
             </section>
         </main>
         <?php include $siteRoot . '/includes/site-footer.php'; ?>
-        <script src="/appointments.js" defer></script>
+        <script src="<?php echo htmlspecialchars($appointmentsJs, ENT_QUOTES); ?>" defer></script>
         <script>
             document.addEventListener('click', (event) => {
                 const link = event.target.closest('a');
