@@ -985,6 +985,13 @@ function owner_checked(bool $value): string
                             <div class="owner-actions">
                                 <button class="btn btn-primary owner-button" type="submit" name="action" value="save_settings">Save Settings</button>
                             </div>
+                            <div class="owner-actions-meta" data-last-login hidden>
+                                <?php
+                                    $lastLogin = owner_get_last_login_time((string) ($user['email'] ?? ''));
+                                    $lastLoginLabel = $lastLogin ? date('M j, Y g:i A', $lastLogin) : 'Unavailable';
+                                ?>
+                                <p class="owner-help">Last login: <?php echo htmlspecialchars($lastLoginLabel, ENT_QUOTES); ?></p>
+                            </div>
                         </form>
 
                         <section class="owner-tab-panel" data-tab-panel="users" role="tabpanel" aria-labelledby="tab-users-button" id="tab-users" hidden>
@@ -1246,11 +1253,6 @@ function owner_checked(bool $value): string
                                             <input type="hidden" name="action" value="change_email">
                                             <input type="hidden" name="active_tab" value="users" data-active-tab>
                                             <p class="owner-help">Current login: <?php echo htmlspecialchars($user['email'] ?? '', ENT_QUOTES); ?></p>
-                                            <?php
-                                                $lastLogin = owner_get_last_login_time((string) ($user['email'] ?? ''));
-                                                $lastLoginLabel = $lastLogin ? date('M j, Y g:i A', $lastLogin) : 'Unavailable';
-                                            ?>
-                                            <p class="owner-help">Last login: <?php echo htmlspecialchars($lastLoginLabel, ENT_QUOTES); ?></p>
                                             <label class="owner-field">
                                                 <span class="owner-label">Current password</span>
                                                 <input class="owner-input" type="password" name="user_email[current]" autocomplete="current-password" placeholder="••••••••">
@@ -1321,6 +1323,7 @@ function owner_checked(bool $value): string
                 const tabs = Array.from(document.querySelectorAll('[data-tab]'));
                 const panels = Array.from(document.querySelectorAll('[data-tab-panel]'));
                 const actions = document.querySelector('.owner-actions');
+                const lastLogin = document.querySelector('[data-last-login]');
                 const accordions = Array.from(document.querySelectorAll('[data-accordion]'));
                 const activeInputs = Array.from(document.querySelectorAll('[data-active-tab]'));
                 const tabList = document.querySelector('.owner-tabs');
@@ -1350,6 +1353,9 @@ function owner_checked(bool $value): string
 
                     if (actions) {
                         actions.hidden = tab === 'users';
+                    }
+                    if (lastLogin) {
+                        lastLogin.hidden = tab !== 'general';
                     }
 
                     if (activeInputs.length) {
