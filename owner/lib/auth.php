@@ -38,6 +38,84 @@ function owner_accounts_data_file(): string
     return $file;
 }
 
+function owner_log_data_dir(): string
+{
+    $dataFile = owner_accounts_data_file();
+    $dir = dirname($dataFile);
+    if ($dir === '' || $dir === '.') {
+        $dir = __DIR__ . '/../data';
+    }
+
+    return $dir;
+}
+
+function owner_login_log_path(): string
+{
+    return owner_log_data_dir() . '/login.log';
+}
+
+function owner_trim_login_log(int $maxBytes = 102400): void
+{
+    $path = owner_login_log_path();
+    if (!is_file($path)) {
+        return;
+    }
+    $size = filesize($path);
+    if ($size === false || $size <= $maxBytes) {
+        return;
+    }
+    $lines = @file($path, FILE_IGNORE_NEW_LINES);
+    if ($lines === false) {
+        return;
+    }
+    $kept = [];
+    $current = 0;
+    for ($i = count($lines) - 1; $i >= 0; $i -= 1) {
+        $line = $lines[$i];
+        $bytes = strlen($line) + 1;
+        if ($current + $bytes > $maxBytes) {
+            break;
+        }
+        $kept[] = $line;
+        $current += $bytes;
+    }
+    if (!$kept) {
+        return;
+    }
+    $kept = array_reverse($kept);
+    @file_put_contents($path, implode("\n", $kept) . "\n", LOCK_EX);
+}
+
+function owner_log_login_event(string $event, array $account = [], string $reason = ''): void
+{
+    $dir = owner_log_data_dir();
+    if (!is_dir($dir)) {
+        mkdir($dir, 0755, true);
+    }
+
+    $email = owner_account_key($account['email'] ?? '');
+    $role = (string) ($account['role'] ?? '');
+    $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+    $userAgent = (string) ($_SERVER['HTTP_USER_AGENT'] ?? '');
+    $userAgent = preg_replace('/\s+/', ' ', trim($userAgent));
+    $userAgent = substr($userAgent ?? '', 0, 200);
+    $reason = trim($reason) !== '' ? trim($reason) : '-';
+
+    $line = sprintf(
+        "[%s] event=%s reason=%s email=%s role=%s ip=%s ua=%s\n",
+        date('Y-m-d H:i:s'),
+        $event,
+        $reason,
+        $email,
+        $role,
+        $ip,
+        $userAgent
+    );
+
+    @file_put_contents(owner_login_log_path(), $line, FILE_APPEND | LOCK_EX);
+    owner_trim_login_log();
+}
+
 function owner_normalize_email(string $email): string
 {
     return strtolower(trim($email));
@@ -501,6 +579,7 @@ function owner_login_user(array $account): void
     $_SESSION['last_active'] = time();
     unset($_SESSION['pending_account']);
     owner_clear_failed_logins();
+    owner_log_login_event('login', $_SESSION['auth'], 'success');
 }
 
 function owner_pending_account(): ?array
@@ -545,7 +624,7 @@ function owner_require_login(): void
     $lastActive = (int) ($_SESSION['last_active'] ?? 0);
 
     if ($lastActive && (time() - $lastActive) > ($timeoutMinutes * 60)) {
-        owner_logout();
+        owner_logout('timeout');
         owner_set_flash('error', 'Session expired. Please sign in again.');
         owner_redirect('/owner/login/');
     }
@@ -553,9 +632,11 @@ function owner_require_login(): void
     $_SESSION['last_active'] = time();
 }
 
-function owner_logout(): void
+function owner_logout(string $reason = 'manual'): void
 {
     owner_start_session();
+    $auth = $_SESSION['auth'] ?? [];
+    owner_log_login_event('logout', is_array($auth) ? $auth : [], $reason);
 
     $_SESSION = [];
 
