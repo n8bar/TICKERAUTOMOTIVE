@@ -54,6 +54,43 @@ function owner_login_log_path(): string
     return owner_log_data_dir() . '/login.log';
 }
 
+function owner_get_last_login_time(?string $email): ?int
+{
+    $email = owner_account_key($email);
+    if ($email === '') {
+        return null;
+    }
+    $path = owner_login_log_path();
+    if (!is_file($path)) {
+        return null;
+    }
+    $lines = @file($path, FILE_IGNORE_NEW_LINES);
+    if ($lines === false) {
+        return null;
+    }
+    for ($i = count($lines) - 1; $i >= 0; $i -= 1) {
+        $line = $lines[$i];
+        if ($line === '') {
+            continue;
+        }
+        if (strpos($line, 'event=login') === false) {
+            continue;
+        }
+        if (preg_match('/^\[(?P<time>[^\\]]+)\\]\\s+event=login\\s+reason=success\\s+email=(?P<email>[^\\s]+)/', $line, $matches) !== 1) {
+            continue;
+        }
+        if (owner_account_key($matches['email'] ?? '') !== $email) {
+            continue;
+        }
+        $timestamp = strtotime($matches['time'] ?? '');
+        if ($timestamp !== false) {
+            return $timestamp;
+        }
+    }
+
+    return null;
+}
+
 function owner_trim_login_log(int $maxBytes = 102400): void
 {
     $path = owner_login_log_path();

@@ -1246,6 +1246,11 @@ function owner_checked(bool $value): string
                                             <input type="hidden" name="action" value="change_email">
                                             <input type="hidden" name="active_tab" value="users" data-active-tab>
                                             <p class="owner-help">Current login: <?php echo htmlspecialchars($user['email'] ?? '', ENT_QUOTES); ?></p>
+                                            <?php
+                                                $lastLogin = owner_get_last_login_time((string) ($user['email'] ?? ''));
+                                                $lastLoginLabel = $lastLogin ? date('M j, Y g:i A', $lastLogin) : 'Unavailable';
+                                            ?>
+                                            <p class="owner-help">Last login: <?php echo htmlspecialchars($lastLoginLabel, ENT_QUOTES); ?></p>
                                             <label class="owner-field">
                                                 <span class="owner-label">Current password</span>
                                                 <input class="owner-input" type="password" name="user_email[current]" autocomplete="current-password" placeholder="••••••••">
