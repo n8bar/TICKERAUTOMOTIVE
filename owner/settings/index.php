@@ -988,9 +988,10 @@ function owner_checked(bool $value): string
                             <div class="owner-actions-meta" data-last-login hidden>
                                 <?php
                                     $lastLogin = owner_get_last_login_time((string) ($user['email'] ?? ''));
+                                    $lastLoginIso = $lastLogin ? gmdate('c', $lastLogin) : '';
                                     $lastLoginLabel = $lastLogin ? date('M j, Y g:i A', $lastLogin) : 'Unavailable';
                                 ?>
-                                <p class="owner-help">Last login: <?php echo htmlspecialchars($lastLoginLabel, ENT_QUOTES); ?></p>
+                                <p class="owner-help">Last login: <span data-last-login-time="<?php echo htmlspecialchars($lastLoginIso, ENT_QUOTES); ?>"><?php echo htmlspecialchars($lastLoginLabel, ENT_QUOTES); ?></span></p>
                             </div>
                         </form>
 
@@ -1324,6 +1325,7 @@ function owner_checked(bool $value): string
                 const panels = Array.from(document.querySelectorAll('[data-tab-panel]'));
                 const actions = document.querySelector('.owner-actions');
                 const lastLogin = document.querySelector('[data-last-login]');
+                const lastLoginTime = document.querySelector('[data-last-login-time]');
                 const accordions = Array.from(document.querySelectorAll('[data-accordion]'));
                 const activeInputs = Array.from(document.querySelectorAll('[data-active-tab]'));
                 const tabList = document.querySelector('.owner-tabs');
@@ -1331,6 +1333,23 @@ function owner_checked(bool $value): string
 
                 if (!tabs.length || !panels.length) {
                     return;
+                }
+
+                if (lastLoginTime) {
+                    const iso = lastLoginTime.getAttribute('data-last-login-time');
+                    if (iso) {
+                        const date = new Date(iso);
+                        if (!Number.isNaN(date.getTime())) {
+                            lastLoginTime.textContent = date.toLocaleString(undefined, {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: 'numeric',
+                                minute: '2-digit',
+                                hour12: true,
+                            });
+                        }
+                    }
                 }
 
                 try {
